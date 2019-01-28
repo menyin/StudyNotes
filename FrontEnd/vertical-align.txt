@@ -1,0 +1,7 @@
+*vertical-align
+ 只适用于inline或者inline-block
+ 
+*inline元素默认是基线对齐。 所以img在父容器中下方有间隙，因为它与空文本节点对齐方式是基线对齐。
+ 解决方式：img变block 或者vertical-align:middle; 或者line-height:0; 或者font-size:0;
+
+*注意：基线（base line）并不是汉字文字的下端沿，而是英文字母“x”的下端沿。  

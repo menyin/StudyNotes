@@ -1,0 +1,60 @@
+微信开发文档 http://mp.weixin.qq.com/debug/wxadoc/dev/index.html
+
+
+*微信公众号有845257580@qq.com和3331866906@qq.com两个可以登录
+*特别注意：微信小程序开发是使用 3331866906@qq.com注册的账号。因为一个邮箱只能做一个小程序，所以之前845257580账号不能再用。
+ 小程序ID：wxae9f77d53e742555   秘钥：64793c8eeffec457a5df645f7a66afbf
+
+*小程序采用mvvm方式进行绑定数据，如页面中用{{ }} 来绑定数据
+ 小程序所谓的控制能力类似于后端语法，如wx:if的属性来
+
+
+*可以定义全局和局部样式，此外 WXSS 仅支持部分 CSS 选择器
+
+*个人版微信小程序
+ 账号 xm917fcw@126.com   qq123852
+ appId   wx81d21fe6887a932e
+ AppSecret fa4a13422486299fa9f80faeaeed7e10
+ 企业版小程序
+ 账号 qyzpzs597@qq.com 密码：597QYzs8566
+ appId  wx1e2155f7eaa0cad1
+ AppSecret  fba0464b8e6e10861dab22a0a8675eac
+
+*实例
+模板代码：
+<view>{{ msg }}</view>
+<button bindtap="clickMe">点击我</button>
+
+说明：点击 button 按钮的时候，我们希望把界面上 msg 显示成 "Hello World"，于是我们在 button 上声明一个属性: bindtap ，在 JS 文件里边声明了 clickMe 方法来响应这次点击操作：
+
+js代码：
+Page({
+  clickMe: function() {
+    this.setData({ msg: "Hello World" })
+  }
+})
+
+*小程序在android和ios，呈现的效果有可能会不通，所以测试的时候需要两种机子都要测试
+
+*597的api相关请求封装在
+
+*当使用微信开发工具开发完后，点击上传按钮，在微信公众号后台会有一个开发版本可供提交审核，审核之前可以用体验版进行测试。
+
+*微信中js遵循es6规范，使用module.exports来导出模块，require引入模块。
+ 可以用.js文件也可以用.wxs文件
+
+*在做架构时可以和java一样使用包，微信小程序主程序默认是主包，其余子包是可以按需加载。
+
+*低版本微信客户端不能使用小程序高版本的API接口，所以在接口调用时需要做下兼容判断。
+
+*目前小程序打包是会将工程下所有文件都打入代码包内，也就是说，这些没有被实际使用到的库文件和资源也会被打入到代码包里，从而影响到整体代码包的大小。
+
+*在请求后端数据接口时（是https协议），出现“对应的服务器证书无效。”，可以在微信开发者工具里项目设置-不校验合法域名...  进行设置
+
+
+？页面 样式  脚本如何对应 即路由， 一个文件夹里包含了前述三者。
+？页面标签学习
+？保存功能是将文件保存到哪里 wx.saveFile
+？<template is="staffName" data="{{...staffA}}"></template>  这里三个点号是什么意思 ！模板语法
+
+weapp.d.ts
