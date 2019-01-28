@@ -1,0 +1,5 @@
+﻿*Getting Started  入门指南、准备开始
+
+*developers looking to become involved in and contribute to the development of Lucene.
+
+*be intended 目的是...

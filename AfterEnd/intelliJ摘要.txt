@@ -1,0 +1,118 @@
+﻿*学习教程 https://www.imooc.com/learn/924
+*破解教程：https://blog.csdn.net/qq_32595075/article/details/79675380
+
+*intelliJ的project相当于eclipse里的工作空间  module相当于eclipse里的工程
+
+*intellij两个项目同时开启两个tomcat时要更改不同的端口号，包括JMX Port
+
+*intelliJ菜单栏
+ Build是项目构建方面工具
+ VCS是版本管理方面的工具
+
+*intelliJ进行javaEE开发配置 详见博客园收藏《Intellij Idea 2017创建web项目及tomcat部署实战》
+ 注意：需要配置当前项目对于所属工作空间的url （在Run->Edit Configurations->Deployment->Deploy at the server startup里点加号配置）
+       此配置相当于eclipse的添加发布的项目到tomcat里。
+       对于新增的项项目，对应的路径要注意：多个项目时，路径必须不一样。
+
+*tomcat服务配置里的After launch勾选后会在启动时候打开浏览器
+
+
+*intellij如果创建web项目时没有自动生成web.xml可以在项目创建后在生成。
+
+*intellij的tomcat热部署设置在Edit Configurations->On 'Update' action和On frame deactivation
+
+*快捷键，和webstorm差不多
+ Ctrl+Shift+N 查找打开指定名称文件
+ Ctrl+E 查找最近打开的文件
+ Double Shift查找任意东西
+ Ctrl+Alt+o 优化导入的类和包 但是实际无效  可以用Alt+Enter导包
+ Ctrl+Shift+BackSpace 回到上次编辑出（Last edit location）
+ Ctrl+F11可以在指定的代码行做书签标记（Toggle bookmark） 做完标记的行，按Ctrl+对应标记数字即可到达该行。此功能用于学习源码
+ Shift+Alt+F 选中指定类或方法按此快捷键，可以将其收藏。收藏类和方法。此功能用于学习源码
+ Ctrl+F12 在当前文件按此快捷键可以查看当前类的结构大纲视图
+ Ctrl+Shift+Alt+U 必须要在pom.xml里按此快捷键，可以显示maven项目的依赖拓扑图。单击相应的依赖项可以链接到相应的配置节点。
+                  如果是类文件里按此快捷键，则显示类的依赖拓扑图。
+ Ctrl+H和Ctrl+Alt+H查看方法调用层次关系,类的层次关系
+ Ctrl+Alt+B 可以查看当前父类或接口的子类或实现类
+ Ctrl+Shift+。折叠当前代码块，Ctrl+。打开当前代码块
+ ctrl+鼠标点击方法名 查找到方法使用处，必须关联下载的源码。并且在使用此快捷键是有一个提示设置，要设置搜索的范围。
+ 在.class文件里不行。所以一些框架，一定要下载其源码，才能使用该功能
+      
+ ctrl+H或者ctrl+alt+B 查看类或接口的继承体系
+
+Empty Project
+
+？打不开纯目录或者磁盘
+  新建一个空的项目，将空项目的.idea目录拷贝到纯磁盘里(如www)
+
+？怎么复制类文件对应的类全名
+
+？intelliJ2017.3 新建web项目为什么都没有WEB-INF
+
+？写了个servlet后不能实现热部署 要重启。 但jsp却可以
+
+*intelliJ  web项目开发步骤：
+ unused imports not found
+
+
+ 注意：创建servlet报错可能是没有想过的Servlet-api的库，在项目属性中添加即可，详见CSDN收藏《Intellij Idea 新建一个servlet报错》
+
+dependencies export  Struts2-2.5.14.1
+
+创建struts2时  use library
+
+*intelliJ添加引用jar可以按文件夹归类 然后在项目属性里添加
+
+*在intelliJ中通过Module-Dependencies导入的外部jar或库  如果在启动tomcat后还是有类型找不到等错误。
+ 可以到Artifacts中会有"...jar ... is missing ..."的提示，需要点击"Fix"或红灯泡解决
+
+*intellj操作技巧
+ *"psvm"+tab 输入main方法
+ *postfix功能：变量或数字+".for"快捷输入for循环  变量或值+".sout"快捷输入System.out.println(变量或值);  这部分功能要多去看看练练
+ *intellij在代码的标签上右键->Split Horizontally 可以像VS那样上下分屏
+ *列操作：选中一个或多个字符，再按Ctrl+Shift+Alt+J 就会选中当前文档的所有相同字符，可以进行列操作。（特有用）
+         在任意编辑处按Shift+Alt+Insert可以进入或退出列编辑状态 
+ *当代码有错误，按F2可以快速定位到错误位置的附近
+ *live template用于快速输入代码，可以定义自己的模板，模板快速录入后光标会定在第一个占位符处，每次回车光标都往下一个占位符移动。
+ *alt+enter 提供代码编写智能提示，导包，实现接口方法等。在for变成foreach重构、字符串+号连接变成String.format重构都可以做智能提示
+ *代码重构、抽取等操作自己练习
+ *git集成：在某段代码行号旁右击-Annotate就可以调出相应的git版本提交信息（鼠标移动到对应记录还会显示具体信息）。
+ *关联一切（这个功能强大）：先Facets定义一个关联Spring的Facet，然后Spring相关的类、类成员变量左边都会有绿色按钮标志，
+  点击可以转到它生成的地方。如果在intellij的数据库管理器对字段或表重命名，则mybatis的映射sql里的字段或表名也相应变化。
+ *调试：条件断点、表达式监控、调试时执行到当前焦点行，调试时直接动态设置变量值等等
+ *文件操作：在当前文件对应的目录下新建文件？？快捷键是什么  
+            复制当前文件到当前文件的目录  快捷键F5
+            移动当前文件到指定目录  快捷键F6
+            选中指定文件ctrl+c复制文件名 ctrl+shift+c复制文件路径
+            依次复制多个文件名或文件路径，然后 ctrl+shift+v则可以粘贴多个结果
+ *文本操作：
+
+*intellij在重命名时，有时候会列出很多关联的列表，如果某些项不需要改，可以右击Exclude进行排除。
+
+
+*intellij新建的maven项目后会弹出以下提示框，应该是导入或自动导入pom.xml的配置的依赖及maven所需相关插件。可以设置为自动也可以不设置
+  Maven projects need to be imported
+  Import changes enable auto-import
+
+*intellij中项目部署到tomcat时都是复制一个tomcat副本到intellij应用程序目录里，如何直接部署在tomcat目录
+ 就是在intellij-tomcat配置里勾选【Deploy applications configured in Tomcat instance】
+
+*intellij多模块（eclipse中的项目）的项目聚合，即多个模块可以在intellij互相调用。 
+ 教程详见《IntelliJ IDEA中创建Web聚合项目(Maven多模块项目)》https://blog.csdn.net/u012129558/article/details/78423511
+
+*intellij在创建聚合模块（工程）：
+ 1.创建一个空的项目，相当于eclipse的工作空间，这里可以创建一个parent模块用于总的依赖版本管理
+ 2.创建一个不用骨架的maven类型模块，修改其pom的<packaging>节点未pom
+ 3.创建聚合模块所包含的模块，在此【Parent】为父模块（依赖版本管理），【Add as module to】才是聚合模块。注意在下一步设置目录要将该模块目录放到聚合模块目录下
+ 注意：聚合模块是用于聚合多个模块，而父模块是用于让子模块继承的（做依赖版本统一管理），但是他们打包类型都是pom
+       聚合模块下包含的模块可以继承parent也可以继承聚合模块，淘淘教程是直接继承聚合模块
+
+*intellij2017在使用JUnit做单元测试时，如代码吗有System.in.read(); 但是在console里输入不了字符。但是使用main去启动这些代码却可以。 可能是intellij2017和JUnit兼容问题。
+
+？？自己定义类属性快捷输入的模板
+？？intellij Facets功能，研究下
+
+*intellij-Help-Find Action...是用于查找编辑器相关操作对应的快捷键和快速入口的功能
+
+？怎么在编辑区跳转到文件区对应的文件
+

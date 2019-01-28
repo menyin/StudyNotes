@@ -1,0 +1,7 @@
+﻿*兼容IE8+的相册插件http://photoswipe.com/ 
+
+*前端常用的点：seajs做js模块化加载、图片延迟加载、图片放大相册、截图工具、web打印功能、弹框组件、加载动画、分页组件
+ 
+
+*谷歌bilibili插件开发 http://chromecj.com/productivity/2018-06/1465.html
+ 项目源码地址：https://github.com/zacyu/bilibili-helper

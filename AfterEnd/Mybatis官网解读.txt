@@ -1,0 +1,85 @@
+﻿*英语单词后面的词性注解
+ “ron. ”是pronoun缩写 是“代词”。
+ “adj. ”是adjective的缩写 是“形容词。”
+ “adv.” 是adverb的缩写 是“副词”。
+ “num.” 是number的缩写 是“数词。”
+ “art. ”是article的缩写 是“冠词”。
+ “prep. ”是preposition的缩写 是“介词”。
+ “conj. ”是conjunction的缩写 是“连词”。
+ “interj. ”是interjection的缩写 是“感叹词”。
+ “v.”动词
+ “vi.”不及物动词
+ “vt.”及物动词
+
+
+*be available 可获得的；可用的
+ 如：Sources of this manual are available in xdoc format at project's Git
+     该手册的xdoc版本在git项目中可以获得
+
+*translate 转化；翻译
+
+*File n.文件；v.提出
+ 如：File an issue 提出一个issue
+     Create a file 创建一个文件
+
+*just adv.只\仅仅\刚好\正好...
+
+*be acquired被获得
+
+*It is recommended that...  建议...；什么什么是被建议的
+
+*as well as 也；和…一样；不但…而且
+
+*for .v 用于...，如用于做什么
+
+*notice n.vt.注意\通知；vi.引起注意\使...注意
+
+*limit n.vt.限制
+ limitations n.局限
+
+*due to  adv.由于...
+
+*For this reason 因此\因为这样的原因
+
+*Therefore 因此，所以
+
+*as the name suggests 顾名思义
+
+*directly
+
+*against prep. 反对\违反\靠\倚\防备；adj.不利的\对立的
+ 如：You can execute mapped SQL statements directly against the SqlSession instance.
+     您可以直接对SqlSession实例执行映射的SQL语句。
+
+*a couple of 两三个，几个
+ 如：here are a couple of examples.
+     这里有几个例子。
+
+* fully qualified name完全限定名
+
+*optional 
+可选的
+
+*even if 即使
+
+*Short names (e.g. “selectAllThings”) can be used to reference any unambiguous entry.
+ 短名称(例如“selectAllThings”)可以用来引用任何明确的条目。
+ 注意：e.g.例如的意思
+
+*It will be up to 这将取决于
+ 如：It will be up to you and your project team to determine which is right for you
+    这将取决于您和您的项目团队来决定哪一个是适合您的
+
+*Lifecycle生命周期
+
+*concurrency 并发
+ 如：Using them incorrectly can cause severe concurrency problems.
+     错误地使用它们会导致严重的并发问题。
+
+*savings n. 储蓄；存款；救助；节省物（saving的复数形式）
+
+*in the order 按顺序
+ 如：in the order that they should be defined
+     按照它们应该被定义的顺序
+
+*introspect 内省

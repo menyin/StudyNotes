@@ -1,0 +1,655 @@
+﻿*目标：
+  1.通过该框架回忆练习传智教程知识点，以此部分为先
+  2.通过该框架扩展学习并练习，javaee相关常用的技术，如shiro
+  3.通过该框架练习SpringMvc相关技术，接下来阶段就是做一个SpringMvc的demo。 以SSM为准
+  4.JSR303验证功能
+  5.反复过知识点，如基本知识，调试技巧，查看调用堆栈层次结构信息。
+  6.通过学习jeesite的shiro配置，尝试解决shiro demo里controller的shiro权限标签不能生效问题。
+  7.通过该框架练习学习EhCache缓存的使用。变化少经常用的数据应该缓存，这时候事务的隔离级别代一定程度上代表着数据的变化频度。
+  8.通过该框架练习学习定时任务（Spring task定时任务），其中注解里可以写cron表达式。教程详见https://blog.csdn.net/u011116672/article/details/52517247
+  9.通过该框架练习学习druid连接池的使用，特别注意其监控统计信息 StatFilter 的使用
+  10、通过该框架练习学习java项目日常如何更新和部署至linux上tomcat，如何搭建测试环境并且将线上的数据库同步至测试环境以供测试,如何备份数据库。
+
+*短期任务1：（融云弄好后再来看产品发布功能，和大胖的商城做下对比测试）
+ 了解大胖微信商城业务逻辑和代码实现、小程序 8月份前（8月10号已完成）
+ 了解各种外包单渠道，做一到两个后台项目。 12月份前 (由于没有项目做，只能先提前学习淘淘商城（10月30号完成），后面再无项目做就直接按传智知识点跳跃渐进式复习,为咕泡课程做准备)
+ 快速过下淘淘商城 2月份前
+ 开始腾讯课堂java架构学习。中间需要学习索引、MQ相关高级知识和应用
+ 复习jeesite相关摘要和知识。
+*短期任务2：
+ 要点：工作方面的新项目前端架构、传智基础知识点跳跃复习实践、咕泡课程报名学习、尝试练手面试（整理了解市场需求）、
+       3年以上系统架构设计经验（将淘淘和jeesite结合并部署、mytotal研究、爱定家研究、淘淘项目并发测试）
+       明年9月小孩上学前尽量完成全部学习或换工作，
+ 课程针对群体：基础不好，对多线程，网络编程，设计模式JDK-API等基础知识掌握不牢固
+               渴望提升，长期从事增删改查的重复性工作，技术、职位和薪资原地踏步，不能晋升
+               追求名企，期待享受大企业的福利待遇，想去网大平台实现自己的梦想，一展抱负
+               经验偏少，在外包、传统行业摸爬滚打做了多年，却向往互联网高薪岗位
+
+*项目实战：企业cms包含PC、m版、APP接口、微信公众号（可以参考597的代码）、独立部署liux
+ 企业cms
+
+*近期目标：先做shiro调研和demo编写，后面再理SSM框架的实现 -- 完成
+
+****jeesite改造点**** 
+ 主键生成策略
+ jsp 自定义服务端标签，有一些可以将这些方法整合成公共方法jar。 
+ 单机改分布式
+ jeesite用spring下service事务回滚默认非检查型异常和错误，所以将所有可能的检查型异常转为非检查型异常并抛出，这个是否需要改观？
+ FormAuthenticationFilter登录功能是否要改成shiro原始写法，这样对于app应用是否更兼容。
+ 缓存从EhCache改为Redis
+ jeesite后台主菜单其实不是从数据库读取的数据，是不是要改造？
+****jeesite改造点**** 
+
+
+*控制器中@RequestMapping(value = "${adminPath}/cms/article")的${adminPath}配置是在spring-context.xml配置的jeesite.properties配置文件里配置
+ <context:property-placeholder ignore-unresolvable="true" location="classpath:jeesite.properties" />
+ 也就是说<context:property-placeholder/>引入的properties文件内容可以在spring的xml配置文件和控制器或service里spring注解里使用。即在spring上下文中使用。
+ 两种使用方式：1.占位符 如 @RequestMapping(value = "${adminPath}/cms/article")，要在spring-context.xml里配置context:property-placeholder节点引入properties文件，如上描述的
+              2.SpEl表达式 如 @Value("#{APP_PROP['jdbc.driver']}")，要在spring-context.xml里配置<util:properties id="APP_PROP" location="classpath:jeesite.properties" local-override="true"/>
+ 另外代码里也可以用Global.getConfig("page.pageSize")获取jeesite.properties的配置（一般在非spring环境的代码里使用）
+
+*<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+ 该配置就是Mybatis支持@Autowired，自动生成dao接口实现类实例功能的配置
+ 除了传智教程讲解的2个属性配置外（<property name="sqlSessionFactory" ref="sqlSessionFactory" />和<property name="basePackage" value="com.cny.scm.dao" />）
+ jeesite还额外教了一个属性配置<property name="annotationClass" value="com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao"/>　可以给要自动生成接口类做注解标记
+
+
+*特别注意jeesite将Controller的扫描（即实例生成）交给springmvc，所以在spring-mvc.xml的<context:component-scan>配置了只扫描controller
+ 而controller之外的层都交给spring进行扫描，所以在spring-context.xml的<context:component-scan>只配置了controller之外的层的扫描。
+
+*jeesite的spring-mvc.xml里的
+ <mvc:message-converters>配置java类型和json及xml的转换
+ <bean id="contentNegotiationManager">能使得让访问的url通过后缀判断获取不同类型的数据，它是去找<mvc:message-converters>节点。
+ 如：通过/data.json和/data.xml就可以获得不同形式的数据。
+
+*sql语句中（mybatis的sql映射），不同数据库的字符串值的连接方式不一样
+ <if test="dbName == 'oracle'">'%'||#{category.id}||'%'</if>
+ <if test="dbName == 'mssql'">'%,'+#{category.id}+',%'</if>
+ <if test="dbName == 'mysql'">CONCAT('%,', #{category.id}, ',%')</if>
+
+*建库脚本 db\jeesite_mysql.sql
+
+*代码生成器生成代码的目录在src\main\resources\jeesite.properties的projectPath节点配置
+
+
+*添加新的模块功能步骤
+ -设计创建业务表（按框架规约，DataEntity里包含的字段+id）
+ -在代码生成-业务表添加，生成方案添加，保存生成代码
+ -在系统设置-菜单管理，添加菜单
+ -在角色管理，对应角色里添加权限
+ -重启服务器后重新登录有该功能菜单权限的用户
+*左树右表功能开发代码生成器没有集成，现自己做左树右表开发步骤总结：
+ -使用单表快速生成代码+参考用户管理进行改造，【学生-干部】为例，学生单表student，干部树表cadre
+ -设计cms_student表，里面包含cms_cadre的关联字段 cadre_id。
+ -配置业务表时将cadre_id字段的查询勾选上，配置生成方案。
+ -在StudentDao.xml里将cadre_id改为cadre.id并添加left join语句、#{cadre_id}改为#{cadre.id}
+    并在findList的sql中添加<if test="cadre != null and cadre.id != null and cadre.id != ''">
+                               AND (c.id = #{cadre.id} OR c.parent_ids LIKE
+                               <if test="dbName == 'oracle'">'%,'||#{cadre.id}||',%')</if>
+                               <if test="dbName == 'mssql'">'%,'+#{cadre.id}+',%')</if>
+                               <if test="dbName == 'mysql'">CONCAT('%,', #{cadre.id}, ',%'))</if>
+                           </if>
+ -在Student实体类里将cadreId字段类型改为Cadre并且属性名改为cadre
+ -在studentForm.jsp里将cadreId改为cadre.id，当然干部输入框也要改为下拉框并在controller添加模型数据
+ -在StudentController添加index方法，另外添加studentIndex.jsp用以包裹左树右表
+ -复制userIndex.jsp内容到studentIndex.jsp，修改相关信息，在userIndex.jsp中我已做<%--cny_note--%>备注
+ -最后添加菜单，添加角色配置菜单，重启服务器，重新登录系统，即可。
+
+
+*主体前端框架的tab使用jquery.jerichotab.js 兼容性不是很好
+
+*后台主体前端框架逻辑：
+ *一级菜单用后台模板遍历，在dom上记录链接信息
+ *二三级菜单（左侧菜单）是通过ajax请求（如/cnysite/a/sys/menu/tree?parentId=79）页面直接填充html字符串
+ *所有菜单自定义的链接都是在右侧iframe里显示
+ *注意：后台左侧菜单树（menuTree.jsp）只能在代码中写死，只能遍历3层~~连主菜单算在内，就是只能遍历4级菜单
+
+*网站相关配置在jeesite.properties里配置，如adminPath、frontPath
+ ？网站URL后缀urlSuffix的实现原理，即如何静态化。其实主要是前台页面的路由会加上这个配置项
+
+*主页面入口的控制器为modules.sys.web.LoginController.index
+
+*每个业务模块的页面都会导入taglib.jsp，它包括各种第三方和自定义的标签库引用
+
+
+*java在做登录验证时可以在登录的处理类里规定不同的异常类型，而在使用该登录类做处理时就可以通过不同的异常类型来判定登录的结果。这种编程模式值得借鉴。
+
+*@Resource注解要jdk1.6+  所以有些maven项目要在plugns里面添加jdk1.6+插件
+
+*正常我们都将事务放在service层，而如果一个控制器需要用到多个service，尽量只是用到多个service的查询，如果要用到多个service的修改，
+ 尽量都将多个service放在同一个service里，才能对他进行事务管理（使用xml声明式或用注解式）
+
+*jeesite中的具体实践看views/modules/cms/front/themes/basic/frontGuestbook.jsp页面，即前台的留言页面
+
+*jeesite业务模块的删除都是逻辑删除，设置一个del_flag
+*jeesite的业务实体都继承DataEntity<T>继承BaseEntity<T>，这两个父类对实体做了一些公共字段的规约，并填充了del_flag对应的枚举（其实是常量）
+
+*jeesite的BaseController的renderString方法，相当于@ResponseBody的功能，是将对象转化为json输出的方法
+ 如一些前台页面的控制器需要判断终端，如果是终端就用renderString方法输出json字符串内容。
+
+*jeesite普通模块的保存记录逻辑（以Article为例）：在service层的save方法中if (StringUtils.isBlank(article.getId()))
+ 如果为true则为新记录，执行article.preInsert();//preInsert是定义在实体基类DataEntity<T>里定义，主要工作有设置id，设置创建更新用户及时间
+ 如果为false则为已存在记录，执行article.preUpdate();//preUpdate是定义在实体基类DataEntity<T>里定义，主要工作有设置id，设置更新用户及时间
+
+
+
+*经常使用的树形结构：公司树、部门树、用户树。这些树都是与部门相关的，如用户树是按部门来划分的（用户数据是异步加载的），具体看效果即可
+ 注意：用户树中如果部门数据多，每个部门都一起去异步加载其下的用户，这样请求过多会造成性能损耗。zTree默认是点击展开时异步加载，但是jeesite修改成弹框一出来就去异步加载用户数据。
+       如果部门数据过多或者像597服务器有限制请求数量的话，可以将jeesite相关代码注释掉即可。 zTree在大数据加载有许多解决方案，其中就有一种采用分页。
+       **树结构只能有一个根节点，如果建多个根节点则在删除其中一个时会把所有的根节点删除。
+
+*jeesite的UI是使用bootstrap2.3.1进行开发，不支持响应式，但是对IE7/8有比较良好的支持。  bootstrap3.0+是支持响应式的
+ 手机端方面用的UI框架也比较老，需要自己重新进行框架选型。建议用H+
+ 根据以往经验，PC的一些功能在手机上是很难做到良好的体验，所以一般手机端的功能会较少。 手机端功能做满了也不划算。
+
+*jeesite字典功能。jeesite里一般通过${fns:getDictList('sex')}获取。而字典表在该开发功能中是有缓存的。
+
+*jeesite里使用mustache.js做前端模板引擎，和art-template.js功能是一样的。 在主子表功能中有使用到mustache.js
+
+*大胖有用到一套UI模板AdminLTE（用的是bootstrap3+）、
+ 其它优秀的UI模板AceAdmin（用的是bootstrap3+）、H+（学习地址http://www.zi-han.net国人仿外国的，个人感觉比较这个全面）
+ 瑞希项目使用BeyondAdmin 也是可以借鉴
+ 大胖bootstrap学习教程推荐李炎恢的教程。
+ 大胖adminlate项目演示地址 demo.jeevip.com/jeeadminlte
+ 大胖微信商城后台演示地址：http://www.jeevip.com/wshop/a?login  账号密码admin admin
+ 大胖vip网盘资源地址：链接：https://pan.baidu.com/s/1c27W8nQ 密码：lhrw
+ 大胖微信商城vip网盘资源地址：链接：https://pan.baidu.com/s/1cEvO4I 密码：kosc
+ 大胖微信商城vip源码SVN地址：https://111.67.194.36/svn/wshop  账号845257580 密码 845257580                      
+
+* fns:abbr() 超出指定数字则添加省略号
+
+*另建一个站点主题（页面目录），需要在主题字典里添加数据。
+
+*当我们切换了当前站点时，其对应的后台栏目管理也会自动切换到该站点的栏目列表。 也就是说当前站点是哪个站点，管理的就是哪个站点。
+ 所以开发新的cms管理模块时，必须在对应的控制器里增加site站点的控制，保证操作的是当前站点的数据。
+
+
+*有缓存的数据：
+ cms前台页面总导航 CmsUtils.getMainNavList()
+
+*SiteMesh使用时注意，被包裹页面和母版页里<%@include%>、<%@page%>的东西都是独立的，不能共享。
+
+*Mybatis执行过程中4大对象，插件原理即创建这些对象的代理对象（AOP机制）：详见博客园收藏
+ Executor
+ StatementHandle
+ ParameterHandle（借助TypeHandle）
+ ResultHandle（借助Typehandle）
+ *其中插件开发过程中的plugin方法就是用于包装我们的4大对象的方法。
+ *插件类（如PaginationInterceptor）重写的几个方法应该是这样的调用顺序
+  setProperties() 传入一些当前插件需要的配置参数以供另外两个方法使用
+  intercept()对@Signature指定的类的方法进行拦截处理
+  plugin()用这个方法返回@Signature指定类的代理类（也可叫代理对象）
+
+
+*jeesite的数据权限是
+ 界面操作：在系统设置-角色修改|角色保存，数据范围下拉框，包含7种数据范围（部门划分数据范围，数据表为sys_office），其中“按明细设置”可跨部门选择。
+ 代码控制：在BaseService.dataScopeFilter()里处理,具体的BaseService子类调用此方法来获取过滤条件sql放置的要传入Mapper.xml里的实体中。
+ 数据库设计：sys_office部门表，sys_role角色表（data_scope代表7种数据范围）等，具体有哪些表可以全局搜索"${sqlMap"就知道哪些表的Mapper里有
+ 原理：根据角色表部门表维护的数据在BaseService.dataScopeFilter生成过滤sql，在CategoryService.findByUser()将将过滤sql字符串设置到要传递到Mapper.xml的形参中。
+ 开发步骤：在要做数据权限过滤的表添加office_id用于关联sys_office表，整个开发相关代码编写可参考用户表的数据过滤。 
+          在模块的service里查询时对于参数实体设置附加过滤sql 具体代码为user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
+          在Mpping.xml里对应查询sql如findList里的where里添加附加过滤sql 具体代码为${sqlMap.dsf}
+ *数据权限并不是每个service都有的，需要看下哪些表的数据是有进行数据权限过滤。 是有和sys_office关联的关表才会过滤
+  *大胖说：在第二第八章和第三期第二章有讲解，过滤哪些数据是在角色里面配置的，你看能配置过滤哪些就是哪些
+
+
+*jeesite各层主要的几个抽象封装：
+ 实体层：BaseEntity 主要附加了实体常用的一些属性，如分页对象，当前用户对象，传递到Mapper.xml里的sqlMap，数据库名称，状态标志等等。注意@JsonIgnore @XmlTransient的使用
+        DataEntity 主要附加了实体必要属性的规约，如删除标志等。还有实体更新和插入时的附加操作，如id生成。 注意@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")的使用
+        TreeEntity 树结构的实体类，规约了树结构的数据必要的属性。注意@JsonBackReference（加在get方法）是为了避免序列化时循环引用，如parent字段是自引用，所以会造成循环引用。
+        ActEntity 工作流的实体类 ？？待了解，工作流方面的问题都待了解。
+ 控制层：BaseController主要做了几个事情：
+        *注入了一些jeesite.properties相关的变量以供具体控制器方法使用
+        *抽象了表单验证相关功能，包括验证和错误信息输出
+        *抽象了和@ResponseBody一样的输出Json字符串的功能
+        *抽象了SpringMvc全局数据绑定异常和校验以及shiro登录异常跳转处理
+        *实现了@InitBinder，做了时间类型转换和HTML字符串编码转换处理。
+ 服务层：CrudService<D extends CrudDao<T>, T extends DataEntity<T>>主要做了基本的增删改查的封装
+        BaseService主要做了：数据权限过滤工具方法、日志工具（主要给具体的业务service使用）。？数据权限过滤工具方法的使用有待研究
+        TreeService<D extends TreeDao<T>, T extends TreeEntity<T>>主要是给有用到Tree树结构功能的Service继承，主要做了
+ 分页抽象：在mybatis-config.xml里配置分页拦截器
+ 异常处理：*Spring里的异常包括检查性异常（非运行时异常）和非检查性异常（运行时异常） ？这节后期需要注意下如何使用
+       Spring里默认会对非检查性异常和错误进行事务回滚，即rollbackFor默认值是RuntimeException和Error。
+       让检查型异常也回滚可用@Transactional(rollbackFor=Exception.class)
+       让非检查型异常不会滚用@Transactional(notRollbackFor=RuntimeException.class)
+       都不进行事务回滚用@Transactional(propagation=Propagation.NOT_SUPPORTED)
+       jeesite的com.thinkgem.jeesite.common.utils.Exceptions工具类可以将检查性异常转换为非检查性异常，从而达到既抛出异常又有事务回滚的效果
+       在jeesite开发中如我们要抛出异常达到事务回滚，一定要抛出非检查型异常，jeesite已经为我们定义了一个ServiceException
+       注意jeesite提供的异常处理工具类com.thinkgem.jeesite.common.utils.Exceptions的使用
+  自定义注解：jeesite有自定义的注解如@Field 和@ExcelField
+  手机接口：注意手机接口的一般都放置前台（即frontPath），不放在后台是因为后台要通过shiro权限控制。如果是一定要写在后台的话，可以修改shiro的配置
+        了解OAuth2.0的原理流程 详见http://www.cnblogs.com/flashsun/p/7424071.html
+  权限验证：除了常规的shiro验证流程外，jeesite自定义了一个表单验证过滤器FormAuthenticationFilter，其实是相当于做了subject.login(token)等工作。
+        也就是说在jeesite充分运用了shiro的功能，能配置就配置，登录操作或者跳转的页面等只需要配置，我们只要编写将请求报文变成token的代码并且配置成功跳转的url既可。
+        其中SessionManager为shiro的session管理类，CacheSessionDAO为shiro的session持久化具体类，此类是可配置的。
+        另外自定义一个类继承AccessControlFilter，然后将此过滤器类用到配置文件shiroFilterChainDefinitions节点上，如${adminPath}/** = 自定义过滤器类bean，这样可以
+        实现移动端请求时token的认证。 如果移动端的权限认证也要通过shiro的session管理，则移动端需要自己在HttpClient做登录请求后在cookie中获取session的id存储在本地。
+  缓存框架：注意以下两种缓存的原理区别（详见jeesite第二期视频教程\章节演示流程图\EhCache和Redis缓存的区别.png）
+        *EhCache缓存的使用：
+         开发中使用EhCacheUtils工具类
+         jeesite将EhCache缓存分为很多模块类型，如系统缓存、用户缓存、集团缓存等。它们是在ehcache-local.xml配置。
+         ehcache-local.xml配置的缓存类型，会在spring容器的EhCacheManager实例里生成对应的缓存。
+         缓存的具体应用（可在代码里查找CacheUtils）：UserUtils里有做用户信息的缓存、在ProcessDefCache对工作流的东西缓存、shiro的session缓存（在spring-context-shiro.xml里看依赖关系）
+         如果是分布式的系统，shiro的session是通过EhCache的缓存进行分布式共享。通过广播方式进行缓存同步共享
+        *Redis缓存，
+         Redis是c++编写的，Jedis是Java调用Redis的客户端
+         Redis实用的教程看大胖网盘分享的传智的淘淘商城项目
+         大胖推荐Redis管理工具RedisDesktopManager
+         Redis默认是划分为16个模块(似乎应该叫16个数据库)，分别为0模块，1模块...
+         jeesite默认使用Ehcahe，如果要用Redis将相关配置的注释取消，将Ehcahe注释即可。主要是shiro的session缓存。但是要重写缓存方法的实现。
+         shiro一般是配合用Redis进行缓存
+         开发中使用Jedis工具类
+   代码生成器
+        jeesite.properties里的projectPath配置代码生成的基础路径
+        config.xml 代码生成器主要配置。其中主要注意的是<category value="curd">配置。 对应GenConfig类型。而模板文件对应了GenTemplate类型
+        jeesite的代码生成器使用的是freemark模板引擎。
+        在具体的模板里，注意<filePath>为模板生成文件的路径。
+        相关数据库表，gen_table、gen_table_column（生成实体属性列的描述）、gen_scheme（生成方案相关信息表）、gen_template(此表已经弃用，用config.xml替代)
+        在模板中@RequestMapping(value = "${r"${adminPath}"}/${urlPrefix}")  这里的${r"原样输出"}包裹的内容是原样输出的内容。
+
+
+
+
+*注意spring-context.xml里SqlSessionFactory类是jeesite自己扩展的一个类，不是MyBatis原本那个类
+ 主要是扩展了“刷新xml文件”功能，即修改Mapper.xml后不需要重启服务器，jeesite通过定时任务即可让系统重新加载新的Mapper.xml文件
+ 可以刷新spring相关的配置文件，不止是Mapper.xml。 可通过mybatis-refresh.properties配置是否自动刷新、开始刷新时间、刷新间隔、刷新目录
+ 所以我们可以在项目启动后，发现控制台里有 "refresh xxxxxx.xml" 的输出
+
+*Mybatis在Mapper.xml里使用${}是将模型数据直接原样，作为sql语句的一部分，而用#{}则是将模型数据作为字符串放到sql中，如 select * from user where id='rose'
+ 简单的说就是$传入的东西不会加'',而#传入的会加''
+
+*大胖老师jeesite的论坛http://bbs.jeesite520.com/forum.php  ？访问不了
+ 官方论坛http://jeesite.net/
+ 可以访问http://www.jeevip.com
+
+*jeesite项目后台的菜单中【链接管理】和【模板管理】默认是没有显示的。可以自己配置
+
+*jeesite视图目录views/modules/cms/front/themes里每个文件夹都代表一个前台站点
+
+*jeesite的cms的模板页面经常使用到fnc和fns标签库。fnc是cms常用的标签，fns是系统常用标签（包含常用的数据获取和前端工具方法）
+
+*首页右上角的菜单可以切换页签模式。
+
+*栏目管理
+ 菜单点击后其所属栏目的展示方式：默认展示、栏目内容列表、栏目第一条。 注意这三种展示方式不同。 在栏目管理里设置。
+ 栏目模型：其中公共模型基本没使用。 只看其它2种模型即可。文章模型，即点击该栏目会按该栏目从文章表中查询数据进行展示。链接模型同理。如有其它模型可自行定义
+ ？栏目视图参数：在栏目表单里的视图参数是写一个json字符串，这个json可以作为这个栏目底下的文章页面的模型数据在页面中显示。
+ 一级栏目是不允许添加文章的。
+
+*jeesite里有些对象是没有使用spring管理的，但它的依赖又有放入到spring容器中去。这些依赖通常使用SpringContextHolder工具类获取。
+ 如：EhCacheUtils等工具类，它里面依赖的CacheManager有放到了spring容器里。
+
+*jeesite开发常用功能
+ 表单保存后又两种提示，一种是tip，一种是固定在列表页里面的提示框。用的是bootstrap的样式
+ 列表表格字段列排序标签<sys:tableSort>，后台用户管理列表有此功能。
+ shiro标签库里，<shiro:hasAnyPermissions>标签是jeesite自己扩展的shiro标签
+ 验证码生成标签<sys:validateCode>
+ springmvc form标签库，注意htmlEscape属性是是否对输入内容做html转义
+
+*jeesite相关数据库表结构说明：
+ cms_article是文章表，cms_article_data是文章内容表，他们没有字段关联，但是其实他们的id是相同的。
+ cms_comment是文章评论表
+ cms_guestbook是公共留言表
+
+*mybatis中尽量少用关联查询数据，而把这种关联逻辑都写在service层。否则每个Mapper都是关联死的，不利于扩展。  除非这种关联是比较常用或必要的。
+ *这样可以减少数据库的压力（数据库压力比较难处理），
+ *会增加服务器压力（相对好处理，可以增加服务器或做负载均衡）
+ *在服务层也可捕捉到某条数据操作成功与否的记录信息。
+
+*jeesite部分目录说明
+  com.thinkgem.jeesite.common.annotation.FieldName用于字段中文名标注
+  com.thinkgem.jeesite.common.beanvalidator  用于JSR303的验证类
+  com.thinkgem.jeesite.common.config.Global全局配置类，用于在编码时快捷获取一些配置信息
+  com.thinkgem.jeesite.common.filter.PageCachingFilter暂时没有用
+  com.thinkgem.jeesite.common.mapper 用于接口的一些数据转换
+  com.thinkgem.jeesite.common.persistence关于持久化的一些东西，？需要多研究和注意下，如分页时根据不同数据库方言产生不同sql，有用到拦截器
+  com.thinkgem.jeesite.common.servlet上传和验证的servlet
+  com.thinkgem.jeesite.common.utils常用的工具类，这个可以重点了解下
+  com.thinkgem.jeesite.modules.cms.web.front.WeixinController微信接口调用的简单实现，其它一些功能要自己扩展
+  templates/modules/gen/代码生成器的模板配置,如果对代码生成的模板不满意可以修改
+
+*使用SpringMvc时需要，静态资源需要另外配置，否则可能出现无法访问的问题。配置如下
+ <!-- 对静态资源文件的访问， 将无法mapping到Controller的path交给default servlet handler处理 -->
+ <mvc:default-servlet-handler />
+ <!-- 静态资源映射 -->
+ <mvc:resources mapping="/static/**" location="/static/" cache-period="31536000"/>
+
+*SSM-Maven项目在intellij里运行时，相关xml扫描正确，但*Mapper.xml文件并不会自动发布到tomcat，
+ 解决方法一：可以通过在pom.xml里做配置
+  <resources>
+      <resource>
+          <directory>src/main/java</directory>
+          <includes>
+              <include>**/*.xml</include>
+          </includes>
+      </resource>
+      <resource>
+          <directory>src/main/resources</directory>
+          <includes>
+              <include>**/*.xml</include>
+          </includes>
+      </resource>
+  </resources>
+ 解决方法二：将所有的*Mapper.xml文件都放到Resource目录下
+ 解决方法三：不写*Mapper.xml文件，而是将对应的sql语句写到对应接口类的方法的注解上如：@Select("...")
+
+*常用接口交互方式
+ http json + HttpClient（第三方框架）    互联网项目，简单轻便
+ xml|string + webservice   企业间常用，安全性较高
+ key-value + MQ（如ActiveMQ或RabbitMQ或Redis） 实时性差
+ 大胖自己的项目里有写了一个HttpClientUtils工具类可以使用
+
+*自己整合的App接口架构（只适用做App的后台功能）：
+ 整合：
+   -登录逻辑在ApiLoginController里另外处理而不用原本的LoginController
+   -App请求ApiLoginController登录后保存返回的shiro的session的cookie。登录后的session和权限控制全部交给shiro
+   -注释掉SpringMvc的异常过滤器SimpleMappingExceptionResolver采用在ApiBaseController用@ExceptionHandler处理
+   -修改了BaseController的@ExceptionHandler方法，增加了Exception参数，以用于日志记录
+   -接口控制器里处理具体数据权限还是一样通过数据权限过滤
+   -通过ApiLoginController登录后的App应用也可以请求普通web的控制器，但是返回的大多数就是html。
+   -事实上用原本的LoginController也可做api登录处理，只是登录成功会返回302 到/a，失败还要在该控制器做移动端判断处理，所以另建了ApiLoginController
+ 接口开发步骤：
+   -在对应业务包中另起一个api包写App接口控制器，使用父包的基本shiro权限过滤。接口都继承ApiBaseController继承BaseController
+   -接口时需要和开发web一样配置url和菜单权限，也需要App重新登录，服务器重启才生效。
+ App请求步骤：
+   -通过ApiLoginController提交post请求进行登录，请求参数和web登录一样。App需要在响应报文里获取shiro的sessionId保存，且每次请求都带上。
+   -请求接口如需登录却未登录则后端返回重定向标志，即302到/a/login,这时App可自行未登录处理也可再请求/a/login，而/a/login会返回未登录json
+   -如果请求接口是权限不足，接口会通过基类控制器返回权限不足json。如果有权限则会返回响应的json数据。
+ 测试：
+   -用http://localhost:8080/cnysite/a/api/doLogin做登录测试
+   -用http://localhost:8080/cnysite/a/cms/api/test/list做接口请求测试，用例包括：登录、未登录、权限不足、正常状态的请求
+ 注意：可考虑在web.xml添加过滤器进行统一的拦截未登录时返回json，否则放过，通过正常shiro过滤。！！不过这样等于自己做Api的权限处理，最后没有采用
+ ？接口和web公用Controller的思考：
+  -控制器要做到数据与视图分离。所有jsp视图里的模型数据都不用fnc\fns等标签获取，而是放在model里。
+  -即使不公用Controller，web端也可以尽量做到数据视图分离，这样的话使得写接口时可以更好的复用web的代码。
+  -如请求是移动端，要在spring-mvc的拦截器里判断移动端，然后在视图渲染之前将数据返回并结束响应流。
+  ？如果出现异常则怎么捕捉到并给App接口返回带错误信息的json，用@ExceptionHandler()捕捉shiro的错误+终端判断返回json是否能解决，但要做终端判断。
+  ？shiro session在App首次登陆时将如何通过token生成,并且是在哪里将sessionId设置到cookie的（应该是在SessionManager.getSessionId里52行设置的，可以尝
+  试在这里做终端判断），这个是个问题。主要要研究下sessionDao的原理。！！这个问题其实不存在，App通过HttpClient请求，shiro会自己处理session逻辑。
+  ？如果公用则url相同，则PC做静态化时后缀为.html，则app调用此接口也要用.html感觉挺怪的。！！通过springmvc的ant路径匹配是否能解决。
+    但如果App请求的数据和web的一致，App要做延迟加载数据就不行，因为model会携带视图所需要的所有数据，这可能造成App性能下降。
+    如果App和web需要做一些数据的差异化处理也会致使两头受限。因为App和web在同一个业务逻辑下可能会需要不同的业务数据或其它区分数据。
+
+
+*微信公众号开发：
+ -学习文档 https://www.jianshu.com/p/e62331a097bf  微信官方开发文档 https://mp.weixin.qq.com/wiki
+ -分类：服务号、订阅号、企业号。 其中服务号的会话能出现在好友会话列表里。个人的订阅号是没有微信支付功能的。
+ -管理模式：编辑模式（在微信公众平台上管理，一些需要访问数据库的功能实现不了，如查账单）、开发模式（开发出来的，通过自己的服务器去调用微信接口进行管理）
+ -花生壳：微信支持80端口,但花生壳80端口是不免费的或不提供80端口，这里只的是域名对应的端口。账号密码menyin/gdlr54288
+ -NatApp:和花生壳一样的软件，账号密码menyin/gdlr54288  由于花生壳80端口问题，最后只能选择NatApp进行内网映射
+         注意：微信现在好像只支持https，所以可以在NatApp的【二级域名】菜单里购买域名就可以支持https
+ -微信开发框架（集成方式3种：maven、jar、src，大胖直接集成了源码src，因为在开发过程中有可能会修改源码）
+  -JeeWx-api是一个免费开源的微信后台开发框架（不包括支付功能），主要主要开发订阅号  ？它和JeeWx有关系么？
+  -JeeWx-qywx-api主要开发企业的公众号。
+  -集成源码需要修改相应的命名空间，并且可能出现一些jdk引用错误，可将项目的jdk引用删除重新添加即可。
+ -给微信公众号发送信息后，公众号会自动回复内容。这些回复的内容是在微信的【素材管理】里的，包括图片素材、文本素材、视频素材、音频素材、图文素材
+ -微信公众号安全性、更新速度、开发周期、安装卸载（关注/取消关注）会比App好，但流量消耗会更大、体验较差
+ -微信公众测试号：基本拥有正式的认证公众号的功能，就是不能群发消息和支付。通过这个url登录  https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
+ -申请公众号支付功能时可能被驳回，官方可能因为公众号里相关资料和信息过少而驳回，如没有一些商品的图文素材等。驳回后一段时间内可以补交材料，最后入没通过300块申请费用不退回。
+ -微信支持80端口,但花生壳80端口是不免费的或不提供80端口，这里只的是域名对应的端口。并且只支持get请求。
+ -在实践中微信相关信息：AppID：wxeabd1b5e41d26cbb 、AppSecret（开发者密码，这个是正式环境的）：846f0b6bd6a039f9e29337b682ee22d6
+ -在测试环境中的AppSecret是显示在界面上的，正式环境中AppSecret需要自己记住，否则要重置。
+ -微信接口服务验证过程：
+  -微信那边将token，timestamp，nonce按顺序加密生成signature
+  -携带signature、timestamp、nonce、echostr去请求我们的服务器
+  -服务器端将自己的token和传过来的timestamp，nonce按顺序加密生成signature0
+  -服务器判断signature0是否等于signature，是则返回echostr，否则返回""
+  -用户-微信-我们服务器的交互过程：用户在微信上操作公众号，则触发操作及数据传递到微信，微信则请求我们的服务器，然后我们的服务器按原路返回数据给用户。
+   其中微信请求我们的服务器时，get和post请求通常分别是用于验证来源和请求数据。
+ -我们可能有微信开发平台的不同产品，如移动应用、网站、公众帐号。 而每个用户在我们的产品上有一个OpenID，但是不同产品会有一个统一的UnionID，用这两区分用户的唯一性。
+ -微信的消息接口都是要xml数据的，所以需要使得SpringMvc返回的数据是xml，要在@RequestMapping添加 produces={"text/xml; charset=UTF-8"}，并且POJO类要用Jaxb注解。
+ -微信消息接口接收消息和返回消息的结构不一定是一样的，通过微信接口测试工具测试到有返回xml数据时要注意结构是不是正确，如返回图片消息。
+ -微信发到我们服务器的消息一般会发3次（有响应就不再发），所以服务器要自己根据MsgId做排重，以免造成重复回复。
+ -微信公众号OpenID和UnionID区别，前者是一个用户对于一个公众号生成标识，后者是一个用户对于多个微信应用的标识（要求这些应用通过开放平台连接到一起，相当是一个组织）
+  当用户给我们服务器发送消息时fromUser字段值还是OpenID，通过OpenID可以再获取用户信息，用户信息里就有包含UnionID。
+ -accessToken是微信很多接口调用必须传递的，就是一个接口调用的令牌。accessToken是开发者用微信公众平台账号的AppId+AppSecret去请求腾讯获得的，有效期2h。
+  所以如果开发者的网站或应用如果有多个，如分布式。则必须有一个统一的服务来管理accessToken。否则它们各自请求accessToken将导致别人的accessToken失效或覆盖。
+  注意普通的接口的accessToken都是通过上述方式获得。另外网页授权时也有一个accessToken，这个accessToken是需要用code获取，获取方式和上述不一样。
+  其实微信每个接口需要传递的accessToken是怎么获取的，其接口文档应该是有描述。
+ -微信打开网页时授权：通过用户点击授权按钮，网站可以获取到用户的微信用户信息。此时产生的openid和用户关注公众号产生的openid应该是两个不同的值。
+  具体实现流程：
+      1.在微信公众号开发平台配置网页授权域名；
+      2.用户访问网站时，网站先重定向到微信的一个授权页面；授权页面url携带了回调url、appid、授权作用域scope等参数
+      3.当用在授权页面点击确定授权，则微信会链接到上步骤所述url，并携带code参数
+      4.url对应后台controller用code再请求相关接口获取access_token及openid等其它信息，再用这些信息参数请求微信用户接口获取用户信息。
+      注意：scope的值有snsapi_base和snsapi_userinfo，前者只有用户关注了该用户才能获取到openid，后者会有弹出窗让用户授权，通过则可获取openi和access_token等参数，以此获取用户信息。
+      ？其中第4步会返回一个refresh_token的数据，这个怎么用
+ -微信JsSDK的使用（以抽奖页分享多获得一次抽奖机会为例，其它接口）
+  1.页面引入微信JsSDK的js文件，
+  2.在后台根据微信规定生成获取微信js接口的权限的签名，然后调用wx.config()将签名等参数传递进入。
+  3.在wx.ready()代表签名验证成功（即授权成功）里进行相关接口的调用，如wx.onMenuShareTimeline()
+  4.当用户点击微信浏览器的分享后会在wx.onMenuShareTimeline()的成功回调里sucess将全局的抽奖机会次数变量+1，如count++;
+ -微信商城原始的账号信息：
+  公众微信号：ogmP_1M1oGE-Y36LJUKeV2If9dl4
+  公众号类型：订阅号
+  公众帐号TOKEN：wshop
+  公众帐号APPID：wx47e8b694350cff47
+  公众帐号APPSECRET：aac9c76083db84bdb066ac254f1b7cac724223f7e95e5bddcf3e835e50dd5384
+      
+ ？《第二期java微信开发扩展》百度网盘没有，还没有录制。
+ ？微信公众号临时素材和永久素材的区别
+   临时素材：如粉丝发送一个图片，则微信会将其保存成临时素材。再如开发者可通过微信接口将本地图片上传为临时素材，此时会返回一个MediaID，需要开发者自己存储。
+   永久素材：上传到微信服务器上的永久存在，可在公众平台的素材管理中查询到。数量有限制。
+ 
+
+*微信商城
+ -jeesite.properties 部分配置
+  wsDomain后台项目地址  wxDomain前台项目地址
+ -？？JasperReport报表的使用。注意该插件使用时，如果电脑开着杀毒软件，则项目可能出错（jsp编译后会变为*_jsp.classtmp）。关掉杀毒软件即可。
+ -该项目是前后端分离的项目，前后端单独部署tomcat，
+  前端项目:源码在doc/wxshop ,需要在wxshop.js里配置owner.serverUrl、owner.frontUrl
+  后端项目：源码即项目wshop
+ -如何绕开微信浏览器验证（当我们直接打开前端项目首页会提示请在"微信浏览器打开"）
+  在WsUtils.getOpenId()中将真实实现注释，将return "oiSj30i5GnAggsDaYoIQexFpluqA";代码去掉注释即可。
+ -微信公众号菜单同步后不一定立即生效，可能要24小时
+ -微信商城的商品分类只分了2级，是为了再移动端界面有更好的展示。
+ -商品的销售属性如果修改，即sku修改，则客户的购物车，订单都会被取消。
+ ？微信商城和企业后台的数据是否有关联
+ ？微信商城的会员后台是否能用jeesite后台管理。
+ ？研究捷微微信接口包常用的接口调用。
+ ？微信商城关注事件中，有判断带场景参数。说明应该有在哪里生成带场景的关注二维码？ 这些代码是在哪里？ ！在会员个人中心里邀请奖励
+ -微信商城页面数据接口都在com.thinkgem.jeesite.modules.inter包下
+ -com.thinkgem.jeesite.modules.member|order|prod|report|returnback包分别为微信商城会员、订单等管理控制器，它们属于企业后台功能
+ -com.thinkgem.jeesite.modules.ws为微信公众号相关后台管理功能控制器
+ -com.thinkgem.jeesite.modules.wx为捷微的微信方面的api
+ -WsUtils是微信的工具类，包含管理项：accessToken、开发者微信账号、省市联动数据。这些数据大多都做了缓存。
+ -微信公众号的菜单，可以通过个性化菜单创建接口，根据用户标签、性别、手机系统、地区、语言进行个性化菜单创建。即根据不同条件显示不同菜单。
+ -微信商城订单代码逻辑
+  prodOrderConfirm.html提交订单时将页面订单信息保存到localstorage，然后跳转到payOrder.html
+  payOrder.html加载完后到localstorage获取订单信息，请求/pay接口去微信那边生成预付订单id
+ -电商主要的数据设计：
+  订单表(包含下单-付款-发货-收货-完成整套流程的信息)，订单详情表包含基本信息
+  sku设计，需要有商品分类对应规格表、规格对应规格属性值表、商品对应规格属性值表、商品对应sku表
+  大胖是直接将sku组合显示给用户，可以优化为淘宝的处理：让用户自己选择，然后在前端匹配sku传递到后端
+ 
+*微信支付（不同的支付方式可能要求有企业资质的服务号）
+ -微信支付是通过公众号平台的入口进行申请的，但是微信支付的管理却是再商户平台进行管理。
+ -如果新注册的微信公众号马上再去申请微信支付，很有可能被驳回。解决办法：在新申请的公众号的素材管理里多增加些素材数据。
+ -微信支付流程（以微信公众号H5支付为例）：
+  1.前端网页或App由用户构造订单信息，传递到后台，后台补充一些敏感信息，然后请求“统一下单”接口，获取预付订单id（有效期2h）
+  2.将预付订单id、非敏感订单信息、订单信息签名传递到前端，前端通过这些信息用指定的方式唤起微信的支付窗口，可能是扫码或账户支付。
+  3.前端网页或App根据自己所需支付方式调用对应接口进行支付，如微信网页内调用微信支付使用WeixinJSBridge.invoke('getBrandWCPayRequest'...) 详见【公众号支付-微信内H5调起支付】
+  4.当微信收到钱后会调用下单时notify_url指定的地址，将支付结果发送给这个地址，此时我们在这个地址的控制器里就可以更新订单状态、减库存等业务操作，并且推送信息给前端。
+  注意：前端h5调支付时在js的成功回调并不能真正代表支付成功（有可能被攻击），所以在支付过程中会传递一个notify_url是接收微信支付的成功通知。
+        无论是我们提交订单信息获取预支付订单id或者是微信发送支付结果给后端，都涉及到一个签名，实际上是要保证在数据传输过程中不被串改。
+        在2步中的订单信息签名中，签名内容根据每个唤起微信支付的方式而不同，在本例子中是appId、timeStamp、nonceStr、package、signType。
+  实践中，做扫码支付demo是成功的。详见cnysite相关代码
+
+*电商相关业务：
+ 订单提交时，是提交到自己服务器后台，此时注意其中商品价格、邮费等数据一定是要在后台从新从数据库获取，而不是拿前端传递的价格。
+
+
+
+*SpringMvc相关知识点：
+  *ResponseBody 在spring-mvc.xml里配置jackson的bean时，将该bean放入到<mvc:annotation-driven>里可以防止在IE10以下出现下载框问题。
+  *rest风格请求：将请求规定为get、post、put、delete，但html里只支持get和post，所以可以在form里method="post" 再加上<input type="hidden" name="_method" value="put|delete"/>来区分实现。需要加过滤器HiddenHttpMethodFilter
+  *@RqustParam  如果前端参数与控制器接收到的形参名称要不一样 可以用这个注解进行对应，并且可以指定该参数是否必须。 如果前后端的参数名都一致并且不需要指定是否必须则可不用该注解。
+  *Model Map Modelmap都是用于传递模型数据，通常使用Map
+  *@SessionAttributes(value={"modeData1"}) 在数据放到模型里时同时放到Session中。注：1.要保证数据有放到模型里才能放到Session，如控制器没有执行，则Session里也没有对应数据。2.除value还可通过types指定
+  *@ModelAtrribute 在所有Action方法执行之前执行，返回的实体可以作为 update的雏形。此注解通常用于更新操作之前将数据从数据库里先查询出来，以防止form表单没有表字段会设置为null的问题
+                   modelAttribute属性还可以防止SpringMvc的form表单标签库的form标签里，用于数据回显。它实际上是通过modelAttribute属性值来请求范围内（@ModelAttribute的方法）来获取具体的实体。
+                   如果form标签没指定modelAttribute属性值则系统会到请求范围内找一key为"command"的模型数据，如果再找不到就报错
+                   原理:实际上就是通过该注解，将一些数据以一些固定的方式存储到springmvc的模型中以供使用
+  *springmvc+jstl的国际化解决方案
+  *<mvc:view-controller/> 在spring-mvc.xml里配置此节点，可以直接映射url  而不用写controller。使用这个路由映射会导致controller里配置的路由无效，所以必须加上<mvc:annotation-driven>节点配置
+  *自定义视图 实际应用是在于一些特殊的处理，如输出excel表格。 而其url就是自定义视图类对应bean的id  默认是首字母小写的类名
+  *静态资源映射： 默认静态资源也会走SpringMvc的DispatcherServlet，但是我们可以配置<mvc:default-servlet-handler />告诉web应用静态资源url在DispatcherServlet找不到就去找默认的Servlet(web容器进行处理)
+                另外可指定<mvc:resources mapping="/static/**" location="/static/" cache-period="31536000"/>来设置静态资源的路径。注意也要加<mvc:annotation-driven>以保证控制器注解路由有效
+  *<mvc:annotation-driven> 让控制器注解的路由映射保持有效。此配置节点帮我们注册了3个bean。 此配置主要是让应用能够支持@RequestMapping、@ExceptionHandle、事务注解、类型转换、JSR303验证等常用的SpringMvc注解标签。
+  *BindingResult 在controller方法中注入该类型实例，它代表前端数据传递到controller方法进行格式化、类型转换、验证、绑定后的结果。通常用于数据验证，要求类型实体字段有注解相应的验证标签。需要掌握该实例的常用方法。
+   @InitBinder 此注解的方法用于对数据绑定器做初始化工作，@InitBinder注解的方法包含WebDataBinder类型参数，该参数的具体使用需要研究（如：设置某个字段不做数据映射）。
+               注意使用WebDataBinder进行类型转换对于POJO是进行属性转换，前端input的name只是作为当前控制器方法的POJO入参的属性。
+               注意：每次执行数据绑定都会来执行下此注解的方法，包括通过@ModelAttribute绑定的模型数据，也会来执行此注解方法。
+               注意：BindingResult和@InitBinder这两个知识点都是DataBinder概念的范畴
+  *自定义类型转换器  用于前后端数据映射，大概使用方式就是写一个转换器接口的实现类，再写两个spring的xml配置。
+  *@NumberFormat 添加在entity实体（java应该叫POJO对象）属性上，以帮助前端数据转化成实体的属性。要求必须配置<mvc:annotation-driven>节点
+                 注意如果使用了自定义类型转换器，则在bean配置时不要使用ConversionServiceFactoryBean，因为它不支持@NumberFormat格式化功能，而要使用FormattingConversionServiceFactoryBean
+                     如果没有使用自定义类型转换器，则没有配置对应bean，则SpringMvc会使用默认的FormattingConversionServiceFactoryBean
+  *@DateTimeFormat 和@NumberFormat一样添加在POJO属性上，使用和注意事项与@NumberFormat基本一致
+  *<form:error>标签 用于在jsp输出BindingResult对应的错误信息（可支持国际化）。注意此标签必须有path属性，并且必须放在<form:form>内部，另外必须经RedirectAttributes过SpringMvc的路由，即直接访问jsp页面时会出错。
+                注意：表单页面（不是提交的url）对应控制器方法里的数据模型里必须要有验证对应的POJO类型实体数据，否则会报错，如果没有可以new一个POJO
+  *自定义拦截器,具体应用比如说是进行移动端放问的拦截（进行重定向）。另外还有日志处理、权限验证。 在jeesite中使用拦截器做了访问日志记录和移动端跳转处理。此知识点可以学习jeesite具体实践。
+  *国际化
+  *Ajax支持。注意：如果前端传递的不是一个对象json而是一个数组json，这时候怎么映射到控制器的方法参数呢（如List类型参数）？即复杂json如何映射到java指定的类型？ 通过@RequestBody
+                  前端请求过程中，如果出现没有到达控制器方法中，并且后端没有报错，则可能是前端请求没有指定contentType，即请求头的正文类型。
+  *多视图配置 ContentNegotiationManager  ？？？该知识点的最佳实践 根据请求报文中不同的head判断输出不同的数据视图，有jsp，有json。
+  *转发和重定向，一般在return时加入forword:和redirect:字符串,也可以用原生的ServletAPI。注意书写路径时是相对路径还是绝对路径，还有视图路径配置的前缀后缀。
+  *RedirectAttributes 是Spring mvc 3.1版本之后出来的一个功能，专门用于重定向之后还能带参数跳转的的工具类。其实利用的是session功能。
+  *异常处理3中方式：@ExceptionHandler、SimpleMappingExceptionResolver、HandlerExceptionRresolver详见CSDN收藏《springMVC+shiro异常处理总结》 实践证明第1,2种同时配置，会执行第2种的逻辑
+  * <mvc:resources mapping="/css/**" location="/css/" cache-period="31536000"/>静态资源映射的cache-period配置是用于告诉浏览器缓存多长时间，浏览器会根据这个设置max-age
+  *注意<context:annotation-config/>和<context:component-scan>的区别：前者是开启注解，后者是开启扫描和开启注解。 
+   假如配置了<context:component-scan>，而且在xml配置了<bean name="calss1">并且calss1里有属性per1并且用是@Autowired，但<context:component-scan>并扫描范围不包括per1类的bean，则per1还是会被注入。
+
+*@PostConstruct方法会在spring容器初始化时执行的方法
+*JSR303是在javaee6.0+后提出的一个数据校验的一个验证框架。SpringMvc并没有包含JSR303的实现，需要自行导入。
+ 导入jar并配置
+ 配置LocalValidatorFactoryBean类型的bean，在<mvc:annotation-driven>节点添加属性validator="validator"。注意：因为Spring框架IOC容器会默认创建该bean，所以此步骤为可省略。
+ 在controller方法的入参加@Valid，如Public String inde(@Valid User user,BindingResult bindingResult)  最后通过bindingResult获取验证错误信息
+ 特别注意@Valid User user,BindingResult bindingResult这两个参数要仅仅挨一起才能发挥BindingResult的功能，这个是要特别注意的
+ 另外如果使用的@Valid却没有使用BindingResult接收错误信息，则页面会直接报400错误。
+ 注意:如果不用BindingResult接收校验错误信息，可以在控制器方法里用JSR303的校验器（具体校验器实例可在控制器通过@Autowired protected Validator validator;方式自动注入）
+
+*特别注意SpringMvc里的验证或者其它一些特殊功能都是基于核心sevlet的，也就是所要配置SpringMvc规则下的路由。
+
+*Hibernate Validator是基于JSR303的验证框架。它还扩展了一些常用的验证注解标签
+
+*如果直接访问index.jsp形式的页面是不会经过SpringMvc的核心过滤器的。因此可能会是的SpringMvc的一些功能没法在jsp页面上体现
+
+*SpringMvc课程中提到POJO概念，全名应该叫简单的Java对象（Plain Ordinary Java Object）
+
+*SpringMvc中请求出现400错误，一般是前端数据到后端POJO绑定时出现错误。比如是前端参数与POJO的属性格式不匹配不能转换等
+
+*SpringMVC框架对常见的全局异常都做了很好的处理，一般错误和异常我们无需关心和干预。但如果出现如404、405等错误时，要另外做处理：
+ 方式1：可以自定义一个DispatcherServlet子类实例用以替代原DispatcherServlet。然后重写其processHandlerException方法
+ 方式2： 最简单的方式就是在web.xml里对http响应码做配置（jeesite也是用这种方式），如下
+    <error-page>
+      <error-code>404</error-code>
+      <location>/WEB-INF/jsp/error/404.jsp</location>
+    </error-page>
+ 方式3：@requestMapping("*")配置一个最后匹配的路由，只要匹配到这个路由说明前面的一些路由都已经匹配过了。
+
+*SpringMvc中get请求中文乱码可以在tomcat的服务配置文件server.xml里面加上配置URIEncoding="UTF-8"：
+ <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" URIEncoding="UTF-8"/>
+
+*java的泛型T是不能像.Net那样直接T t= new T(); 而要如下进行调用
+ Class<T> entityClass = Reflections.getClassGenricType(getClass(), 1); T t = ntityClass.newInstance();
+
+*jeesite用的是spring4.1.9,要使用@CrossOrigin就必须升级为spring4.2+，后面我升级为spring4.3.10并且jackson升级为2.8.2
+
+*在泛型类里如何获取泛型参数T的class对象？
+ ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass(); clazz = (Class<T>) type.getActualTypeArguments()[0];
+ 在jeesite里有在Reflections做了上述封装 Class<T> entityClass = Reflections.getClassGenricType(getClass(), 1);
+
+*大胖jeesite中实现ssm中多数据源切换思路，在spring配置多个数据源和数据源切换管理类。 在controller层里做数据源切换后再调用业务service进行保存。
+ 产生问题：如果多个数据源保存，则多个数据源的保存在各自的事务里，则其中一个数据源出现问题只能是自己回滚，其它数据源的事务是不能回滚。java有解决方案
+*Url中形如"/user/getUserById/12"的叫 rest风格的url
+ ？权限系统的基本使用
+  ！已学习，但在实际demo中的controller权限注解实践失败。应该是shiro版本不同配置也和网上资料不一样造成的。
+
+ ？代码生成器，对于常规的外键表的相关字段如何显示，如学生表里要显示班级名称
+
+ ？菜单添加时，链接地址打开的目标窗口除了"mainFrame"还有什么值
+
+  ？如何去模拟500错误，异常我们可以正常用除以0来模拟。
+  ！直接让内存溢出
+   if(11==11){
+               ArrayList<Integer> list = new ArrayList<>();
+               int i=0;
+               while(true){
+                   list.add(i++);
+               }
+   }
+
+  ？SpEL表达式，需要研究下
+
+  ？tomcat7-maven-plugin如何实现热部署，java代码不能热部署
+   ！已研究，未成功。!淘淘商城有讲解
+
+  ？在BaseController里的initBinder方法做时间类型转换，如果时间类型转换失败怎么办？
+
+  ？jeesite不同人员的数据域权限是怎么做的 比如组长只能查看自己的当前组的数据 公司领导能查看所有的组的数据。！！大胖老师二期8章中有讲到
+   ！已学习
+
+  ？泛型的使用
+   ！已学习
+
+  ？练习org.apache.commons.lang3.StringUtils类的使用
+
+  ？BaseEntity里有很多自定义的注解，是做什么用的。很多是硕正组件的注解
+     @JsonIgnore注解的属性get方法，在序列化json时将被忽略
+     @XmlTransient注解的属性get方法，在序列化xml时将被忽略
+     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") 在序列化时按照指定的格式进行序列化，而@DateTimeFormat是前端传后端时按格式进行类型转换用到
+     @JsonBackReference 在get方法上添加该注解可以防止在序列化时类型里属性和属性类型之间有循环引用，如树型节点实体有parent自引用。
+
+  ？jeesite部署到服务器太吃内存和cpu，有谁知道怎么将缓存给关闭么
+
+  ？ThreadLocal的使用要研究下 ~
+
+  ？群里有人提问：我们想自定义一张用户表，然後登录系统时让系统检索我们自定义的用户表。但我发现，在安全模块这部分，作者大大好像把鉴定入口给封死了？
+    大胖老师回答：shiro控制的，登录的时候会读取用户表的，你可以扩展这个表，或者做个这个表的扩展表，相对比较简单的操作
+
+  ？xstream的使用，注意要序列化成xml的实体可以用注解。另外具体的和springmvc整合和jackson差不多。
+    Jaxb2.0、Dom4J和xstream功能是一样的，但Jaxb2.0和xstream更加简便实现xml和java对象的转换。而Dom4J则更加灵活。
+
+  ？花生壳的使用。 在微信公众号开发中经常使用到
+
+  ？jeesite中是使用web的session还是使用shiro的session，还是两者同时用，具体应用场景是什么。 session可以存储在cahcache或redis
+
+  ？jeesite似乎没有单点登录集成，CAS是一种实现方案。！此部分在咕泡vip课程有讲解
+
+  ？项目中什么对象要放到spring什么对象不用。个人认为spring有这aop和ioc功能，可以在业务开发过程中应对一些变化。如果一些东西是绝对不会变的，可以不用spring。
+
+  ？CacheUtils工具类只是适用于Ehcahe，是否可以通过对其属性做不同实例注入，来适应不同缓存。默认用Ehcahe，要使用Redis
+
+  ？jeesite.js 大概浏览下功能。
+
+  ？jeesite全站搜索功能暂时还没有做，等做好后研究下。 ！这个具体的方案一般是淘淘课程里的solr或electricSearch
+
+  ？当前站点是在哪里初始化和缓存
+  ？jeesite的当前站点虽然保存在cookie但代码中获取当前站点都是从UserUtils.getCache()获取，显然是有bug ！在登录成功后跳转的action里获取cookie里的
+  site并put到UserUtils缓存里。
+  ？百度统计全局搜索hm.  找到SpringContextHolder.java和2.0-focus.html  研究下这个是做什么的
+  ？Article表里有weight、weightDate分别代表权重和权重过期时间，这个权重机制
+  ？List<Category> categoryList = Lists.newArrayList();//这里的com.google.common.collect.Lists 有啥子用。！只是一个便捷工具而已
+  ？token和session那点事
+    他们的作用基本是一样
+    token安全，session相对不安全
+    token存储在本地，App重启不灭，而session相反。
+    token把用户信息加密存储在本地减少服务器负载，session存在服务器。但传输过程中会有比较大的流量负载。
+    token在请求数据是可自主决定是否携带，sessionid是存在cookie同域下每个请求都会携带
+    App使用token还有一点是因为App不一定使用http协议进行交互，即不一定用httpclient处理，那就不一定有cookie 所以使用session不通用
+    App一般都需要保留较长的状态，如用session则会对服务器负载有很大的考验
+
+  ？如何增加前台用户登录功能
+    -如果前台用户和后台用户的用户表使用同一个的话，就简单的增加一个区分前后台用户的角色（或者使用用户类型）即可，使用同一个后台界面，只是角色不一样进行不同控制。普通项目就用此方案
+    -如果前后台用户在不同的表里则，需要shiro的权限控制做两套，多个realm实例。并且另外做前台用户角色里的权限分配功能。要求高的项目用此方案。
+
+  ？大胖的adminlate项目新增了什么功能
+    -数据库备份
+
+  ？文件上传下载及请求原理过程。应该是单独用servlet做请求的处理。
+
+  ？分布式环境下，权限过滤是放在应用层还是服务层
+
+  ？多视图配置 ContentNegotiationManager配置中，如果请求url后缀为.json则返回json，但如果controller出错呢？ 返回500？通过全局错误处理controller进行返回？还有转发和重定向应该如何返回json呢？
+    通过这个多视图是否可以解决同一个controller为web和移动端服务的需求

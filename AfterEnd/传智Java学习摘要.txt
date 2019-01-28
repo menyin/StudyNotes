@@ -1,0 +1,344 @@
+﻿*Java继承用关键字extend  C#用：
+
+*Java子类中调用父类成员用的是super  C#用base
+
+*Java通过instanceof运算符实现判断一个对象是否是某个类的实例  C#用is
+
+*Java重写方法直接在子类写相同的方法名   C#却使用override关键字进行重写
+
+*Java接口中的成员变量都是常量，默认修饰符为public static fianl   C#成员变量就是变量
+
+*Java手动抛出异常throw new Exception();时，需要在其方法声明后面加关键字 throws Exception，并且调用该方法的方法可以捕获该异常也可以再通过在方法声明添加throw Exception关键字的方式再向上抛出异常
+
+*通常在web项目中多层中，除了UI层用try-catch外，其余层的异常都是抛出而不是直接捕获
+
+*Java有内部类的概念，C#有，但很少用
+
+*Java包概念相当于Windows里的文件夹，类似于C#里的命名空间
+
+*Java修饰符
+   public      都可访问
+   protected   同个包并且同类或者其子类
+   default     同个包同个类
+   private     同个类中
+
+*eclipse工作目录      相当于VS里的解决方案文件夹
+ eclipse工程          相当于VS里的项目
+
+*eclipse快捷键
+    alt+/  内容补全    敲出部分单词(一般开始两个)，按快捷键会自动跳出完整单词，我将它改为ctrl+shift+Enter
+    ctrl+1  自动修复    如：单词写错，按快捷键会自动提示修复方案供你选择
+    ctrl+/  单行注释/取消单行注释   光标放置与欲注释行按快捷键
+    ctrl+shift+/多行注释  ctrl+shift+\取消多行注释
+    alt+方向键  上下移动代码位置  光标放置于代码所在行或选中代码并按快捷键
+    shift+tab   左右移动代码位置  光标放置于代码所在行或选中代码并按快捷键
+    ctrl+shift+f 格式化代码
+    ctrl+shift+o 快速导入当前类所有包
+    ctrl+d  删除当前行
+    get和set及构造函数需要自己设置快捷键
+    ctrl+shift+T可以查找任意类的源代码
+    ctrl+L定位到某一行
+    shift+alt+J 生成类的文档注释
+    shift+alt+X,J 运行为java application   先按shift+alt+X放手后再按J
+    ctrl+shift+T查找指定类的java文件
+    ctrl+shift+R查找指定名称的资源文件
+    ctrl+shift+X选中代码转大写
+    ctrl+shift+Y选中代码转小写
+    ctrl+H 全局搜索字符串
+
+*eclipse的Outline用于层级展示一个类的所有成员。可点选其中一个成员然后按需要查找的成员的首字母即可定位到所需成员
+
+*Java jar包相当于C#里的程序集概念
+
+*用dos命令  反编译Java的class文件
+
+*Java查看源代码方式：按住ctrl键并单击查看的目标代码，或者将光标放在查看目标代码处然后按F3
+
+*Java中有StringBuffer和StringBuild，两者类似，常用于大量的字符串拼接，但前者线程安全。(推荐StringBuild)      相当于C#中的StringBuild
+
+*线程安全：在同一时刻，只允许同一个线程来操作同一份代码。
+
+*Java   System.Exit(int status) status为0正常退出，非0异常退出。 status对于Java开发者无意义，但对于操作系统统计有意义
+ 
+*Java对象的finalize()方法用于释放对象资源，相当于C#的dispose()方法
+
+*Java的System.gc()方法建议Jvm进行垃圾回收(只是建议)
+
+*Java获取系统时间早前用Date类但是现在被Calendar类取代。Calendar cal=Calendar.getInstance();获取当前系统时间
+     SimpleDateFormat类作用：1.将日期转换为指定格式的字符串  2.将指定格式的字符串转换为日期
+
+*Java程序至少会有两个线程存在，一个是执行代码的main线程，一个是执行回收垃圾的线程
+
+*Java自定义线程的使用方法：
+     方式一：
+     1.创建一个类继承Thread
+     2.重写Thread的Run方法，并在Run方法里写线程所要执行的代码。(Java中主线程执行main方法里面的代码)
+     3.创建该线程子类对象并调用Start()方法。(注意：不手动调用Run方法)
+     方式二：
+     1.自定义一个类实现Runnable接口
+     2.实现接口的run方法，将任务代码写在run方法里
+     3.创建Thread类对象并且将1步的自定义类对象作为实参传递到Thread构造函数
+     4.调用Thread类对象的start方法
+
+*Java父类方法没有抛出异常(没有抛出异常标识)，其子类重写该方法时就不能抛出异常，即只能捕获异常
+
+*Java解决线程安全问题方式(推荐方式一，灵活可控，只同步需要同步的代码)
+    方式一：同步代码块synchronized(任意共享对象作为锁对象){同步代码块};                相当于C#的lock方式
+      注意：1.锁对象是要共享的。2.同步代码里的sleep并不会使得锁释放。
+            3.非必要不要用锁，会降低效率。4.可以用字符串常量作为锁对象
+    方式二：同步函数 用synchronized修饰的方法即同步函数(可以将Thread子类里的Run标识为同步函数)   
+      注意：1.非静态同步函数的锁对象为this，静态同步函数的锁对象为该函数的类的字节码文件(class对象) 
+            2.同步函数的锁对象是固定的，不能自定义
+            3.由于非静态同步函数锁对象是this所以不能解决线程安全问题。 
+            4.类的字节码文件是一个类创建对象a时，Java另外new Class()对象用于描述该类对象a的对象
+
+*Java同步代码块或同步函数中的锁对象的wait()和notify()方法用于让用到锁对象的线程进入到等待和唤醒状态
+
+*Java的单列集合类可分为2种：
+     List接口类：有序，可重复 如 ArrayList LinkedList     注：ArrayList和C#List差不多
+     Set接口类：无序，不可重复 如 HashSet   TreeSet    
+ Java的双列集合类：
+     Map接口：
+        HashMap
+        TreeMap
+        Hashtable了解，和HashMap实现方式一样，但是线程安全，效率低
+*Java集合工具类Collections 数组工具类Arrays
+
+*ConcurrentHashMap和Hashtable的区别
+ 它们都是线程安全的，但ConcurrentHashMap在多线程高并发情况下性能比HashTable高很多
+ ConcurrentHashMap实现同步时，只是锁定内部Map的一部分，所以性能比较高。
+
+
+*Java中每种基本的数据类型都有一个用于描述它的包装类，对应如下
+    基本类-->包装类
+     byte-->Byte
+     short-->Short
+     int-->Integer
+     long-->Long
+     double-->Double
+     float-->Float
+     boolean-->Boolean
+     char-->Character
+
+*Java自定义泛型的声明用<T>放置于方法返回值前或者类名后 如声明方法public <T>T get(T t){...}
+ 泛型注意：
+     1.静态方法不能用类声明的自定义泛型，而应该在自己的泛型添加自定义泛型声明
+     2.Java中泛型用上下限进行约束，相当于C#的泛型约束。
+       下限，形如：public static void print(Collection<? super Integer>){...} //代表约束是Integer或其父类的类型
+       上限，形如：public static void print(Collection<? extends Integer>){...} //代表约束是Integer或其子类的类型
+
+
+
+*Eclipse调试方法：
+     1.代码编辑器左边--双击打断点   
+     2.代码编辑器内--右键--debug as--Java Application	
+     3.F5进入方法内部、F6跳过本行代码、F7当F5逐步进入源码后再用F7会结束原有的方法返回数据、
+     4.光标放置于代码处会有相应的信息、在代码处右键watch可查看具体信息
+ *在打很多断点的情况下，可以在debug视图下breakpoints面板管理这些断点，入删除
+     
+
+*正则表达式中  用\n来表示引用第n组的内容，如(.)\\1表示引用了第一组所匹配到的内容
+ 正则表达式一般用于匹配matches、切割split、替换replace、查找，其中前3者都是用字符串本身方法，而查找是用正则对象(Pattern和Matcher)解决
+
+*字符串的操作方法参数是一个正则表达式字符串时，其中如果有\d等正则元字符时,此处的\需要转义。如"abc123".replaceAll("\\d","*");
+
+
+*Java静态导入，用于简化代码书写。如import static java.util.Collections.*是导入Collections的所有静态成员，注意同名静态成员的处理
+
+*Java集合使用迭代器遍历集合过程中不允许修改集合的个数
+
+*实现了Iterable接口的类可以使用增强for循环：for(数据类型  变量名：遍历目标){...}   类似于C#的foreach
+ Map集合(双列集合)没有实现Iterable接口，而单列集合都是实现了Iterable接口，因此单列集合才可用增强for
+
+F:\AAAAAAAAA\Java\32期基础班\day19\视频\2.可变参数、自动装箱与自动拆箱.wmv    此文件夹里的枚举的声明使用看下  其余视频线不看
+
+*Java方法中定义可变参数用...如public void myMedth(int... parm){}
+
+*Java的枚举类里面可以定义成员变量和成员方法，然后通过枚举值(即枚举对象)进行调用    而C#却不能定义成员方法
+
+*Java的switch适用的数据类型：byte、char、short、int、String、枚举类型
+ switch中使用枚举时注意：在case后写的枚举值只需要写枚举值，不需要再写枚举值所对应的枚举类型
+
+*Java调用某些方法时必须声明抛出异常或者try-catch，如果要抛出而不捕获并且不想在调用处声明抛出异常，则可抛出RuntimeException类型异常
+ 也就是说运行时异常抛出时则可以不用在方法声明处标记抛出异常，而编译异常则需要，并且如果编译异常没有在方法声明上做标记则编译就会出错，而且调用者也必须处理异常。
+
+*Java的序列化和反序列化
+     要点：
+        1.Java流对象包括字节流、字符流、文件流、对象流等等
+        2.Java对象输入输出流对象用于持久化对象ObjectOutputStream，前提条件是要实现Serializable接口(标识接口)                C#里的序列化对象用特性标签
+        3.Java中没有任何方法的接口叫标识接口，类似C#的特性标签
+        4.Java的集合类都实现了Serializable接口
+        5.反序列化过程中，对象序列文件的内容要大于等于代码上类的内容才能反序列化成功(序列文件和代码上的类都维护了一个通过类名、成员等信息计算出的版本号serialVersionUID)
+        6.自定义序列化版本号就可以使得5点的问题解决，具体方式是在类里定义private static long serialVersionUID=22;
+        7.序列化过程中如果不想某些字段写入到文件中可以用transient关键字修饰成员变量名，或者将这些字段写到父类也可以达到不被序列化的效果。
+        8.欲序列化的类里如果有另一个类对象的引用，则该引用类对象的类也必须可序列化,即要实现Serializable接口
+        9.静态成员不会被序列化
+
+*java中所谓的DTO VO POJO ENTIY概念详见 https://www.cnblogs.com/lyjin/p/6389349.html
+
+*Java用Properties类来进行配置文件的生成和读取
+ 注意：
+  1.如果配置文件中若出现中文，使用store方法时只能使用字符流Writer对象，如使用字节流的话其默认是iso8859-1存储会出现乱码
+  2.如果使用Properties对象对配置文件进行修改，则需要再调用store方法将修改保存到配置文件中
+  3.Properties继承了Map接口，它其实有集合的方法，如put方法，但不建议使用，因为Properties类是专供配置文件使用
+
+*Java打印流printStream作用：不需要想fileOutputStream等流操作之前都要将输出内容转化为字符串，而直接打印到文件
+     printStream事实上是调用了内容对象的tostring()方法
+
+*Java可使用System.Out.println()将日志信息输出到文件里，但需要重新设置其输出流(用setOut(PrintStream out)）
+
+*编码概念：将看得懂的字符转化为看不懂的字符(string.getBytes())。Java平台里默认的编码是GBK。
+    注意：1.编码解码过程中要使用相同的码表(Java里叫字符集charset)
+          2.Unicode只是一个码表规则，一个公共规范。但如果指定码表为Unicode的话实际上用的utf-16码表
+          3.在utf-16编码后的数组会默认增加两个元素-2，-1，用于标识是utf-16的编码
+          4.在控制台上有些字符是不能显示，只能用？号代替。如果代码调试过程中可以使用断点调试来查看这些字符
+          5.并非所有乱码都可还原。如：A码表编码后用B码表解码，若B对某内容解析不出来的话，则这些内容将丢失，所以还原不了
+
+*转换流：用于进行不同流之间的转换
+     1.输入字节流转为输入字符流：InputStreamReader类。注意没有从字符流转为字节流的类
+     2.输出字节流转为输出字符流：OutputStreamWriter类。
+     3.使用转换流可以指定码表进行读写
+
+*网络编程3要素：IP、端口号、协议
+
+*Java的Socket分为udp协议下的Socket(使用DatagramSoket插座服务、DatagramPacket数据包类)和tcp协议下的Socket(使用Socket客户端类、ServerSocket服务端类) 
+
+*Java的CS很少  
+ JFrame和Joptionpanel相当于C#的Form和MessageBox
+
+*Java的事件通过监听器实现，在监听器里必须实例化对应的对象
+
+*批处理bat
+     步骤：将需要执行的命令写在txt文件中，然后改后缀名为bat，然后双击该文件即可批量执行
+     常用命令：
+         1.在所有批处理的命令后面加一行命令pause，可以是控制台停留住，按人任意键退出
+         2.echo或echo off命令用于向控制台输出字符串  如：echo欢迎使用本软件   注意在echo前加@可以隐藏echo命令在控制台上的输出
+         3.title命令设置当前控制台窗口的标题
+         4.color命令改变控制台的背景色和前景色
+         5.在批处理文件中，用% %括起来的内容是注释内容
+         6.在bat文件中用%1、%2...%9共9个参数来定义命令中的参数，然后在cmd中执行该bat文件时后面加上实参(用空格隔开)
+
+*在cmd中，如找不到主类，则可考虑设置classpath进入到相应的目录内  如Java -classpath .\notepad.jar cn.itcast.event.notpad 注意：如果-classpath .\notepad.jar后面有跟分号，则在这个路径找不到class还会到当前路径找
+
+*Java中运行只认class、zip、jar格式的文件
+
+*java中流操作中的readLine()方法（如：SocketReader.readLine()）,是通过判断流中是否有\r\n来截取一行，如果没有就截取不到。并且读取结果是不包含\r\n的
+
+*java中的输出流操作时，write()后一般要flush()下
+
+*在普通socke编程过程中，无论是udp还是tcp的方式，接收端接收的方法（如：inputStream.read()）会被发送端的写方法（如：outputStream.write(））阻塞。也就是在发送执行前接收方法是“停”在那里的
+ 包括serverSocket.accept();也是阻塞的，即在有客户端请求之前都会“停”住。这应该就是所谓BIO的内容
+
+*tomcat是服务软件，用于构建web服务的。和IIS差不多。  tomcat只支持javaEE技术部分东西，有些东西不支持。如分布式。
+ 开发后生成的jar包或war包直接放在tomcat的webapps目录下，然后启动tomcat后tomcat会自行解析成项目，然后就可以访问运行了。
+
+*HttpServlet类是在servlet-api.jar包里的，如果在javaSE环境下要使用HttpServlet类就必须引入servlet-api.jar包（在tomcat的lib里有这个包）
+ 将包拷贝到项目新建目录下，然后右键build path-->add to build path。类似于.net拷贝程序集后引入的操作。
+
+*在eclipse左边资源管理器中，选中.java文件下的类右键Copy Qualified Name可以拷贝类的全名(即带包的全名)
+？？问题：
+  1.工程文件里的settings文件夹是做什么用的
+  2.在同一个工作目录里存放两个工程(项目)，那在eclipse里保存编译是不是就两个工程都会进行保存编译。
+  3.eclipse里查看源码(open declaration)，由于系统加载的是无源码的包，看不了。如何解决。
+  4.eclipse一直不能在对应的配置目录里编译成class文件(此问题花了很久时间才解决)。  ！！解决：在菜单project--build automatically
+  5.Tomcat一直启动不了。查看console后发现有输出错误信息堆栈，此时发现之前为基地单元项目配置的全局数据库在家庭网络下连接不上。于是注释掉这些配置即可。
+
+*一般引入的一些工具包或其它包都是放在WebContent下的lib里
+
+
+*eclipse快捷键
+ ctrl+shift+o快速导包
+ ctrl+1弹出提示框，如未导包、快速生成实现接口方法时可用。
+
+*在eclipse上对项目文件夹重命名后需要在对应配置的生成目录做相应的名称更改。否则会有问题。
+
+*jsp页面访问的url是区分大小写的，如果要忽略大小写，具体百度下。
+
+*jsp中out.write()只能输出字符、字符串类型变量。out.print()则可以输出任意类型。
+
+*java中int是Integer的包装类，Integer有.toString(),而int没有。但要int要转为字符串可以用String.valueOf()
+D:\work\workspace-jee\.metadata\.plugins\org.eclipse.wst.server.core
+
+*jsp中为域对象设置数据： pageContext.setAttribute("dataName",333);
+
+*java中for(Peron p:personList){ } 相当于C#的foreach(Person p in personList){ }
+
+*Eclipse下jstl标签使用:
+ 方法1(实际上不无效)：右击项目-构建路径-配置构建路径-库-添加外部jar，然后在jsp页面里添加<%@ taglib uri="标志名" prefix="标签前缀简写"%>
+ 方法2(有效)：将jstl的jar包拷贝粘贴到WebContent/WEB-INF/lib下，右击jstl包-构建路径-添加至构建路径，然后在jsp页面里添加<%@ taglib uri="标志名" prefix="标签前缀简写"%>
+ 注意：其中标志名和标签前缀简写对应在导入的jstl的jar包里的对应标签的tld文件(如c.tld)里找uri结点和short-name
+
+*JDBC2.0以前版本的包在java.sql.*   2.0版本以后在javax.sql.*
+
+*数据库sql语言的几个概念
+ DDL语句：ddl是数据库模式定义语言，即CREATE DATABASE、CREATE DATABASE等
+ DML语句：对数据库里的数据进行操作的语言，即增删改
+ DQL语句：数据查询语言,即相关的查询语句，
+
+*java静态代码块是在类里定义的，在加载class文件时执行一次。可做一些初始化操作，C#一般在构造函数里做。如
+ public class Person
+{
+  static
+  {
+  }
+
+ }
+
+*java中可新建一个后缀名为.properties的文件，然后用Properties pro= new Properties();然后调用pro.load();加载.properties文件。 
+
+*java中，实现了Cloneable接口以达到能使用clone()方法，注意这个方法是protect的，也就是只能在同个包下或者子类中调用。
+
+*云南基地单元项目学习
+ 1.做了一些平台引入、maven等复杂看不懂的配置
+ 2.启动项目，http://localhost:8080/main/进入，用户名密码hsit/1 
+ 3.【基础设置】-【文档查缺归档设置】菜单模块，调试查看a元素属性
+    menu-url="/tlcell-webapp/pub/pubFilePagin/list.action?billType=TLA1&_mid=B8C98815636F4E6695BEC9C374403770&_token=797E620F225F137EB144A0DBA74D8F9F&_ssoServer=http://localhost:8080/main"
+    根据/tlcell-webapp/pub/pubFilePagin/list.action找到对应的java代码文件
+ 4.根据上步找到的java文件即代表一个业务单据模块，学习相应的代码。一个业务单据的创建基本就是写action、vo、建数据表。
+
+
+*java的动态代理就是将一个对象a(假设a是实现了IA接口的接口对象)通过Proxy处理成一个代理对象p，再将p转为IA接口对象
+ 这时候用p来替代a对象。  在p的定义过程中可以在a的某个指定方法进行扩展，如执行一些相关的附加处理。  其实相当于
+ p只是用于替代a对象并对a对象的某个方法进行扩展，这样有点类似于为a添加方法执行的监视。
+ 在C#可以用微软自带的System.Runtime.Remoting.Proxies 下的RealProxy可以满足类似Java动态代理的需求
+*自定义连接池课程里有使用到java动态代理技术
+
+*java里的注解就类似于C#里的特性标签，其实他们的作用是，告诉编译器这些注解或特性标签所在类该如何运行。
+ 实际上个人理解是不管java或者C# 都必须通过反射或其它手段去获取程序员的代码里的类对象，从而执行他们的业务逻辑，
+ 当这些类有一些注解或特性标签时，就是代表在运行方式上可能有所不同或有所筛选。
+
+
+*Struts框架：实际上是对Servlet的封装，使之成为和Asp.Net MVC的控制器和Action类似的框架。
+ 两者都预先实现了一些功能(如)请求数据自动封装、文件上传、国际化简化、数据校验等功能。
+ 但不同的是，Struts对请求的响应页面和形式是可以配置的，Struts只是返回一个标记，而真正的响应是在特定的xml配置。
+
+*Spring框架：大概就是提供一个工厂类给要使用对象的代码，代码中要获取对象都是先获取一个工厂类对象，再公共工厂类对象获取要创建的对象。
+ Spring的工厂类对象是通过读取配置文件，再反射出对象实例的。
+
+*Hibernate框架:实际上就类似于.Net里的EF框架，是一个数据持久化框架。Hibernate的session对象(会话对象)就相当于EF里的context对象
+
+*控制反转和依赖注入:
+ 控制反转即是将本来是类自己内部要创建的对象，交个别的人去创建，解决的是对象创建问题。
+ 依赖注入即将对象注入到类中供类使用，解决的是类与类之间的依赖关系。然而这两个概念有点模糊不清。
+
+*Maven工具：java语言源码编辑完成之后需要有工具进行clear清理->compile编译->test测试->report报告->package打包->install安装->部署
+ 知识要点：
+     1.Maven构建软件过程中涉及有5个仓库：本地仓库(在本地开发电脑)，远程仓库(在公司服务器,即私服)，中央仓库(Apache的网络仓库，在网上)。
+     2.本地仓库、远程仓库的位置分别在Maven安装包的setting.xml的localRepository、repository节点配置。
+       个人理解：Maven的setting.xml配置的远程仓库可能是公司私服也可能是Apache的网络仓库。所谓的远程仓库只是针对上一级提供的仓库，中央仓库只是最后提供构件的末端仓库。所以如果有公司私服仓库，私服仓库对应的远程仓库就是中央仓库。中央仓库应该是在公司私服上配置。
+     3.利用Maven来建立的项目，需要的jar包等构件从本地仓库，远程仓库，中央仓库依次往上找。找不到就报错。
+     4.项目经过package打包后只在本地仓库生成包。只有install安装才会将打包的东西上传到远程仓库，才能供别人的项目连接下载使用。
+     5.项目生成的jar包war包等都属于构件，类似.Net的exe或dll，其它项目要引用这些就必须引用这些构件的坐标。坐标=组织id+构件名+版本
+     6.Maven构建的项目里的pom.xml里可以配置引用的构件、自己的坐标等。
+     7.在pom.xml里的dependency下的scope节点，用于此依赖项将在本项目构建过程中哪些范围引入，如<scope>test</scope>则在安装生成jar包其实是不包含此依赖项，因为只是因为测试才引入此依赖项，发布是不用的。
+       这个会造成，如果A项目依赖了x包并且配置为<scope>test</scope>，此时B项目如果依赖A项目jar包并不会间接依赖x包。这时如果B项目用到x包的东西就会报错。
+     8.在Eclipse里，一般公司会绑定一个指定的Maven版本。
+     9.将别的项目安装生成的构件A(如jar包)放置在本地仓库货远程仓库，此时自己Maven构建的项目要引用构件A只要在pom.xml配置依赖项，并在项目代码里导包，就可以用构件A的类了。
+
+     
+     
+
+
+*在eclipse里的项目文件夹有红色叉是报错，代表项目里有语法错误或者引入的包找不到(在配置路径里可以看到找不到的引入包)
+
+要释放输入，请按ctrl+alt

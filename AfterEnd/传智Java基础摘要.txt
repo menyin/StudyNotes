@@ -1,0 +1,1422 @@
+﻿*教程中用的jdk是1.7以上~ 如有问题先考虑此问题。
+
+*某些应用程序双击后会出现黑屏一闪，这种一般都是要在控制台运行。
+
+？classpath除了让虚拟机查找class文件，还有另外的的作用，是对编译器的作用
+
+*javadoc可以对代码文件生产代码说明文档。如果要生成作者等其它信息，要加对应的信息参数，如-author
+
+*Java除了构造函数外还有构造代码块  直接用一对{/*代码*/}表示，它优先于构造函数执行
+ 另外还有一个叫静态代码块的，也是类似。它是随着类型的加载而执行的，即时给类型初始化。
+
+*在子类构造函数中，this()和super()这两个构造函数只能出现一个，并且要在子类构造函数的第一行。
+ 当父类没有无参构造函数，子类只能调用手动调用父类的有参构造函数，并且在子类实例化时要传递相应的参数。
+
+*重写注意：
+ 1.子类重写的方法访问修饰符权限要>=父类对应方法的访问修饰符。
+ 2.重写时签名，参数列表必须保持一致。
+ 3.子类重写方法的返回值类型要是父类对应方法返回值类型或其子类型。
+ 4.同3理，子类抛出异常类型要是父类抛出异常的类型或其子类型。
+
+ 
+
+*final关键字，被修饰的变量或方法或类固定不能被修改或重写或继承，注意在定义时就要赋值了。
+ 一般常量这样定义 public static final str="abc";
+
+*自定义类要实现拷贝功能要
+ 1.重写Object类的clone方法（修改访问修饰符为public）
+ 2.实现cloneable接口，该接口只是一个标记接口
+
+*浅拷贝：在拷贝对象时，这个对象里的属性对象只是拷贝引用地址，而没有另外再拷贝一份属性对象。
+   注意：对象浅拷贝是没有调用类的构造函数的
+
+*深拷贝
+   利用序列化和反序列化方式来创建对象
+
+*build path 当导入其它jar包，需要手动设置classpath，而eclipse的buildpath就是帮我们做这个事情的。
+ 
+*java的注解中如果属性值是value则value可以省略，如@RequestMapping(value="/hello.action") 可以写成@RequestMapping("/hello.action") 
+
+*JUnit单元测试：
+ 1.导入JUnit.jar
+ 2.写一个类，在要测试的方法上写注解@test
+ 3.右击方法名，run as -junit test就启动
+ 注意：
+  1.测试时，junit窗口显示绿色状态条则测试成功，否则红色
+  2.junit测试其实遵循一定的规范
+  3.运行的@test方法不能是静态方法，也不能带有形参
+  4.有些测试方法需要构造环境，比如说读取文件方法，则需准备文件，测试完后还要删除文件，
+    这时候可以将这些前后准备和删除工作单独定义在方法中，然后打上@before和@after注解即可
+    或者用@BeforeClass或者@AfterClass，但这两个注解要求准备方法是静态方法。
+
+ JUnit测试规范，以Class1的Func1方法为例：
+ 1.新建一个名为ClassTest的类，并新建一个TestFunc1的方法并打上@test注解
+ 2.在TestFunc1里面写测试的用例，如new Class1().Func1。
+ 3.run as junit test
+ 注意：
+   1.命名要按照规范来
+   2.其实现实开发中就是直接在原类里些@test注解进行测试，测试完后删除注解
+   3.测试用例里面可以用Assert.assertSame(expected,actual);进行断言，如果不是预期值则会显示红条。
+   4.Assert.assertSame相当于是==  所以Assert.assertSame(new String("abc","abc"))答案是否，此情况可以用asserEquals
+   5.Assert还有 assertNull,assertTrue
+   6.junit可以运行方法，类（类里的所有@test方法），包（包里所有@test方法）
+
+
+*内省API
+ 其实C#也有相应的技术，就是调用某种类型的方法去invoke实例。
+ 基于get和set方法
+ 
+*BeanUtils比内省API更好用的工具，
+ 好处：
+   1.设置属性值，如果是基本数据类型，它会帮我们做类型转化
+ 注意：
+   1.BeanUtils底层还是用内省，所以也要基于get和set方法
+   2.如果是非基本数据类型做属性值设置时，则需要需要注册转化器Coverter.Register()？？？如何使用有问题
+   
+ 使用步骤：
+ 1.导入BeanUtils包和其依赖包log包
+ 2.
+
+*在导入一些外部包时，如果重写某些类的方法时，参数没有语义化，是因为eclipse下这些包没有关联源代码。
+ 这时候可以关联源代码，打开方法声明，会弹出"Attach Source",这时候可以将原代码附加进来。就可以解决问题了。
+
+*抽象类存在的意义：里面的抽象方法没有实现，这就意味着子类必须要重写它，这就使得多态的差异性必须在代码编译之前解决而不是执行才发现错了。
+ 抽象类注意：
+ 抽象类是有构造函数的
+ abstract与其他修饰符的关系:
+	final与abstract不能共存:
+		final:它的作用  修饰类代表不可以继承  修饰方法不可重写
+		abstract修饰类就是用来被继承的，修饰方法就是用来被重写的。
+	static static修饰的方法可以用类名调用，
+		 对于abstract修饰的方法没有具体的方法实现，所有不能直接调用，
+		也就是说不可以与static共存。
+	private
+		private修饰的只能在本类中使用，
+		abstract方法是用来被子类进行重写的，有矛盾
+		所有不能共存.
+
+*Java并没有C#的out和ref关键字，所以只能通过其它方式实现这样的带出功能。可以用数组，类实例来解决
+ 
+*接口：
+ 成员变量默认都是常量，如public static final String name="cny";//即使不用public static final修饰，编译器也会自动加上
+ 成员方法默认都是抽象方法，如public abstruct Fuc(){} //即使不用public abstruct修饰，编译器也会自动加上。
+ 接口无法实例化
+ 接口没有构造函数
+ 非抽象类实现接口必须将其所有方法都实现。
+
+*一个Java文件只能放置一个public类型，C#好像没有限制
+
+
+*内部类：一个类可以包含另外一个类，包括成员内部类和局部内部类。
+ 作用：内部类可以访问外部类的成员变量。
+ 应用：如国家类型，国家实例中国里还有省份类型，这就相当于国家类里面包含了省份类型。
+ 访问方式：1.在外部类内部的方法里访问成员内部类
+           2.在外部类以外访问成员内部类： Outer.Inner inner=new Outer().new Inner(); //要求内部类是public的
+           3.成员内部类是静态类时外部类以外访问：Outer.Inner inner=new Outer().Inner();
+           4.局部内部类只能在外部类的方法里访问
+ 注意：
+ 1.生成的class文件名用"外部类名内部类名.class"
+ 2.如果外部类与成员内部类存在同名成员变量，则内部类访问的是内部类的成员。
+ 3.如要成员内部类强制访问外部类的同名成员，可以用外部类名.this关键字，如Outer.this.name，即内部类方法里的this是指向内部类实例，要获得外部类实例的引用用外部类名.this
+ 4.成员内部类要定义静态成员，要求内部类自己要定义成静态的。这时可以这样访问Outer.Inner.name  而这时外部类以外访问内部类就应该是Outer.Inner inner=new Outer().Inner();
+ 5.局部内部类要访问外部类方法里的局部变量，只能要求这个局部变量为final变量
+
+*匿名内部类：没有类名的内部类，使用频率比较高。有简化书写的好处。常用于作为方法的实参传递。
+ 使用方式1：
+ new Person(){ //Person是这个匿名内部类的父类或接口。相当于借用它父类的名称
+   public String name="社会主义好";
+   public void ShowName(){
+     System.out.println(this.name);
+   }
+ }.ShowName(); //直接调用匿名内部类的方法
+ 使用方式2：
+ Person p=new Person(){ //Person是这个匿名内部类的父类或接口。相当于借用它父类的名称
+   public String name="社会主义好";
+   public void ShowName(){
+     System.out.println(this.name);
+   }
+   public void ShowAge(){
+     System.out.println(this.name);
+   }
+ };
+ p.ShowName();//直接调用匿名内部类的方法
+ p.ShowAge(); //直接调用匿名内部类的方法
+ 注意：
+   必须存在继承或实现关系才能使用。  
+   和C#的类实例构造器不要混淆
+   使用方式2时注意，如果匿名内部类有Person类型以外的特殊方法，则不建议使用匿名内部类，因为没法接收这个匿名内部类实例
+
+
+*异常和错误，实现了Throwable接口，JVM运行发现不正常情况，会创建不正常情况的类来描述这些不正常情况信息
+ 异常是代码运行时在特定情况下出现的问题，异常通常是修改代码处理
+ 错误是jvm虚拟机在运行代码时出现的问题，错误一般不会通过修改代码处理
+ 异常处理方式：
+ 捕获 try-catch可以写多个catch
+ 抛出 方法内用throw抛出，方法签名用throws标记（可以声明多种类型异常，用逗号隔开）
+ 
+*继承RuntimeException和Error的是非检查型异常，而直接继承Exception的是检查型异常需要处理否则编译报错。
+
+*异常体系要在面试前做了解
+
+*liux归档文件即windows的压缩文件
+ cvf分别代表归档文件,是否显示打包错误信息，指定压缩文件名
+
+*jar包里的liux文件是清单文件，指定入口类
+ 打jar包要注意的事项：
+	1. 一个程序打完了jar之后 必须要在清单文件上指定入口类： 格式 Main-Class: 包名.类名
+	2. jar包双击运行仅对于图形化界面的程序起作用，对控制台的程序不起作用。
+        3.对于控制台类或图形类程序的jar都可以用批处理文件来启动
+jar文件的作用：
+	1. 方便用户快速运行一个项目。
+	2. 提供工具类以jar包的形式给别人使用。 
+
+* bat处理文件: bat处理文件就是可以一次性执行多个命令的文件。 
+  因为打jar包还需要配置清单文件，比较麻烦，所以有时候就直接打包zip然后用批处理执行里面的class文件，具体操作看下面
+  jar双击可以运行仅对于图形化界面的软件起作用，对于控制台的程序是不起作用的。对于控制台的程序我们可以使用bat处理文件快速启动一个项目。
+  编写bat处理文件：编写一个自定义的文本文件，然后把后缀名改成bat即可，然后把你所要执行的命令写在bat处理文件中即可。	
+  bat处理文件常用的命令：
+	echo 向控制台输出指定的内容。
+	echo off 隐藏echo off后面执行过的命令。
+	@      隐藏当前行执行的命令。
+	title 改变当前控制台窗口的标题
+	color 指定控制台的背景颜色与前景颜色
+	%注释的内容%
+	pause: 让当前控制台停留。
+	%1~%9:   当用控制台执行bat文件，给bat处理文件传入参数，bat里面用%1-%9来依次代表传入的参数
+
+
+*编译好的class文件在运行到时候，除了在class文件当前路径找所依赖的class文件，还会到classpath指定的路径去找
+ 所以打包好的jar包要提供给使用者使用，就要求使用者定义classpath来指定到jar包内部，不然使用者class根本找不到。
+ 注意：
+      1.classpath可以包含文件名，如classpath=./test0/test.zip;  注意后面这个分号如果不加则只在classpath指定路径下查找class，否则还会在当前路径下查找。
+      2."java"命令可以跟-classpath参数，这个设置仅对于当前命令有效
+      3.打包只认zip和jar两种格式
+
+ ?jar包在手动给别的类使用时出现可以编译但不能运行
+ 
+
+*eclipse里java文件如果J图标是实体的代表可运行，空心的代表不可运行
+ eclipse如果删除工程，没勾选删除硬盘对应目录，则只会在eclipse中删除工程。
+ 不同版本eclipse创建的工程在互相导入时会出现兼容问题，可以在当前eclipse创建新的空工程，然后将要导入的工程src拷贝到空工程下。
+
+
+*泛型、枚举类是jdk1.5+的新特性
+泛型在集合中的常见应用：  	
+   ArrayList<String>  list = new ArrayList<String>();  //正确 推荐使用。 	
+   ArrayList<Object>  list = new ArrayList<String>();  //错误
+   ArrayList<String>  list = new ArrayList<Object>();  //错误
+  	
+   //以下两种写法主要是为了兼顾新老系统的兼用性问题。
+   ArrayList<String>  list = new ArrayList();      //正确
+    ArrayList    list = new ArrayList<String>();   //正确
+ 
+注意： 
+  1.泛型没有多态的概念，左右两边的数据 类型必须 要一致，或者只是写一边的泛型类型。
+  2.在泛型中不能使用基本数据类型，如果需要使用基本数据类型，那么就使用基本数据类型对应的包装类型。
+泛型类要注意的事项：
+ 	1. 在类上自定义泛型的具体数据类型是在使用该类的时候创建对象时候确定的。
+ 	2. 如果一个类在类上已经声明了自定义泛型，如果使用该类创建对象 的时候没有指定 泛型的具体数据类型，那么默认为Object类型
+ 	3.在类上自定义泛型不能作用于静态的方法，如果静态的方法需要使用自定义泛型，那么需要在方法上自己声明使用。
+
+*泛型中的“参数化”，当声明class SubDao extends Dao<Student>时，我们说这个Dao是已经被参数化的Dao。
+ 也就是说当子类调用父类的方法时，这个方法是参数化的Dao的也就是Dao<Student>的
+ 而java通过Type等来获取泛型里面的类型参数的类，如此处的<Student>,再如<Student,Worker> 
+ 详见CSDN收藏《ParameterizedType应用，java反射，获取参数化类型的class实例》
+
+*泛型的PECS原则：(详见CSDN收藏 https://blog.csdn.net/xx326664162/article/details/52175283)
+ List<? super Person> tests = new ArrayList<>(); //tests=new ArrayList<Object>();如果这样赋值不会编译报错  
+ tests.add(new Chinese());
+ 第一行代码?通配符其实是通配List<? super Person>整体的，而不是通配类型。所以第一行代码注释里的代码不会编译报错。
+ 理解可以看第一行代码的注释，相当于new ArrayList<Object>()实例可以用List<? super Person>类型接收。
+ 其实第一行代码是表示tests是参数类型是Person获取Person父类，因此可以add()里肯定可以传new Chinese()但是如果
+ 传别的类型如new String(123)就会报错，因为编译器不确定tests能不能接收。这样理解就可以解释关于这个知识点的疑问
+ *另外注意如果用了通配符的话就无法实例化，即无法使用new List<? super Person>(); 会编译报错。
+ *CSDN收藏里讲解【? super T】部分时， fruits = new ArrayList<Food>(); //compile success代码是错的，此代码会报错。
+        
+
+
+？javap反编译命令详解
+
+*javac -d指定编译class存放路径，  如javac -d .  即class存放于当前路径
+
+*java的枚举类比C#强大，可以定义方法，构造函数，其实是一个特殊的类
+ 注意：
+   1.定义构造函数，要求枚举值要传递构造函数相应的参数
+   2.定义抽象方法，要求枚举值要实现抽象方法
+   3.枚举值必须要位于枚举类的第一条语句
+   4.使用switch-case判断枚举值时，case后面只需要写枚举值，不需要用枚举类访问，如case Sex.man:;//会报错
+
+*java代码的路径，windows环境下正反斜杠都可以做路径字符串，但注意反斜杠\在java中有特殊含义所以需要转义，即用"\\"
+ 在不同操作系统路径字符串的分隔符不同，所以我们在代码中可以用File.separatorChar来连接路径字符串。
+
+*文件操作的RandomAccessFile可以比InputStream和OutStream体系更好用？https://blog.csdn.net/yhl_jxy/article/details/79272792
+
+
+*在java应用中，通过以下2种方式获取资源（文件）
+ this.getClass().getResource(pathString),如果pathString是以"/"开头代表从classpath路径开始，否则是以当前类所在包路径开始
+ this.getClass().getClassLoader().getResource(pathString), 该方式是以classpath路径开始的。不能以"/"开头，否则结果为null。
+
+*java当前路径，即执行java命令时，控制台的当前路径
+ java绝对路径，即物理路径，一般包含盘符，但是有些系统是没有盘符的
+ java类文件相对路径，即相对于classpath的路径。可以这样获得相对于classpath路径的一些文件输入流：Calss clazz=DBUtil.class;InputStream inputStream = clazz.getResourceAsStream("/db.properties");
+
+
+
+*虽然DOM4J号称支持XPath，但其核心包dom4j-1.6.1.jar里并无XPath功能，要另外导入期扩展lib目录下的jaxen-1.1-beta-6.jar
+
+*DTD约束语法相对简单，一个应用xml文档里的所有标签只能受到一个DTD文档的约束
+ Schema约束相对复杂，一个应用xml文档里的不同标签可以受到不同XSD文档的约束，同名标签用名称空间来区分，如<NS1:name/>和<NS2:name/>受到不同名称空间的约束
+ Schema案例：
+   book.xml文件
+   <?xml version="1.0" encoding="UTF-8"?>
+   <itcast:书架 xmlns:itcast="http://www.itcast.cn"  //itcast这个命名空间的别名为http://www.itcast.cn  此处如果没有写:itcast 则为默认名称空间，而在应用xml里有些没有写名称空间的则对应此默认命名空间
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://www.itcast.cn book.xsd"> //itcast这个命名空间别名对应的地址是book.xsd
+	<itcast:书>
+		<itcast:书名>JavaScript网页开发</itcast:书名>
+		<itcast:作者>张孝祥</itcast:作者>
+		<itcast:售价>28</itcast:售价>
+	</itcast:书>
+
+   </itcast:书架>
+   book.xsd文件，它也是一个xml文件
+   <?xml version="1.0" encoding="UTF-8" ?> 
+   <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" //指定xs命名空间的地址
+					  targetNamespace="http://www.itcast.cn"  //指定这个Schema目标约束的命名空间
+					  elementFormDefault="qualified">
+	<xs:element name='书架' >
+		<xs:complexType>
+			<xs:sequence maxOccurs='unbounded' >
+				<xs:element name='书' >
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name='书名' type='xs:string' />
+							<xs:element name='作者' type='xs:string' />
+							<xs:element name='售价' type='xs:integer' />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+   </xs:schema> 
+ 
+ 注意：Schema约束下的应用xml标签如果没有写名称空间则使用的是默认的命名空间，即xmlns="默认命名空间"
+
+*在java1.5后就叫Java2EE为javaEE
+
+*web服务器软件有很多，他们都支持JavaEE技术，Tomcat是较为流行的一款，但它不支持EJB和RMI
+ JavaEE有13种技术：
+    JDBC数据库访问技术
+    JNDI名字和目录服务
+    EJB分布式会用到
+    RMI
+    JSP
+    Java Servlet
+    XML
+    JMS
+    Java IDL
+    JTS
+    JTA
+    JavaMail
+    JAF
+
+*telnet工具，在打开或关闭windows功能里开启telnet客户端。使用方式看doc文档
+
+*当请求头的connection为keep alive表示请求完保持连接，为close表示请求完关闭连接
+ 
+
+*eclipse里使用Tomcat发布项目是发布到Eclipse的工作目录下的.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps目录下，而不是Tomcat的目录
+ .metadata\.plugins\org.eclipse.wst.server.core\tmp0这个目录是eclipse对Tomcat的一个克隆，如果再多几个服务器，则会有tmp1、tmp2...
+
+
+*request.getParameter()对于单个表单元素值适用，但对于像复选框这种多个值的表单元素是不适用的。此时用request.getParameterValue()
+
+*当客户端数据字符串转为字节流传到到了Tomcat，Tomcat要将字节流转为字符时默认是ISO889=59-1编码
+ 所以设置这个编码或再转下码，
+ request.setCharacterEncoding("utf-8");//只适用于post方式提交的数据
+ String name = new String(name.getBytes("iso-8859-1"),"utf-8");//通用，get方式提交的数据可以用此法
+ 另外还可以改服务器的配置，如Tomcat里的/conf/server.xml里的Connector标签的URIEncoding属性改为utf-8，此法不建议使用，因为服务器并不是每个人都可以改的
+
+*响应体的格式contenttype可以设置输出的数据类型，可以看tomcat/conf/web.xml/mime-mapping节点即所有的类型。
+ setContentType("text/html;charset=utf-8");可以设置输出数据类型和编码
+  详见 https://blog.csdn.net/tlms_/article/details/78749980
+
+*设置下载文件时的相关说明用response.setHeader("Content-Disposition", "attachment; filename="+file.getName());
+
+*response.setCharsetEncoding()设置响应实体写进流时的编码， 这个编码是作用于response.getWriter().write()
+ 但是不作用于response.getOutputStream().write();  它是自己设置的编码
+
+*正常开发时，会在开头设置请求和响应的编码，加如下代码：
+ resquest.setCharsetEncoding("utf-8");
+ response.setContentType("text/html;charset=utf-8");
+
+？获取web项目下的各种地址总结：
+？eclipse下怎么关联到相关的源码，源码在哪里下载或查找 
+
+*Servlet生命周期： 构造函数，init(),service(),destroy()
+ 注意：
+  1.Servlet实例中有两个init方法，有参和无参，tomcat调用有参init，有参init里会调用无参init，而无参init是供开发者重写初始化业务逻辑的。
+  2.每个Servlet在tomcat里是单例的，但是request和response是不同的，即单实例多线程。  每个用户的访问tomcat都会创建一个线程并调用Servlet单例的对应方法。
+  3.Servlet实例的doPost方法里如果还有转发操作，则会出现java.lang.IllegalStateException异常，只要将doPost要实现的逻辑放到doGet里，在调用doGet即可。
+    原因是转发是在同一个请求和响应中完成，所以要保持相同的method即同为get或同为post
+
+*Java 的Person.class和C#的Person.type其实是一个意思
+
+*java网站动态资源信息都在web.xm里，而ServletContext就是封装了web.xml的信息，另外ServletConfig对象是封装了具体Servlet对象的配置的信息
+ 所以一个网站中有多个ServletConfig对象，但是只有一个ServletContext对象。
+
+*ServletContext对象相关方法应用：
+  getContextPath()  得到"/web工程名"路径字符串，常用于网站请求转发
+  getInitParameter(java.lang.String name)  -得到web应用的初始化参数，即在web.xml配置的<context-param>节点里的参数配置。注意：这里获取的是全局的配置，而ServletConfig对象里获取的参数配置是局部的
+  在jeesite就是将Spring和SpringMvc的xml分开，Spring的用全局的<context-param>而SpringMvc是用DispatcherServlet的配置参数。
+  因为spring大容器其实是通过web的监听器初始化，而springmvc子容器则是通过Servlet初始化
+
+
+*java里有很多域对象，它们存取的范围不一样，应用于不同场景：
+ HttpServletRequet 域对象
+ ServletContext域对象
+ HttpSession 域对象
+ PageContext域对象	
+
+
+
+*在myeclipse里如果自己修改了工程名，则需要在properties-myeclipse里修改部署名称，否则可能出现访问不到的问题。eclipse不会有这样的问题
+ Enhanced class decompiler
+
+*request.getRequestDispatcher(path).forward(request,response)和response.sendRedirect(path); 注意这两个方法的path参数的基准路径是不一样的。
+ 前者是在"/myProject"基础下，即只需要写"/page1" ,后者是在服务器根域基础下，即要写"/myProject/page1"
+
+*路径中的当前路径"./"在javaSE项目和javaEE项目的含义有所不同，但都是值java运行时的路径
+ javaSE 指的是工程路径，因为eclipse是在工程路径下运行java命令，并将classpath设置到工程路径下的bin目录下
+ javaEE 指的是tomcat的bin目录，这个目录是启动tomcat的startup命令的地方，也就是java命令运行的地方。
+ 注意："./"指的是java控制台运行的路径，由于classpath可以自定义，所以这个"./"可以是很多种情况。
+      file.getAbsolutePath();可以获得文件的绝对路径
+ 
+*ServletContext.getRealPath("/myProject/file.txt")是用于将"/myProject/file.txt"路径转为基于java命令运行路径下的绝对路径。
+
+*cookie的有效路径设置cookie1.setPath("/myProject");，它代表访问当前设置路径下的资源才会携带此cookie
+
+*Jsp其实就是一个Servlet，它们一样是在第一次访问时创建实例，在以后的访问不再创建
+
+*Jsp里的java方法声明只能在声明标签里
+
+*Jsp里的errorPage指令用于指定错误页面，isErrorPage用在错误页面里，如果为true则错误页面里可以用exception内置对象
+ 可以在web.xml里配置全局的错误页面配置，通常配置一个500错误页面和404错误页面
+
+*Jsp九大内置对象
+ page是jsp编译后的类
+ out spWriter类，相当于带缓存的PrintWriter,  缓冲区默认大小8kb，可以在jsp页面指令里配置buff，buff=0即关闭缓冲区功能。注意和PrintWriter输出的顺序
+ pageContext
+
+*在jsp编译后的java源码里，要看到session和exception对象必须要求在jsp指令上有做相应的配置
+
+*pageContext里包含了jsp九大内置对象的其它八个，，为在service以外的其它方法使用这些内置对象提供了便利
+ pageContext.setAttribute("name");有个重载pageContext.setAttribute("name",域范围常量)
+ pageContext.findAttribute();可以在四个域对象中依次查找属性
+ 域范围常量:                     在EL表达式里对应的变量名
+  PageContext.PAGE_SCOPE          pageScope
+  PageContext.REQUEST_SCOPE       requestScope
+  PageContext..SESSION_SCOPE      sessionScope
+  PageContext.APPLICATION_SCOPE   applicationScope
+
+*Jsp的include指令和include标签的区别，include标签是动态包含，是可以传参数的，include指令不行
+
+*在导入jstl包时，要先将jstl核心包放置web-inf/lib下再buldpath
+ <c:out value="${name}">和${name}的区别是前者可以设置默认值，而且默认值还可以写html代码，可以设置是否原样输出
+
+？JavaEE引入外部库的几种方式
+
+*javabean里的get set方法注意： boolean类型的get方法为isXxx()
+ 在使用javabean规范时需要注意：
+    1）必须提供无参数的构造方法
+    2）类中属性都必须私有化(private)
+    3）该类提供公开的getter 和 setter
+
+*jdbc2.0-相关的包在java.sql.x    jdbc.2.0+相关包在javax.sql.x
+
+？按照jdbc的连接方式编写代码，结果连接不上，报错：com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
+  可以用mysql客户端连接下，如DBvisual或Navicat
+
+*ResultSet result = st.executeQuery("select * from student");注意列索引是从1开始 result.getInt(1);
+
+*一般 Statement实例用execute(),PreparedStatement实例用executeUpdate()
+
+*jdbc有批处理和事物定点回滚功能，但是ado似乎是没有
+
+*自定义连接池课程里有使用到java动态代理技术
+
+*代理分为静态代理和动态代理
+ 静态代理相当于一个包装类，需要实现和目标类相同的接口。所以一旦接口有修改，则目标类和代理类都需要进行相应的修改。
+ 动态代理，又叫jdk代理和接口代理。无需实现上述接口，是在内存内创建代理对象。
+ 
+
+
+*OOAD  面向对象的分析与设计     使用软件RationRose
+
+*监听器功能不仅可以监听javaee的周期对象   还可以监听一些自定义对象添加到session时进行监听，要求这些对象实现特定的接口。这种session绑定对象时的监听器是不需要写web.xml配置
+
+*国际化功能可以国际化固定文本，如"UserName"/"用户名"，也可以国际化动态数据，如货币、数字、日期
+
+*Struts2开发时必要的几个包
+ commons-fileupload-1.2.2.jar
+ commons-io-2.0.1.jar
+ commons-lang3-3.1.jar
+ freemarker-2.3.19.jar
+ struts2-core-2.3.4.1.jar
+ xwork-core-2.3.4.1.jar
+ 
+？注意在使用Struts2.3.4时，能执行action里的代码，但返回标识字符串后不能跳转，报404错误。！结果是跳转目标页面放错路径了。
+
+*注意：
+  1.建议使用Struts2.1+以上版本
+  2.使用的struts的版本不同，核心过滤器类是不一样的！
+
+*在struts2-core-2.3.4.1.jar/struts-default.xml里有拦截器和拦截器栈定义，他们的关系就想文件和文件夹关系一样。
+ Struts2执行的拦截器可以在struts-default.xml里做引用定义，一般引用拦截器节点名，如果有多个拦截器可以引用拦截器栈节点名。
+
+
+*java里通常一个业务模块写一个包
+ Struts2里的包，struts.xml中抽象包中不能不能包含action定义，否则运行过程中会报错。
+ Struts2页可以像asp.net MVC一样一个类相当于一个controller 其下有很多个action
+
+*struts.xml配置节点详解
+ package节点 用于划分模块
+   name名称，唯一的
+   extends 继承其它包
+   abstract 是否抽象，如果是抽象则不能包含action子节点，只能被继承
+   namespace 名称空间默认命名空间为/，在action被浏览器访问时的路径就包含namespace。注意值要加斜杠，如设置成"/namespace1" 则路径为http://localhost:8080/myproject/namespace1/action1
+
+   action节点 用于配置请求路径于action类映射，即url路由
+     name 请求路径名，作为url的一部分，如如http://localhost:8080/myproject/namespace1/actionName1
+     class 请求处理的action类的全名 默认值是struts-default.xml里配置的default-class-ref节点class属性值
+     method 请求处理的方法，默认值是execute 所以可不写
+
+   result节点 用于指定请求处理方法执行之后的跳转或转发
+     name action处理方法的返回值
+     type 跳转的类型，是转发还是重定向或其它
+     注意值需要加斜杠
+
+ include节点 可以引入其它的配置文件，相当将节点拆分到其它小的配置文件。
+ 
+*Struts2的action类写法有3种：
+ 1.继承ActionSuport类，如果要用Struts2的数据校验功能，就必须用此方式。一般也用这种方式
+ 2.实现Action接口，
+ 3.不继承任何东西，还是有自动注入组装参数功能   
+
+*使用通配符优化action配置，用*代表路径中的部分字符串，如下：
+  <action name="user_*" class="cn.itcast.a_config.UserAction" method="{1}">
+	 <result name="{1}">/{1}.jsp</result>			
+  </action>
+  
+*注意：
+  1.如果package的namespace="user" 并且action的name匹配的是"login"，则http://localhost:8080/myproject/user/login或http://localhost:8080/myproject/user/a/b/c/login等都可以匹配
+    它的寻找过程是：先找最后一层路径之前的路径字符串，看在package里的namespace里有没有，没有就剥掉一层再找，直到剥剩默认命名空间"/"再找，如果这样找不到就报错
+  2.Struts1的action访问路径后缀默认是.do 而Struts2默认后缀是.action，如上面路径也可以写成http://localhost:8080/myproject/user/login.action
+    如何修改访问后缀：在全局的struts.xml里面用<constant>节点修改默认的访问后缀，多种后缀用逗号隔开，无后缀的配置也要用一个逗号隔开。
+    这个后缀在struts2-core-2.3.4.1.jar/org.apache.struts2/default.properties下的struts.action.extension=action,,   但不能在这里修改
+    struts的一些常量也可以在default.properties里查找到，这些常量可以做修改配置重启、文件上传大小、全局跳转视图配置等等一系列配置
+  3.如果有多个路由配置有冲突，则后面的会覆盖前面的
+
+*action配置中如果没有配置method，则可以使用动态方法调用方式来访问action类里的方法，如<action name="user" class="...">
+ 这可以用http://localhost:8080/myproject/user!method1来访问method方法 
+ 注意：现在是struts版本基本默认是关闭动态方法调用功能，需要通过常量节点配置进行配置后方可使用。
+
+*在jsp获取网站根路径的服务端变量${pageContext.request.contextPath}
+
+*注意全局跳转视图默认配置要放置action之前，这是struts.xml的DTD规约的
+
+
+*struts2可以指定渲染的模板技术，默认支持ftl、vm、jsp三种
+？ftl方式如何配置使用，神冠项目有用到。
+
+*与spring集成时，指定由spring负责action对象的创建     <constant name="struts.objectFactory" value="spring" />
+ ？既然在web.xml里已经添加了spring的监听器，似乎不用此配置
+
+
+*Struts2的action方法里数据处理的几种方式：
+ 1.直接拿到SevletApi,需要引入相应的servlet包，但是需要获取网站根路径等数据就需要这种方式
+   ServletActionContext.getRequest();
+   ServletActionContext.getRequest().getSession();
+   ServletActionContext.getServletContext();
+ 2.通过ActionContext类，不用引入servlet包，是解耦的方式，推荐使用
+   ac=ActionContext.getContext();
+   request=ac.getContextMap();
+   session=ac.getSession();
+   application=ac.getApplication();
+ 3.当前action类要实现相应的接口，如RequestAware、SessionAware、ApplicationWare，
+   重写相应方法，方法里就可以注入相应的域对象，也是解耦方式，实际开发中推荐使用。
+   @Override
+   public void setRequest(Map<String,Object> request){
+     this.request=request;
+   }
+
+ 注意：第二种方式ActionContext是在action里的方法调用时才被创建，所以ac对象不能在action的构造函数里实例化。
+       如果action有很多方法都要用到域对象，则可以用第三种方式，将域对象设置成全局的成员变量。 
+
+
+*Struts2在action类里通过成员变量封装请求数据时，如果封装的是对象，则必须设置get和set，否则会出问题，如果其它简单类型就只设置set即可
+ 注意：自动封装功能仅限post提交的数据。
+
+*Struts2封装请求数据时，能对基本数据类型和日期类型进行转换（日期只支持"yyyy-MM-dd"格式）
+
+*Struts2包含32个拦截器，默认打开18个，具体可以在struts-default.xml文件里查看学习
+
+*Struts2文件上传功能
+ 注意：
+    1.默认上传文件最大2M，超出则报“input”错误，可以在struts.xml进行相关常量配置
+    2.上传功能需要在struts.xml里配置错误视图，即在对应的struts.xml里的配置result[name="input"]
+    3.在struts.xml里可以通过配置拦截器注入参数（具体参数可看具体拦截器源码学习），实现限制上传文件类型
+
+*Struts2的action数据处理原理：利用值栈来做数据存储
+ 1.值栈通过ActionContext.getValueStack()获取，
+ 2.值栈分map栈和list栈，action类里的成员变量存储在list栈（即root属性），域对象的变量存储在map栈（即context属性）
+ 3.在jsp页面上可以用<s:debug>标签输出值栈对象的信息。
+ 使用：
+    1.在action里的成员变量，在对应的jsp里使用<s:property value="变量名"/>;action里的域对象的变量则用<s:property value="#域对象.变量名"/>;   
+    2.如果取各种域对象的变量怕麻烦可用<s:property value="#attr.变量名"/>;  如果直接赋值字符串就用''括起来
+    3.如果action类里用context.getContextMap().put("req_data", "111");设置域对象变量，则在jsp可用<s:property value="#req_data"/>和<s:property value="#request.req_data"/>
+      如果action类里用context.get("request").put("req_data", "111");设置域对象变量，则只能用<s:property value="#request.req_data"/>
+      因为在ognl表达式里#号就代表了context.getContextMap()对象
+    4.在struts.xml的result配置的url里，还可以用${ognl表达式}来获取值栈对象里的变量，从而给result里url传参。
+    5.在jsp还可以用<s:parameter value="参数名"/>    来获取url参数，包括第4点所述参数
+    6.如果想要创建list栈变量，即不用#号访问，在action里可以获得值栈对象进行push()或set()变量即可
+    7.ognl表达式只在struts的对象标签使用，值标签（如<s:textfield>）可将ognl表达式用%{}括起来，从而构造ognl环境，达到取值效果。
+    8.ognl表达式只能和struts的服务端表单标签一起使用。如此代码是行不通的<input type="text" value="%{#request_data11}"/>
+  
+ 
+*struts的验证功能注意：验证某变量应该是经过数据自动封装后的，如Date类型，如果有自定义转换器，则验证时所用的值是转换后的数据。
+*eclipse调试过程中，Map集合中的map对象是在其table熟悉中
+
+**在javaEE的架构中，其实外部引入的jar包其实只是通过classpath变量的路径上添加jar包对应的路径而已，
+  其实所有的类或文件都是平行存在，它们只是通过不同的包名来形成类似C#的命名空间
+  所以，如果要覆盖引入的jar包中的类或文件，只需要在src目录下添加包名和类名相同的类或文件即可
+  注意：在整合各类框架时，如各个框架有同名的包，则要注意值过滤掉重名的包，否则程序可能出现问题
+
+*struts2表单重复提交问题
+ 新增表单提交到saveAction里时，saveAction直接转发到list.jsp ，这时候list.jsp的浏览器url还是http://localhost:8080/myproject/save
+ 于是你在浏览器刷新一次这个url，就保存一次。这就是表单重复提交问题。
+
+*Hibernate4.0+在于struts整合时会有问题，需要注意下
+
+* source folder:存放.java源文件的根目录;
+  output folder：.class编译输出的根目录；
+    纯“java project”中，一般把"src"设置为source folder，把bin设置为output folder；
+    在“web project”中，一般把"src"设置为source folder，把WEB-INF/classes设置为output
+
+？怎么指定struts2的默认模板文件，
+？struts2的路由配置中，如果不写一个action类，如何直接通过配置的路由url到达指定的jsp？ 
+？struts2如何在action中直接返回数据，如json
+？ognl表达式只能和struts标签一起用，使得模板文件里都是struts服务端标签，不利于前后端分工维护
+？在WEB-INF/lib下如何再新建目录加以分区，然后buildpath，实践struts相关包不行。或者有其它方式，管理众多jar
+
+
+*hibernate的对象映射文件里的<property name="name" column="NAME"></property>的type类型可以不写，会自动匹配
+
+*hibernate的对象映射文件或启动配置文件均可在源码中找到demo
+
+*注意在创建表，无论写sql还是用工具，注意列类型的容量，即size设置。不设置会报错
+
+*hibernate的HQL语句中的使用的是类名和属性名，而不是数据库中的表名和字段名，这个需要非常注意
+
+*hibernate自动建表功能，一般测试或开发时用配置文件配置，如果正式环境时一般在代码里配置，这样更新数据库表时可以手动留下log
+ hibernate加载映射文件配置<mapping resource="hibernate/test/Employee.hbm.xml"/>，也可以通过代码实现（config.addClass），前提是映射文件要按规则命名，如Employee.hbm.xml
+
+*个人理解hibernate映射配置一对多或多对多关系时，
+  inverse属性（专业名称叫控制反转）配置为true代表，当前映射实体类没用维护关联实体类的权限，也就是操作时不在外键字段或者关系表中做相应的操作。
+  cascade属性（专业名称叫级联操作）配置为save-update|delete|save-update,delete|all|none 则可在有控制权限（inverse="true"）时,可以对应级联操作（可以简化功能代码）
+
+*hibernate的一级缓存中，
+ session在执行保存更新操作时，其实是拿缓存的内容对数据库进行更新。当事务未提交时执行这个更新操作，
+ 所以代码中多次操作同一对象，最后提交事务时，只保存最后这个对象的属性。
+ session.flush()只是将缓存同步到数据库，并未从数据库同步到缓存。
+
+*hibernate懒加载的数据，在session关闭后再去第一次使用会报错
+
+*HQL查询的语句如果放置到配置文件后需注意语句中可能有小于号<  这时候xml配置文件会乱。 所以需要进行转义，使用转义符号或者用<![CDATA[....]]>批量转义
+
+*#hibernate.c3p0.idle_test_period 3000 空闲测试时间，如mysql 最高8小时没用的已打开的数据库连接则会自动断掉，而hibernate为了防止这种情况出现，所以设置这个空闲测试时间，在这个时间间隔给使用数据库连接执行空的sql语句，就不会产生8小时自动断开的问题。
+
+*hibernate的二级缓存可以配置哪些类及其导航属性集合需要缓存，并且可以配置这些缓存的类是否是只读（在代码中不能修改操作）。
+ 原理：如果是查询单个对象及其导航属性集合用的缓存是通过主键识别，如果是通过条件查询缓存是通过查询条件识别的。list不用一级缓存，但可以用二级缓存。
+ 如前台显示的项目，就可以将类目、组织架构等相对不变又经常访问的类配置成只读缓存
+ 注意二级缓存可以在hibernate.cfg.xml或类的xxxx.hbm.xml文件里配置
+
+*控制反转，对象的创建交给别人，而不是当前类里自己创建。解决的是对象创建问题
+ 依赖注入是解决对象之间的关系
+？？hibernate在数据库表结构更新后如何同步更新到映射文件和模型类上，反过来又如何更新
+？？hibernate映射字段时，类属性和表字段是否可以映射不匹配的类型，如int映射为varchar
+？？如果一个部门有数万个员工，这时候部门类懒加载员工集合也非常多，是否有办法再做懒加载的筛选功能
+？？测试hibernate的自动建表功能无效，折腾半天没找出原因和解决方案。！！方言配置更改下就可以了
+？？struts的拦截器里执行了invoke其实action和视图渲染已经执行完毕，在拦截器的return其实无实际作用。需要写demo测试
+？？eclipse添加用户库后的库jar删除可以吗？ 
+？？现实开发维护中，我们需要将数据库更新脚本保存下来以提供给实施人员更新线上数据库，这时如果启用【hbm2ddl.auto=update】怎么保存这些更新脚本
+    如果不能，则我想还是通过数据库更新后来更新实体和映射文件，因为数据库管理工具在更新时都会生成脚本。
+
+*如果所使用的数据库用户的角色是dba时hibernate.hbm2ddl.auto配置为update时，hibernate不会去自动生成表结构。所以在部署时要注意用户角色，也要做数据备份
+
+
+
+？？！！需重新学习DTD和Schema、反射和泛型  
+
+*Spring配置文件配置对象依赖时注意：
+   p:userService="userService"和p:userService-ref="userService"的区别  一个是直接给值一个是直接给对象的引用
+   用自动装配方式配置对象依赖时可以在具体的bean标签里配置，也可以在头部同一加全局自动配置。
+   用自动装配方式配置对象依赖时如果用类型自动装配，则xml里配置该类型的对象必须只有一个，也就是要唯一。
+   用自动装配方式配置对象依赖时用注解方式，则其中@Resource(name="user")的name是可以省略，内部应该是通过类型名进行查找，如果User类型对象是通过xml配置，则也要保证唯一。
+   注解和xml配置方式可以混用，以达到让类型对象加入到IOC容器中。
+
+ ？通过注解方式将类型对象放入IOC容器中，这种方式和new区别似乎不大，可能可以配置一个对象被获取时的方式（单例或实例）
+ ？尝试下如果不写set方法则Spring对象依赖配置是否能够生效。注解的方式是可以去掉set方式。
+
+*Spring的web方面的初始化参考源码里的API  \\spring-framework-2.5.6.zip\spring-framework-2.5.6\docs\api
+
+*AOP编程中提到关注点代码和业务代码概念
+ 关注点代码：重复的一些代码，如事务包裹，日志记录。一般通过AOP方式动态的植入到业务代码前后
+ 业务代码：实际业务相关的代码
+
+*代理对象的使用理解：当某个对象方法有AOP需求，这时候由于java一般遵循接口编程并且是用Spring获取对象，
+ 此时只需要写个代理类，然后将Spring xml配置的对象类更改掉即可，方便维护和扩展。
+
+*当Spring和Struts2结合时，Action对象交由Spring创建。此时在Struts的xml里action节点的class属性即可填Spring配置的beanId也可以写类全名。
+
+*以下代码的getPersonById静态方法参数传递也是用constructor-arg节点（类的构造函数的参数也是用此节点传递）
+<bean id="personByArgMethod" scope="prototype" class="test.TestMethodArgs" factory-method="getPersonById">
+        <constructor-arg index="0" value="1"></constructor-arg>
+    </bean>
+
+*Spring3.2.x和jdk1.8不兼容，运行项目后可能出问题，如在xml配置开启注解扫描时启动项目会报错
+
+*在Spring-Struts整合过程中，注意如果Action使用注解方式，则要定义Scope 即使用@Component和@Scope("prototype")两个注解，只用@Component会报错。报错。
+
+*注意在使用Aop拦截某类方法时，必须保证在使用该类的实例的地方，这个实例是用该类的接口接收。如该类没有实现接口，则使用该类型接收。
+ 之所以能用该类型接收是因为当该类型没有接口时，spring会切换成cglib方式去做动态代理以实现Aop
+
+*出现java.lang.NoClassDefFoundError 错误，可能是因为有两个类加载器。如在Spring环境下，所有对象都通过Spring-Aoc容器获取，而此时如果你在一个类里面同时用aoc获取和new关键字获取，则代表使用了两个类加载器。 则jvm运行时不知道找哪个加载器。
+ 此时就要注意一个问题：Spring-Aoc和new混用容易出问题。
+
+*在使用Spring-aop时拦截执行顺序为。注意注解和xml方式实现aop可以同时使用，并且xml方式是包裹在外层，注解是包裹在里层。
+  Around环绕前....
+  Before执行之前
+  执行了目标方法    //若异常则中断
+  Around环绕后....  //若异常则不执行
+  After执行之后
+  AfterReturning返回值之后  //若异常则不执行
+  AfterThrowing出现异常     //只有在目标方法出现异常后执行
+ 注意：如果目标方法有返回值,则Around拦截应有返回值，并可直接定义为Object不用做类型转换，否则拦截目标方法后的返回值会是null
+   如：@Around("pointCut_()")
+       public Object around(ProceedingJoinPoint pjp) throws Throwable {
+           System.out.println("Around环绕前....");
+           Object object=pjp.proceed();  // 执行目标方法
+           System.out.println("Around环绕后....");
+           return object;
+       }
+
+*？用注解的方式实现事务时，如果不添加Spring-aop的包则有可能会报错。 但是使用xml方式实现事务却不会，可以不用引入aop包
+
+*？使用注解来注入成员变量时，如果成员变量set方法要做一些额外的操作，则@Resource要写在set方法声明上
+
+*intellij里在项目属性里的Modules里选择具体的模块，里的Web可以设置Web Resource Directories及web目录
+ 
+*特别注意，IntelliJ新建项目时一开始选的是jdk1.8，后面再更改项目jdk版本为1.6，再进行debug到tomcat可能会出现问题。报错如下：
+ 而且在intellJ里 debug模式启动tomcat会报错  但run方式启动却不会，另外切换tomcat7切换为tomcat6，也不会出现这个问题。
+ 其实新建项目时候酒已经确定了项目的jdk版本，不能更改。 就算在intellij里修改项目和模块的jdk版本并修改编译jdk版本也不行。
+ 注：如果低版本jdk1.6改为高版本jdk1.8则不会有错误，这可能也体现了高版本向下兼容的原理。
+ 注：在一个项目中如果有多个模块，那尽量使用相同版本的jdk，否则容易出现以上问题。
+ 信息: Starting Servlet Engine: Apache Tomcat/7.0.59
+	Exception in thread "Catalina-startStop-1" java.util.NoSuchElementException
+	at java.util.LinkedList.remove(LinkedList.java:788)
+	at java.util.LinkedList.removeLast(LinkedList.java:144)
+	at com.intellij.rt.debugger.agent.CaptureStorage.insertExit(CaptureStorage.java:102)
+	at java.util.concurrent.FutureTask.run(FutureTask.java)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:662)
+*以上问题其实真正的原因是intellij2017只能以jdk1.8+启动和编译，意思应该是项目必须保证在jdk1.8+版本。所以只要保证project的jdk1.8+即可解问题。
+
+*Spring和hibernate整合时，报java.lang.IllegalArgumentException相关错误，可能原因有：
+ 在applicationContext.xml里配置hibernate的hibernate.hbm.xml文件引入时采用的节点名称可以尝试以下几种,注意3种的区别：
+   <property name="mappingDirectoryLocations">   //指定映射的文件路径,如"WEB-INF/HibernateMappings"
+   <property name="mappingResources">            //指定classpath下具体映射文件名
+   <property name="mappingLocations">            //可以指定任何文件路径，并且可以指定前缀：classpath、file等
+
+*Spring IOC容器获取方式有很多种，以下这种是获取web应用启动时创建的IOC容器
+？？WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
+
+*Sping和hibernate整合是，号称session默认以线程方式创建，一般在sessionFactory里不用另外配置以下节点。
+ <prop key="hibernate.current_session_context_class">thread</prop>
+ 其实是在配置里有配置事务txManager为前提，如果去掉事务配置，则以上配置仍需要，否则运行时会出现异常。
+
+？线程方式创建又是什么意思？意味着什么
+ 意味着一个请求就是一个线程就是使用一个session
+
+
+
+*用intellij反向生成hibernate时，如需要生成一对多或多对多等映射关系，则必须另外在生成时添加两表直接的关系，
+ 并且在选择生成实体的字段时要将原本的外键字段的勾选去掉。
+ 另外在生成hibernate时，不能指定主键生成策略，估计使用myeclipse的反向工具会更好用点
+
+
+*hibernate中的hbm2ddl.auto=update 是只能更新增加，如增加表，增加字段。不能更新删除和修改，如删除字段或修改字段类型。
+
+
+*mysql 150错误的常见原因如下：
+1， 两个字段的类型或者大小不严格匹配，例如，如果一个是INT(10), 那么外键也必须设置成INT(10), 而不是 INT(11) 也不能是 TINYINT. 你得使用 SHOW 命令来查看字段的大小，因为一些查询浏览器有时候把 int(10) 和int(11) 都显示为integer。另外，你还必须确定两个字段是否一个为 SIGNED,而另一个又是UNSIGNED, 这两字段必须严格地一致匹配。 
+ 
+2， 你试图引用的其中一个外键没有建立起索引，或者不是一个primary key , 如果其中一个不是primary key 的放，你必须为它创建一个索引。 
+ 
+3， 外键的名字是一个已经存在的一个键值了，这个时候，你应该检查你的数据库以确保外健名字是唯一的，或者你在键名后面加上几个随机的字符以测试是否是这个原因。 
+ 
+4， 其中一个或者两个表是MyISAM引擎的表，若想要使用外键约束，必须是InnoDB引擎，（实际上，如果两个表都是MyISAM 引擎的，这个错误根本不会发生，但也不会产生外键），你可以通过查询浏览器来设置表的引擎类型 
+ 
+5， 你可能设置了ON DELETE SET NULL, 但是相关的键的字段又设置成了NOTS NULL 值。你可能通过修改cascade 的属性值或者把字段属性设置成 allow null 来搞定这个bug. 
+ 
+6， 请确定你的Charset 和 Collate 选项在表级和字段级上的一致 
+ 
+7， 你可能设置为外键设置了一个默认值，如 default=0 
+ 
+8， 在这个关系里面，其中的一个字段是一个混合键值中的一个，它没有自己独立的索引，这时，你必须为它创建一个独立的索引。 
+
+9， ALTER 声明中有语法错误 
+
+
+
+*Spring配置的OpenSessionInView用于解决的问题：Spring在service层设置事务后，service方法
+ 调用结束即事务结束即session关闭， 在此情况下，当controller层或jsp访问懒加载数据出错。
+ 也可以用简单的方式在service层调用下懒加载的数据，使得它完成加载。
+ 其实OpenSessionInView的原理就是通过拦截器在Action这层创建session并添加事务。
+ 注意：它是在web.xml里配置
+？？研究下java-web的线程问题  Action Controller Service Dao
+
+
+*mysql最大支持连接数大概在200多个，这意味着session也就两百多个。而oracle免费版只有几十个，付费版则可以有很多。
+ 网上查了下mysql默认100个，最大可配置16384，这个配置不是越多越好，要看服务器资源性能。
+ 那怎么通过服务器部署解决此问题？ 
+
+*我们做数据库并发的数量，要区别于在线人数。
+ 比如一个用户平均100秒进行一次数据库操作，那你所谓在线2亿人的话，数据库并发就在每秒200W。这显然是需要一个分布式系统才能达到的。其实你问了一个很好的问题，就是数据库每秒能处理多少个并发操作，估计真正做过测试的人也不多吧。我去年是测到400多个写操作，当然这取决于你的服务器性能，业内据说能做到500-1000吧。 
+？？学习测试并发量，模拟并发
+
+
+***************log4j配置相关 begin ***************
+ log4j.rootLogger=日志级别，appender1, appender2, ….
+
+    日志级别：ALL<DEBUG<INFO<WARN<ERROR<FATAL<OFF，不区分大小写
+    注意，需在控制台输入，只需将其中一个appender定义为stdout即可
+    注意，rootLogger默认是对整个工程生效
+    注意，如果只想对某些包操作，那么：log4j.logger.com.hutu=info, stdout，表示该日志对package com.hutu生效
+    注意，这样做可以区分dev/线上，也可以减小性能影响：if(log.isDebugEnabled()){log.debug();}
+
+ log4j.appender.appender1=org.apache.log4j.日志输出到哪儿
+
+    ConsoleAppender（控制台）
+    FileAppender（文件）
+    DailyRollingFileAppender（每天产生一个日志文件）
+    RollingFileAppender（文件大小到达指定尺寸时产生一个新的文件）
+    WriteAppender（将日志信息以流格式发送到任意指定的地方）
+    JDBCAppender（将日志信息保存到数据库中）
+
+ log4j.appender.appender1.File=文件目录及文件
+
+${user.home}/logs/...
+
+ log4j.appender.appender1.MaxFileSize=最大文件大小
+
+ log4j.appender.appender1.MaxBackupIndex=备份文件个数
+
+    其中，appender1是在第一行定义过的；
+    文件目录及文件，例如，/home/admin/logs/hutudan.log
+    最大文件大小，例如，100KB
+    备份文件个数，例如，1
+
+ log4j.appender.ServerDailyRollingFile.DatePattern=日志后缀格式
+
+    例如，'.'yyyy-MM-dd
+
+ log4j.appender.appender1.layout=org.apache.log4j.日志布局格式
+
+    HTMLLayout（以HTML表格形式布局）
+    SimpleLayout（包含日志信息的级别和信息字符串）
+    TTCCLayout（包含日志产生的时间，执行绪，类别等信息）
+    PatternLayout（可以灵活的指定布局格式，常用）
+
+ log4j.appender.appender1.layout.ConversionPattern=日志输出格式
+
+    例如，%d - %m%n或%d{yyyy-MM-dd HH:mm:ss} %p [%c] %m%n
+    %c 输出日志信息所属的类的全名
+    %d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy-M-dd HH:mm:ss }，输出类似：2002-10-18- 22：10：28
+    %f 输出日志信息所属的类的类名
+    %l 输出日志事件的发生位置，即输出日志信息的语句处于它所在的类的第几行
+    %m 输出代码中指定的信息，如log(message)中的message
+    %n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”
+    %p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL。如果是调用debug()输出的，则为DEBUG，依此类推
+    %r 输出自应用启动到输出该日志信息所耗费的毫秒数
+    %t 输出产生该日志事件的线程名
+    可参考：http://blog.sina.com.cn/s/blog_4e4dd5570100qowy.html
+
+ log4j.appender.ServerDailyRollingFile.Append=true
+
+    
+    Logger类：完成日志记录，设置日志信息级别
+    Appender类：决定日志去向，终端、DB、硬盘
+    Layout类：决定日志输出的样式，例如包含当前线程、行号、时间
+
+***************log4j配置相关 end   ***************
+
+?struts2的包含其他路由配置文件时如何用通配符  ！！ 如：<include file="com/cny/nsfw/*/conf/*-struts.xml"></include>
+
+*在异常处理时，类需要throws异常时，则其接口也必须throws
+ 
+*在struts2的全局异常配置功能中，在action里throws异常时，可以直接使用抛出异常，throws Exception 而不用具体的异常类。
+ 此时在错误页面里居然可以接口道抛出的具体异常对象。这说明方法出的throws Exception声明其实应该只是一个标志而已。具体
+ 的action方法的调用者接收到的异常应该是具体的异常类。如：throw new MyException("这时一个自定义的异常类");
+ 
+
+*字符串相关操作的包org.apache.commons.lang3.StringUtils
+ StringUtils.isNotBlank("")判断字符串是否不为空
+
+
+*在实际项目使用过滤器做登录过滤时需要注意，要把登录过滤器的配置放置在struts过滤器的前面，否则会先执行struts的过滤器！！！
+
+*画流程图可以用EDraw Max比visio漂亮。
+
+*用powerdesiner做概念模型时，association工具（应该叫关系工具）是当两个实体多对多的关系需要有其它属性（如：状态）时，
+ 则可用此工具将两个实体连接，连接关系和实体的要用association link工具
+
+？？hibernate在三层架构里，如果执行增删改出现问题，数据有没有保存成功是怎么返回信息？在教程里一直没有提到
+   如果有用到spring，应该是在service层向Controller层抛出异常，并且在service层有aop进行事务的回滚。
+
+*使用@Deprecated注解的类或方法，是表示该类或方法不建议使用，如果使用会有警告信息
+
+*java自带的常用工具类
+ URLDecoder  如：URLDecoder.decode()
+
+*回显问题在struts2里是通过后端带参数处理，但一般处理方式是在前端通过cookie等做本地存储处理
+
+*统一建模语言工具 IBM RationalRose
+ 用例图是描述操作者和功能之间的关系
+ 类图是描述程序类或接口之间的关系
+ 时序图是描述一个功能在正常执行情况下的生命周期流，一般不包括异常或错误等其它情况。
+
+*SVN是可以锁定代码文件，已达到独占的效果，使他人不能和你同时修改。
+
+？intellij如何使用svn 需要研究演练一遍，后天到光标那边去做演练。  徐光标的SVN服务https://www.bsxsm.cn/svn/nanyang/      wangwj/wangwj
+ 安装步骤详见博客园收藏《IntelliJ IDEA 下的svn配置及使用的非常详细的图文总结》
+
+？需要做的练习
+  信息发布里直接在Action里输出json
+  分页service dao
+  查询helper
+  json-lib  
+  任务调度
+  搞清楚Struts 和servlet下 几个域对象的区别和关系
+
+*struts2有专门为Action返回json提供的插件struts2-json-plugin-2.x.jar，具体使用百度
+ 个人倾向于直接使用son-lib-2.3-jdk15.jar，ezmorph-1.0.6.jar，commons-beanutils-1.8.0.jar然后在Action里void方法里将json写到响应流里。
+ 单元测试时由于自己使用的struts2的jar包里包含commons-lang3-3.1.jar 会导致报错，用低版本覆盖即可（如commons-lang-2.4.jar）
+
+*servlet\jsp\struts-action中的域对象的区别和关系
+ *servlet包含的域对象
+   HttpServletRequet 通过doGet/doPost方法的参数获得  如doGet(HttpServletRequest req, HttpServletResponse response)
+   ServletContext    在doGet/doPost方法体里通过req.getSession().getServletContext();或this.getServletContext();获得,还有其他非主流方式
+   HttpSession       在doGet/doPost方法体里通过req.getSession();获得
+ *jsp包含9大内置对象中前4个为域对象
+   HttpServletRequet 在jsp的java代码里直接就存在变量request
+   ServletContext    在jsp的java代码里直接就存在变量application
+   HttpSession       在jsp的java代码里直接就存在变量session
+   HttpServletResponse在jsp的java代码里直接就存在变量response
+   PageContext       在jsp的java代码里直接就存在变量pageContext 默认操作page域，也可操作其它域如pageContext.setAttribute("name","cny",PageContext..SESSION_SCOPE)
+   ServletConfig     在jsp的java代码里直接就存在变量config
+   Object(this)      在jsp的java代码里直接就存在变量page，指的是当前jsp页面对象
+   JspWriter         在jsp的java代码里直接就存在变量out，相当于带缓存的PrintWriter
+   Throwable         exception
+ *struts-action中域对象，struts2的域对象即可通过ServletActionContext拿到Servlet的域对象，又可通过中间类ActionContext拿到Servlet域对象的Map（注意：仅仅是Map）
+   HttpServletRequet 在action里通过ServletActionContext.getRequest()  而其Map对象通过ActionContext.getContext().getContextMap();
+   ServletContext    在action里通过ServletActionContext.getServletContext() 而其Map对象通过ActionContext.getContext().getApplication();
+   HttpSession       在action里通过ServletActionContext.getSession()  而其Map对象通过ActionContext.getContext().getSession()
+   HttpServletResponse在action里通过ServletActionContext.getResponse()
+   PageContext       在action里通过ServletActionContext.getPageContext()
+  注意：1.HttpServletRequet、HttpSession、ServletContext这3个域对象及其Map在Action中均可通过实现对应的接口进
+          行注入，如public class MyAction extends ActionSupport implements ServletRequestAware,RequestAware
+        2.一般如指输出数据到页面，则Action中建议使用接口注入方式获得域对象的Map即可，而不使用原始的域对象。
+
+
+*SpringMvc的Action是单例的，而struts2的Action是多例的
+
+*传统开发模式还是SpringMvc+jsp会多点
+
+*SpringMvc相关jar包说明
+ commons-logging.jar 日志包
+ org.springframework.asm-3.0.5.RELEASE.jar 字节码反射包
+ org.springframework.beans-3.0.5.RELEASE.jar bean标签的配置包
+ org.springframework.context-3.0.5.RELEASE.jar 扫描注解包
+ org.springframework.core-3.0.5.RELEASE.jar  核心包即ioc包
+ org.springframework.expression-3.0.5.RELEASE.jar  spring的EL表达式包
+ org.springframework.web.servlet-3.0.5.RELEASE.jar  SpringMvc相关包
+ org.springframework.web-3.0.5.RELEASE.jar  SpringWeb相关包
+
+*SpringMvc有3个重要的中间件（其实是有9大组件）
+ 映射器  用于筛选什么请求交给Action
+ 适配器  用于查找指定的控制器实例。默认的适配器为SimpleControllerHandlerAdapter，能找很多形式的Action。
+         它既能找实现了Controller接口的Action，也能找继承了AbstractCommandController类的Action，等等)
+         
+ 视图解析器
+ 特殊的控制器ParameterizableViewController，它是用于jsp到jsp/html的转发控制器 
+
+*继承了AbstractCommandController类的Action可以以类型对象来收集表单参数。
+ 如果类型成员变量能匹配到表单元素name则该成员变量有值，否则为null   ？？？如果是int等非引用类型呢
+
+*SpringMvc3.0之前不支持/形式的访问，即不能访问.do,.action等带后缀名之外的路由
+ SpringMvc3.0+是可以支持/形式访问，即可以访问.do,.action等带后缀名之外的路由，如"/user/login"
+
+*SpringMvc的路径变量匹配功能，需要用@PathVariable做注解
+ @RequestMapping("/goURL/{folder}/{file}")
+	public String goURL(@PathVariable String folder,@PathVariable String file) {
+		System.out.println("goURL.folder|file===" + folder+"/"+file);
+		return "forward:/WEB-INF/"+folder+"/"+file+".jsp";
+	}
+
+？AbstractCommandController  SimpleControllerHandlerAdapter  ParameterizableViewController关系
+
+*web项目中对于中文乱码问题，SpringWeb有一个只针对post请求的过滤器CharacterEncodingFilter可以解决。 
+ 但get等其它方式的请求不能过滤处理。
+
+*基本类型和其包装类型使用注意：
+ 在功能代码中一般一般用基本类型，因为功能代码可能会通过webservice等方式共享给别的语言，基本类型更加通用。
+  而实体中则更倾向于用包装类型 而实体中则更倾向于用包装类型
+
+？实践核心servlet 不加action或do   实践证明是不行的~  只有通过其它方式来实现这种需求
+  直接在web.xml里配置DispatcherServlet的<url-pattern>为/
+
+？SprinMvc是如何获取action方法的参数名称，并且注入表单提交的值
+  实际上它是通过org.springframework.asm-3.0.5.RELEASE.jar这个包的字节码解析来区分参数名。
+
+？frm标签库的使用
+        
+？日期转换
+
+*多个实体里的属性名相同在SpringMvc中可能在封装成请求参数时会有歧义问题，如name。所以实体属性名尽量不同。
+
+*struts或springmvc里的真实路径是形如"/user/index.jsp" 逻辑路径是形如"userIndex"的路径。
+   
+*jdbc中stmt.addBathc()适合多个不同的sql进行批量处理
+       pstmt.addBatch()适合相同sql但参数不同的批量处理，如批量插入某表记录。
+
+*重定向相关的两个Action是共享session，转发是可共享request
+
+*SpringMvc的Model只能递交给jsp等其它模板中去。
+
+*SpringMvc的bean扫描配置中，在spring.xml配置扫描的包要排除controller对应的包，在spring-mvc.xml要排除service和dao对应的包。
+ 否则会造成Spring的事务回滚失效。
+
+**SpringMvc可以在spring.xml里配置自动注入dao实例，以达到省略写dao实现类的目的。另外service层，可通过@Autowrited来注入dao的实例。
+  其原理是通过固定的写法配置，Spring为我们动态创建了dao层接口的实例，使用的是动态代理的技术。
+  此时注意在dao的接口类方法声明处并不需要throws异常，默认应该就是向上抛出，所以对应的service实现类及接口类也不需要throws
+  在spring Aop里应该是将service的原始代码try-catch掉，然后在catch里将异常throw出去
+
+**SpringMvc-Mybatis配置中在sqlSessionFactory的bean配置中添加<property name="mapperLocations" value="classpath:cny/model/*.xml"/>
+  即可达到扫描mybatis的实体映射文件，这样也省去在每次添加实体映射xml就要在mybatis.xml里做引入。
+  另外原本在mybatis.xml配置是别名<typeAliases><typeAlias type="cn.itcast.scm.entity.Dept" alias="Dept" /></typeAliases>也可优化为：
+  配置成<typeAliases><package name="cny.model"/></typeAliases> cny.model为实体所在包，所有实体类的别名都为自己的类名，如 Dept。
+  这样就可以在实体映射文件里使用别名了 如：<insert id="insertDept" parameterType="Dept">  注意也可以写dept，因为不区分大小写
+  
+*java中说的controller一般指哪个类，而handler指的是类里面的方法，即具体的处理方法。
+
+*hibernate适合小批量或中小批量的数据操作，对于复杂多表的操作速度较慢。数量级估计也就100条左右
+ jdbc则是速度最快但编写代码较为复杂
+ mybatis则是介于上述两者之间，也是目前较多企业选择的方案。
+
+*mybatis和hibernate的session要与当前线程绑定在一起，已达到一个线程使用一个session优化的目的。
+  和dotNet的线程槽原理一样是一样的。 这个方案实现代码在教程的MybatisUtil.java里
+
+*mybatis的事务管理可以委托给jdbc来管理的，也可以委托给spring或web服务容器管理。
+
+*mybatis的实体至sql的映射文件名理论上随便写，但一般形如：UserMapper.xml
+
+*注意mybatis的表-实体映射文件（如UserMapper.xml）里resultMap节点并没有映射表名，
+ 这和hibernate不同， 其实它是在sql语句的节点里体现表名的
+
+*在mybatis.xml中如果类全名有多处用到则可以定义一个全局的类全名别名节点
+
+*UserMapper.xml映射select 语句时，
+   *如果返回的是集合类型，则resultType属性并非"List<User>"而是User的类全名
+   *如果参数是单个并且是基本类型（不是其他类型实体）则#{}里可以随便写，入#{sss}，但不建议。
+   *必须使用select节点标签。而insert/update/delete节点标签之间是可以混用，但不建议。
+   *如果类属性和数据库字段名称不一致并且数据库字段写错，此时并不影响insert操作，但是有返回的
+    select操作就会找不到映射关系而报错。另外select的返回类型不是用resultType而是用resultMap
+
+*项目中UserMapper.xml映射里返回类型一般都是resultMap，有可能因为是多表结果集或者表字段和类属性名称不一致。
+
+*UserMapper.xml映射中如果类型属性名和表字段名完全一致则resultMap节点配置可以省略，否则必须配置。
+ 传递的参数如果有多个，则使用Map，在java代码则实例化一个map收集所有参数并传递给mybatis
+
+*mybatis其实是手工写sql，然后将结果集进行对象映射。 对于关联查询确实比hibernate效率高，开发成本低。
+
+*mybatis动态sql中<if test="age!=0 and age!=null"> 并且要使用and关键字而不能用&&
+ mybatis动态sql删除操作中的<foreach>标签已定义cllection="array"属性，在<delete>里就不用再加parameterType="array"
+
+*使用mybatis时如果控制台没有输出详细的执行sql语句，应该是缺少log4j.properties,将该文件添加是源码根目录下
+
+*mybatis逆向工程工具详见CSDN收藏《用Intillij IDEA实现MyBatis逆向工程 》，这时java项目工具都通用。
+ 网上很多是idea上的maven项目的mybatis工具，还有eclipse上的，但他们的配置都是一样的
+
+*注意在ssi框架整合时，对于Action的基类抽取时注意：对于application这种公共对象可以抽象为基类的成员变量，
+ 而对于session这种每个线程都唯一的实例是不适宜在基类里抽象成成员变量的。session实例通过具体Action的方法注入会比较合适。
+
+*教程中建议在mybatis里的sql语句尽量不要写*号，而是具体的字段。这样可以减少没必要的字段数据查询。
+ 但是如果在表增加了字段后，则对应的sql语句就有可能需要修改。
+
+*在ssi框架中的BaseServiceImpl<T>.initBaseMapper()是在构造函数之后初始化之前执行，
+ 用于将具体的子类成员变量如accountMapper赋值给baseMapper，以达到子类不必在写父类接口的实现方法。
+ 但是每增加一个业务子类就必去在BaseServiceImpl里添加对应子类的成员变量。
+
+*@PostContruct是spring框架的注解，在方法上加该注解会在项目启动的时候执行该方法，也可以理解为在spring容器初始化的时候执行该方法。
+
+*Maven与Ant区别：
+ Maven有包的声明式依赖和全球中心仓库，可以用于包管理和项目构建
+ Ant只有项目构建。现在基本已被Maven取代。
+ maven在指定依赖版本时可以使用范围，如[1.2,1.3] 是1.2 <= x <= 1.3版本之间，其实就是区间标识，其中(号是不包含等于，如(,1.0）是 x <1.0
+
+*Maven GAV坐标即Group ID、ArtifactID、Version
+
+*如果有些依赖maven坐标在网上下载不到jar，可以用本地的jar安装到本地仓库。详见https://blog.csdn.net/superit401/article/details/51567646
+ 可以使用第3种：mvn install:install-file
+
+??明天回听下 最后10分钟的内容
+
+？做mybatis的单元测试时要注意观察下控制台输入的日志，以了解mybatis的工作流程。
+
+？测试resultMap是否能通用  可以的话就都用它。 
+
+？？教程里为什么没有提到，多对多或一对多关系下的增删改操作
+  另外如何插入时生成主键，即如何定义主键生成策略 ！可以参考jeesite的生成方案
+  mybatis对应的Spring事务切面在教程里没有提到 
+  springmvc中如何解决get方式提交的数据中文乱码问题
+
+？？做测试用Idea打开eclipse项目进行编码开发，并且不改变项目的目录结构。！Idea是兼容eclipse项目的呢
+
+？？ssi框架的权限管理有什么较好的实践经验  ！！可以借鉴ssh框架整合时利用过滤器的登录权限控制
+
+？？ssi对于外键关联，需要显示关联表的信息（如名称），这时候该如何做。是直接在显示的主实体里关联外键实体，
+    还是重新定义一个对应的新的类，即使用java规范的什么VO、BO、PO。此时VO可继承主实体的类。
+    ！mybatis其实是可以设置关联并设置延迟加载，但实践中一般把这些关联写在业务层。
+？？？java开源快速开发框架
+	JeeWeb敏捷开发平台
+	JeeSite快速开发平台
+	WebBuilder
+	ejavashop电商快速开发框架
+
+	JFinal
+	spring boot
+
+        这个帖子描述的框架是什么框架 http://blog.sina.com.cn/s/blog_625550f70102wr1s.html
+
+
+**虚拟机补充优化方案（除了合理拆分磁盘文件，还有以下操作）
+  1、压缩虚拟机文件（文件压缩），减少虚拟机大小;
+  2、删除休眠文件，增加物理机C盘空间。并关闭休眠功能（powercfg -h off）
+  3、处理器由原来2 调节为4  总的是8核
+
+
+
+
+*java项目管理中存在jar包多，来源不明、版本和依赖未显示声明等问题。
+ 
+*初次使用maven3.2.1时发现编译不了，原因是该版本和jdk.8不兼容
+
+*使用的maven版本不同，其对应插件的版本也会有所不同。
+
+*注意maven项目中grounpId不一定是类的包全名，两者可以不同。
+
+*myeclipse里maven项目，如a项目引用b项目，则b项目若没有安装到本地仓库时，将b项目删除，a项目的b引用会报错。 如果b有装到本地仓库则不会。
+
+*注意maven项目中间接依赖要求被依赖的构件是要为<scope>compile</scope>，因为发布的jar包不会包含test范围的jar
+ 
+*myeclipse里已经集成了javaee相关的jar，myeclipse里的maven的pom.xml里可以不写javaee相关的jar依赖。 此时javaee的相关包采用普通引用即可。
+
+*Maven+jdk1.8时执行mvn compile会出现问题而Maven+jdk1.6不会
+ 因为使用的jdk1.8是压缩包版本，里面没有tools.jar等一些包。
+ 因为在jad1.8安装过程中将jre路径和jdk路径选择成一样的，会造成jre里的lib覆盖掉jdk里的，以致于tools.jar丢失。
+ 所以同jdk1.8重新安装，将jdk安装目录和jre安装目录分开即可。
+
+*注意maven固有的目录结构中，resources目录是在main下与java目录同级。慕课网教程描述的resources是在src下和main同级，经打包实践发现是错误的。
+
+*通过intellij和archetype插件新建的项目，没有java目录，需要自己添加。另外为方便intellij编码java和webapp目录要设置成源码和WebResource目录。 不过即使不做设置，maven工具在编译打包一样会识别。
+
+*一般情况下，我们用到的资源文件（各种xml，properites，xsd文件等）都放在src/main/resources下面，利用maven打包时，maven能把这些资源文件打包到相应的jar或者war里。如mybatis的mapper.xml文件要放到src/main/java下面就需要修改pom.xml文件，否则，这些文件不会被打包的（可以用maven-resources-plugin插件解决）。
+ 
+*Maven的本地仓库默认在${user.home}/.m2/repository   我们可在settings.xml里自定义本地仓库位置。如：E:\Maven_Respository\Respository
+ 另外也可指定自己setting.xml，目前来看应是在具体代码编辑器里设置。如intellij里新建项目时可指定为E:\Maven_Respository\settings.xml
+ 这样每个项目都可以指定不同的本地仓库及相应的settings.xml，以方便多个项目开发需求。
+ settings.xml还可以设置使用的jdk版本
+
+*Maven依赖的短路原则：
+ 如a依赖b依赖c依赖x-1.1.jar 并且 a依赖m依赖x-1.0.jar 则最终a会取路径短的依赖优先，也就是a最终a依赖x-1.0.jar
+ 如果两个依赖路径层数相同则先声明的优先。
+
+*Maven聚合和继承，如我们想将多个项目安装到本地仓库，则需要对单个进行一一的install
+ Maven可以将多个项目放置一起运行，这称为聚合。在pom.xml使用<modules>进行配置。
+
+*Maven相关命令
+ mvn clean package -DskipTests，不执行测试用例，但编译测试用例类生成相应的class文件至target/test-classes下。
+ mvn clean package -Dmaven.test.skip=true，不执行测试用例，也不编译测试用例类。
+ 
+
+*pom.xml部分标签说明：
+ <modelVersion>4.0.0</modelVersion> <!--指定当前pom版本-->
+  <groupId>com.cny</groupId>  <!--一般为公司网址反写-->
+  <artifactId>webmaven4</artifactId> <!--一般为项目名+模块名-->
+  <packaging>war</packaging>  <!--指定打包形式，默认为jar-->
+  <version>1.0-SNAPSHOT</version>  
+  <!--指定当前项目版本，其中第一个0表大版本号，第二个0表分支版本号，第三个0表小版本号-->
+  <!--另外snapshot快照版，alpha内部测试版，beta公测版，Release稳定版，GA正式发布版-->
+  <name>webmaven4 Maven Webapp</name> <!--项目描述名-->
+  <url>http://maven.apache.org</url> <!--项目地址-->
+  <dependencies>  <!--依赖列表-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope> 
+      <!--选项有test、compile、provided等 默认是compile-->
+      <!--provided表编译和测试是用到，打包发布是不需要。如web项目servlet的引用可以此配置，因为web容器里会自带servlet相关jar-->	
+      <optional>true</optional> <!--设置依赖是否可选，默认为false-->      
+      <exclusions>...</exclusions> <!--排除依赖传递列表,如a依赖b依赖c，但a不想依赖c就可以排除c-->
+    </dependency>
+  </dependencies>
+  <dependencyManagement>...</dependencyManagement>
+  <!--主要用于依赖模块间继承的管理，用此节点定义的项目可以作为其它项目的parent项目引入。
+    这样可以实现项目继承，达到依赖包的复用。作为用于被引用的parent项目，可以删除main、test目录-->
+  <build>  <!--项目构建相关配置-->
+    <plugins>...</plugins> <!--插件列表-->
+    <finalName>webmaven4</finalName>
+
+  </build>
+  <parent>...</parent> <!--设置继承，具体有待了解-->
+  <mudules>...</mudules> <!--设置多个模块同时编译，具体有待了解-->
+
+*慕课网maven教程中使用Jetty插件作为web容器，该插件在pom.xml的<plugins>配置
+
+*nexus的war包放置在tomcat7后加载速度很慢(教程里未说明原因)，但是放在tomcat6就不会有问题。
+ 注意nexus的war包在网上挺难找的，所以直接下周bundle包的nexus-2.14.8-01-bundle\nexus-2.14.8-01\bin\jsw\windows-x86-64
+ 目录下执行install-nexus.bat和start-nexus.bat，然后通过http://127.0.0.1:8081/nexus/访问，登录名密码 admin admin123
+ nexus的组仓库其实是一个虚拟的仓库，其实是几个实际仓库划定为一个组，在项目pom.xml里可指定到这个组仓库里的具体仓库里挨个找包
+
+*maven包的管理流程：项目根据pom.xml配置dependency从本地仓库找包，没有则到nexus私服下载包，再没有则nexus从中央仓库下载包。 
+                    自己开发的包，要本地公用则install到本地仓库，如要公司公用则deploy到nexus，如要世界公用则按照特定流程发布即可。
+
+*intellij中maven项目（Project）只能设置指定一个settings.xml和maven仓库。也就是说多个模块（Module）是公用的。
+
+*maven项目中如果有单元测试，如果单独用junit运行单元测试没出错，但在maven package时出错，有可能是因为项目路径中有中文。
+
+？？pom.xml里的<repositories>和<distributionManagement>都有<repository>子节点，有什么不同吗？
+   * <repositories>配置的是下载的远程仓库
+   * <distributionManagement>配置的是发布的远程仓库
+   * 两者都需要在settings.xml里的<servers>配置对应的<server>节点。 上述两个远程仓库可以配置为公司的公共仓库。
+   * 具体区别详见博客园收藏《(十一)Maven远程仓库的各种配置》
+
+？？所谓的nexus私服是用于发布时的远程仓库还是，下载时的远程仓库？  ！！应该是同一个。
+？？我们发布不是要发布到像tomcat这种web容器吗，那发布到nexus私服又有什么好处，实际部署是怎样的过程。是发布到远程仓库后，实施人员自行下载部署吗。这里的发布概念应该是“发行”，即发行到公共仓库以供公众使用，与部署概念不同，部署是将包放到web容器中。
+
+？？pom.xml里的<build>节点的使用。 大概作用是当项目目录结构没有完全按照maven的规约时，可以配置一些特殊的规则。
+
+？？在新建Maven web项目后，当maven依赖加载完后 intellij右下角会出现如下提示。应该是设置检测pom.xml有新的依赖自动下载导入依赖的jar
+	"Maven projects need to be imported: 
+	 Import Changes Enable Auto-Import"
+
+？？既然maven项目的目录结构是统一的，是不是意味着eclipse intellij就可以混合着开发？
+
+***************gradle学习 begin ***************
+*相比maven，gradle不需要那么多的pom.xml配置
+
+*intellij并不要像配置maven一样在settings里配置，在创建项目时指定gradle安装目录即可
+
+*intellij有专门提供给groovy开发的工具，在Tools-Groovy Console
+ groovy语言有点像js是弱类型语言，有闭包，有箭头函数
+
+*gradle的build.gradle相当于pom.xml，但比pom强大。 gradle其实有点像glup
+ 主要一些节点
+ repositories要下载jar的远程仓库，默认从中央仓库，并下载到默认目录里。
+ dependencies依赖列表
+
+*gradle可以配置从maven的本地仓库中去找jar包，具体操作网上找。相当于gradle和maven公用本地仓库。
+
+***************gradle学习 end ***************
+
+***************liux学习 begin ***************
+----此部分学习需结合传智+大胖的教程进行学习-----
+
+*常用的liux系统版本UBuntu 叫乌班图
+
+*root账号 密码123456  cny账号597123456 
+ mysql的账号密码  root 123456
+
+*【sudo+普通命令】命令是超级用户在/etc/sudoers里为普通用户配置的命令。这样相当于是超级用户授权给普通用户执行某些命令。
+
+*man命令是Linux下的帮助指令，通过man指令可以查看Linux中的指令帮助、配置文件帮助和编程帮助等信息。
+ 如man gzip 就会显示gzip命令的相关帮助信息
+
+*在安装VMware-tools时，执行linux命令时会有很多[/lib/bin]等提示，只要一直回车即可。
+
+*编辑完linux配置文件/etc/profile后，需要重启机器。或者(刷新配置，用命令source /etc/profile)	
+
+*在配置java环境变量时，配置文件写export PATH="$JAVA_HOME/bin:$PATH"时 这里的：号是连接字符串的意思。
+
+*linux远程命令工具推荐XShell、Putty、SecureCRT
+ linux远程传输工具推荐FlashFXP、Winscp
+
+*使用yum命令从linux仓库中下载jdk时，是默认下载到usr/lib/jvm目录下。 所以下载完要自己到该目录下去找jdk安装目录并配置到环境变量中去。
+ 使用此方式不好选择指定版本
+
+*curl 命令可以直接模拟浏览器访问  如curl http://127.0.0.1
+
+*Linux上编辑一些文件不是很方便   可以直接用文件上传工具进行编辑  如WinScp
+
+*Windows下的批处理文件是bat后缀   Linux下的批处理或者叫脚本是sh后缀
+ sh start.sh 或者 ./start.sh两种方式都可以执行shell脚本
+
+*centos7的防火墙设置交由firewalld（centos7之前的版本都是用iptables管理）
+ 详见csdn收藏 https://blog.csdn.net/c233728461/article/details/52679558
+
+
+*vim编辑器的使用：
+ 在Linux命令行工具里 输入 vim aa.txt 
+ 按i 是进入编辑模式 ，按esc是退出编辑模式，按: 是进入文件操作模式（在此模式下 q是未保存退出，q!q是强制退出，wq是保存退出）
+
+*在centos7安装mysql数据库时按大胖老师教程用yum安装，出现mysql-server没有可用的软件包错误 问题
+ 解决: 通过这个教程可解决 https://www.linuxidc.com/Linux/2016-09/135288.htm
+ 但是在重置mysql的密码时大胖的方法又不行  后面使用mysqladmin -u root -h localhost password 'your password'可解决
+
+*在centos7安装mysql后，除了和安装完tomcat一样要配置对应端口开放，还要给指定的远程连接账号密码授权，步骤：
+ mysql -u root -p123456;  在服务器上进入mysql
+ mysql GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123456' WITH GRANT OPTION;  
+ mysql flush privileges; 
+
+*在centos7下mysql关闭 systemctl stop mysqld   开启 systemctl start mysqld
+
+
+*查看某端口是否开放  如80端口用命令 lsof -i:80
+
+*不同版本的linux下用yum安装tomcat、mysql、jdk的默认安装目录都有所不同，具体可百度
+
+*如果tomcat启动或关闭出问题可以将其强行kill掉，步骤
+ 用ps -ef|grep tomcat命令查看tomcat的进程id，在root字符串之后
+ 用kill -9 进程id  暴力关闭   不加-9是正常关闭
+
+*ps -ef|grep 软件名    该命令用于查看软件的信息
+
+*ps aux|grep 软件名    该命令用于查看软件的进程信息，可查看到该进程的pid
+
+*kill -s 9 pid 杀死某进程
+
+./natapp -authtoken=dcf6d54b5daebf8e
+
+*linux命令里 换行就是执行命令，可在命令最后加上反斜杠\ 即可表换行不执行命令。 这样可以增加有些比较长命令的可读性。
+
+*mkdir -p 是创建多级目录
+
+*linux下在某个目录下 用pwd命令是打印当前工作目录
+
+*在Windows环境下去编辑linux的文本文件可能出现问题，如两个环境下的换行符是不一样的。  但是可以用Winscp等ftp工具连接linux进行编辑。
+
+*linux下启动tomcat后，可以输入tail -f logs/catalina.out命令来查看tomcat实时启动日志
+
+*有很多软件（如Redis）都是给源代码，然后在linux上安装编译环境（如gcc），然后在linux上编译，为什么？
+ 因为linux有很多版本，如centOs、RedHat等，同一个软件运行文件不能在linux之间通用（和windows不同），所以只能给源代码自己编译。
+ 另外gcc编译成的是二进制文件，可直接执行，而java编译的只是.class字节码文件不能直接执行
+ gcc编译直接在源码文件目录里（src的父目录）执行make ，并且保证在该目录下有MakeFile文件，安装用make install -PREFIX 安装目录
+
+*linux下应用程序启动模式分两种：
+ 前端启动模式：会占用一个命令终端，就是启动后我们就不能敲其它命令了。如启动Redis用 ./redis-server
+ 后端启动模式：不会占用一个命令终端,如启动Redis用 ./redis-server redis.conf
+ 
+*linux下新建批处理文件如start-all.sh后其文件没有可执行权限，可执行chmod +x start-all.sh开放该文件的可执行权限
+
+*开启一个端口：
+ firewall-cmd --zone=public --add-port=80/tcp --permanent   （--permanent永久生效，没有此参数重启后失效）
+ firewall-cmd --reload
+
+*查看已开放端口：
+ firewall-cmd --list-ports
+
+*windows上测试某主机端口是否可连接：
+ telnet 192.168.1.242 8080
+
+*centos7安装后默认网卡是关闭的，用ip addr是查不到ip的，可以进行相关设置。编辑配置文件/etc/sysconfig/ifcfg-ens33
+
+*查看一个软件是否安装，如mysql 使用命令rpm -qa|grep mysql
+
+*mkdir /dir1/dir2/dir3 -p 级联创建目录
+***************liux学习 end   ***************
+
+
+***************activity学习 begin   *************
+
+*和Activity同类的中间件还有JBPM、OSWorkFlow，但是现在基本都用Activity
+
+*Activity相关概念：
+ *重要的类ProcessEngine 它包含了几个服务：
+  历史服务：存储历史执行过的流程，如李某在请假流程中有几次的请假。
+  仓库服务：存储每个工作流的定义信息，如存储报销流程、请假流程等。
+  任务服务：每个流程中经过的每个环节都叫一个任务，如班主任审批环节。
+  角色|参与者服务：如老总、班主任
+ *BPMN一种流程图，可以ongoing设计器设计
+ *数据库，包含23张表，以act_开头的表，有几个不同的分类，如act_hi_*的表是用于存储流程历史。
+  -学习时注意观察在activity工作过程的几个阶段所影响的表
+  -流程发布阶段
+    -act_re_deployment部署表
+  -流程定义阶段：
+    -act_re_procdef流程定义表，其中name和key对应了bpmn文件里的process节点的name和id属性。这两个属性标识同一个流程。 同一个流程可能有多个版本（通过version字段区分）。另外id字段形如LeaveBill:1:4，分别代表key:版本号:自动生成的序列号
+    -act_ge_property通用属性表，应该是类似用于生产squence序列的表，其中act_re_deployment的id值就是act_ge_property表里next.dbid记录对应的value
+  -流程执行阶段：
+    -act_ru_execution流程实例表，通过key获取流程并执行时，执行的是版本最新的流程（act_re_procdef中版本最新的记录）。其中id和proc_inst_id一般是一样的，是指实例编号，act_id指任务当前流程走到哪个任务的任务id（即bpmn文件里的userTask的id属性）。如果流程走完，则该流程对应的流程记录就清空掉。
+  -任务查询阶段
+    -act_ru_task任务表   
+  -任务完成阶段
+    -act_ru_task任务表   是对原有的记录做修改还是删除重新插入一条记录。应该是重新插入，因为记录id都变化。如果流程走完，则该流程对应的任务记录就清空掉。
+    -act_ge_bytearray字节资源表，用于存储字节资源。如上传的流程定义的bpmn和png文件，再如存储流程变量值如果是bean，也会存储在该表。
+  -流程删除
+   此操作会把act_re_deployment、act_re_procdef、act_ge_bytearray表的相关连记录都删除
+  *流程实例id和执行实例id的关系。
+   -流程实例id代表一个流程的具体实例，在流程完成前它只在act_ru_execution表的PROC_INST_ID_存在。无论流程实例是否执行完都会在act_hi_procinst插入一条记录以保持此流程实例的信息。为执行完则END_TIME_字段为空。
+   -执行实例id，是act_ru_execution表的id，代表一个执行者的信息，如果一个流程实例中，执行实例只有一个，那执行实例id等于流程实例id，否则不同。如果有两个执行实例则它们有存在父子关系，通过PARENT_ID_标识
+  *流程变量：即在整个流程实例周期内，在各个环节需要的具体业务参数。使用这些参数来判断是否执行流程或执行其他操作。流程变量存储在act_hi_varinst和act_ru_variable变量，通过流程实例id和任务实例id等字段区分。 注意：任务实例本地变量在该任务完成后就销毁，即在act_ru_variable中会删除，但act_hi_varinst表中不会删除（流程实例变量同理）。 如果是流程实例的变量则作用域在整个流程实例周期内。 
+  *排他网关：相当于在流程图中定义一个判断节点，这个节点相当于一个switch，他下面的连线可以写条件里可以写条件表达式语句，如${name==1},这个name是上一个任务传递的流程变量。 
+  *动态定义任务处理者，原理和排他网关差不多，在流程图的任务节点的任务处理者用表达式，然后在启动流程的时候将参数传递进去。如${userName}
+  *抢签任务、会签任务、多实例任务：？？用户组合多个用户是在数据库是如何实现的
+   抢签任务：当任务节点分配的是多个用户或者用户组，只要其中一个用户办理任务都会使任务完成。
+   会签任务：当两个或多个任务节点之前用并行网关，则只有在这些任务节点全部完成，才能执行下一层的任务或结束。
+   多实例任务：当一个任务节点，需要有多个人员进行处理才能使得该任务节点完成，这就是多实例任务。此时需要设置多实例的实例列表（即哪些实例参与该任务节点）、元素变量（即实例列表循环时的变量名）、任务节点完成条件（也是通过变量处理）、任务完成方式（是并行还是串行）。
+  *activity如何使用业务系统的用户及用户组：
+   1.在spring-context-activiti.xml重新定义activity的用户和用户组管理类实例，在新的管理实例里做相应用户和用户组的转化适配；
+   2.此时，如果某个任务节点指定的是具体的用户组(jeesite中为角色)，如dept，注意不是${dept}，则当打开系统任务相关菜单时，在ActTaskService里是将当前用户userId传递进activity的查询对象里，由activity再调用1步骤定义的管理实例，去查询这个用户所拥有的用户组是否与dept相匹配。
+  *jeesite的bug：
+   1.【已办任务-详情】只查询了正在执行的流程，没有查询已完成流程，即未查询历史流程的已办任务。
+   2.当流程在系统删除后，还能在待办任务和已办任务中查看到该流程的任务。正确的逻辑应该是,未完成流程不可删除，已完成流程可删除，但是要级联删除其相关的数据，包括任务，表单，二进制数据等。
+  *由activity引出的设计思想：在途表+历史表，即正在执行的和已完成的数据分别放在这两张表中。当数据量大的时候可以使得查询速度加快。activity中该思想具体应用中，历史表会包含在途表的所有数据，并且记录流程执行过程中的一些变化，如流程变量值的变化。
+   3.缺乏修改流程表单修改功能，即下一个任务节点未完成前提下，当前任务有权修改表单。
+  *jeesite保存业务表单时同时存储流程实例id（procInsId）实现，是通过ActTaskService.startProcess统一进行更新处理
+
+
+***************activity学习 end   ***************
+
+***************lucene学习 begin   ***************
+
+*lucene的基本原理
+ *创建一个索引库，其中包含词汇表和原始记录表
+ *原始记录表记录的标题或内容包含的词汇经过拆分归类到词汇表记录中，形成对应。
+ *客户端通过搜索查找词汇表记录，然后对应到原始记录表记录并返回结果。
+ *我们的业务数据记录存储到原始记录表后，lucene通过算法分词并存入词汇表中，词汇表就可以供查询了。
+ *在查询时，我们可以根据分词策略参数不同，获取不同策略下的结果。
+ *在索引库的cfs文件中，可以设置合并因子，如合并因子为3，则当索引库目录里的cfs文件达到3个时候就合并一次
+  也就是说当记录数为3、5、7...时会进行合并
+ ？搜索词如果为“旅游胜地”，而索引库的词汇表里有“旅游”，好像是能匹配的，并不是想当然的只能匹配到“旅游胜地”4个字
+~明天写demo
+
+*Lucene应用个人认为最主要是在于寻找或自定义适合公司业务的分词策略
+***************lucene学习 end   ***************
+
+
+*格式化类 Format体系 
+ SimpleDateFormat
+ NumberFormat

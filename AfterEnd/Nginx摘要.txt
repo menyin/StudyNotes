@@ -1,0 +1,55 @@
+﻿*淘淘商城应该是传智28期的内容  但是后面32期居然没有了这部分内容。
+
+*Nginx并发量在5w  而tomcat在500  不是一个数量级的。
+
+*Nginx应用场景：
+ *http服务器 
+ *访问静态资源
+ *配置虚拟主机（和VMWare不一样）
+ *反向代理
+ *负载均衡
+
+*Nginx官网上安装包列表里  mainline标识的是主线版本  stable是稳定版本  一般用稳定版本。
+
+*在VMWare虚拟机文件发生变化后，再打开【我已移动】和【我已复制】的区别在于后者会当成新的虚拟机重新设置网络等配置。
+
+*Nginx在用configure设置完编译时的配置后，会生成一个MakeFile文件，此文件用于编译Nginx
+ configure命令设置的参数有包Nginx的安装目录，日志目录等信息
+
+*Nginx还可以配置https
+
+*淘宝、百度是全站https 京东默认是http但登录后是https
+
+*Nginx配置的多个虚拟主机可以通过端口号，域名，ip进行区分
+
+*hosts文件的作用：操作系统（包括Windows、linux等）的浏览器访问域名时候，如果本地hosts有配置映射就不会去dns上做解析了。而直接通过hosts里配置的进行解析。
+ 针对域名解析会有一些问题：如hosts劫持、dns劫持（只有网络运营商可以做到）
+
+*正向代理：比如翻墙，我们请求国外没有被屏蔽的服务器A，A再去请求我们的目标服务器B，然后A把B的响应内容返回给我们。
+ 反向代理：我们请求反向代理服务器，反向代理服务器决定去找某台真正的服务器处理，然后原路返回给我们。
+           反向代理过程中，可能只有方向代理服务器有公网ip，其它服务器都是内网。反向代理服务器只是做请求的转发
+
+*使用Nginx做反向代理时，所有服务的入口的是Nginx服务器，如果Nginx服务器挂了，那系统就没了。
+ 此时就要实现所谓的“高可用”，即增加备份的切换Nginx服务器。 keepalive+Nginx就是来解决这个问题的。
+
+*模拟Nginx反向代理步骤（虚拟机ip为192.168.157.132）：
+ 1.复制两个tomcat更改server.xml的3个端口；此处访问端口为8081、8082
+ 2.在hosts里配置192.168.157.132 t1.cny.cs 、192.168.157.132 t2.cny.cs做为模拟dns解析
+ 3.在nginx.conf里配置两个tomcat的映射，这里只列举一个tomcat服务器的配置：
+     upstream tomcat1{
+       server 127.0.0.1:8081;
+    }
+    server {
+        listen       80;
+        server_name  t1.cny.cs;    
+        location / {
+            proxy_pass http://tomcat1;
+            index  index.html index.htm;
+        }
+      
+    }
+ 4.启动2个tomcat，启动Nginx，分别用t1.cny.cs和t2.cny.cs访问
+ 注意：upstream里的server可以配置多个，每个server还可配置权重，如 server 127.0.0.1:8081 weight=1;
+       weight越大权重越大，访问命中机会也就更高。
+192.168.157.132:8081
+192.168.157.132:8082

@@ -1,0 +1,594 @@
+﻿*咕泡学院入学时间：2018.11.1
+
+*架构课程4.0
+ 源码分析专题（Tom/James）
+ 微服务架构专题（小马哥）
+ 性能优化专题（James/小马哥）
+ 分布式架构专题（Mic/Jack）
+ 并发编程专题（Mic）
+ 电商项目实战（Mic）
+ 团队协作专题（James）
+
+*咕泡资源（这些资源在换工作及新工作解决问题中都是很好的资源）
+ qq群：有众多的学员分享交流
+ BBS、ASK、Gper生态圈：学员老师都会回答你的问题、分享面试经验。可以积分，积累经验
+ 老师：主要解决个性问题，如职业生涯，工作碰壁，面试问题，沟通技巧...
+ 微信公众号：课程提醒、学籍信息、作业提交情况、毕业跟踪等
+ GitLab：包含课程源码、问题集锦
+ 云盘：放置录播视频、预习资料、课后作业
+ 定期给学员做软实力提升、HR技巧分享、英语提升？？这部分内容在哪
+ 咕泡分布式架构：看架构图，已经是一个成熟的互联网框架。
+ 内推机会：对于全国名企有一些招聘需求可以get到
+ 
+*gitlab使用学习
+ *链接：http://git.gupaoedu.com 用户名密码 menyin gdlr...  邮箱8425...@qq.com
+ *咕泡通过gitlab的项目（your projects）来划分不同的版块，主要模块划：问题区vip/qa、作业区vip/static、公告区vip/nice等
+  每个区都是以一个项目的形式存在，其中包括以下版块：
+    --Overview 概况
+      --Details 详情
+      --Activity 动态
+      --CycleAnalytics 统计
+    --Repository 仓库
+      --Files 文件
+      --Commits 提交记录
+      --Branches 分支
+      --Tags 版本或里程碑
+      --Contributors 贡献者
+      --Graph 图像
+      --Compare 对比
+    --Issues 问题点
+      --List 列表
+      --Board 版块？
+      --Labels 标签？
+      --Milestones 里程碑？
+    --MergeRequests 合并需求？
+    --Wiki 维基？主要是一些附加的知识点文档
+    --Snippets 片段？应该是用于部分代码分享，即“Snippet support”功能
+    --Members 参与的成员
+ *github、gitlab的.md文档，issue都使用Markdown语法，可以下载typora编辑器进行编辑（intellij亦可）。学习https://www.jianshu.com/p/191d1e21f7ed
+ *在qa区中发issue时，右边有个todo面板，可以设置label来标志紧急程度
+
+
+*计算咕泡的总课时安排学习计划（和淘淘对比下）
+ 课程大致分为：常用框架源码解析、分布式、微服务架构、jvm及性能优化、并发编程
+ ？先博后专、？思维方式、？先总结规整知识要点整合taotao+jeesite、？将近期学习实践的要点梳理一遍、问题找咕泡讨论一遍
+
+
+*咕泡课程学习注意（整套课程一定要多实践）：
+ 分布式课程（2-3个月）最好是看直播，有一些问题可以直接提出。结合架构图进行学习
+ 微服务课程（1个月）会涉及spring源码，因此在此之前要学完spring源码部分
+ 多线程、并发、性能优化涉及jvm，因此在此之前要学完jvm
+ 实战项目是穿插在各个部分的课程中
+
+*问答流程：vip群聊、gitlab/qa、私聊老师。以后可以简历指导和面试指导
+
+*翻译小组，可以学习英文技术文档 http://git.gupaoedu.com/vip/nice/wikis/%E7%BF%BB%E8%AF%91%E5%B0%8F%E7%BB%84
+
+*咕泡生态圈 https://gper.gupaoedu.com/
+
+*Tom老师和我的技术路线基本一致，喜欢思考，个性也比较像，喜欢艺术，哈哈
+
+*Mic等老师用了一款在线绘图工具，很方便，可绘制流程图、思维导图、原型图、UML、网络拓扑图、组织结构图等。详见 https://www.processon.com/
+
+？《5月下旬学习指导.mp4》22分提到明天下午有英文课程，是指什么课程？
+
+Tom老师，你好，
+   想找您咨询下一些问题，我的情况大致如下：
+   *java开发七八年，主要还是传统项目，今年更多的是做前端的工作。
+   *对互联网分布式技术有一定了解，能自己用zookeeper、dubbo、nginx等搭建出基础分布式的架构环境。
+   *知识有一定体系，技术涉猎有java、C#、前端，总体知道自己该如何学习进步，但缺乏互联网经验。
+
+？找各个老师交流下：
+  *英文水平不是很好，看英文技术文档都是用翻译软件，提升这方面能力有什么建议，技术文档有没有一些格式和套路。
+   因为学习一些技术的时候，通常都是找找视频教程和中文文档，然后有时候要折腾很久。
+   james答：花一个月硬啃技术官网：http://spring.io/  https://spring.io/projects/spring-framework
+  *硬件和网络方面的知识也比较欠缺，有什么建议
+  *11月半路出家，从哪部分开始切入好，还是从头开始看录播。我工作相对比较轻松，时间也充足。（老师似乎建议直接跟直播，后面再挑着看录播）
+  *很多技术问题会知道如何解决，也能很快的判断出大致的原因，但要找找资料，这个算基础薄弱吗？需要改进吗？ 
+  *如何去模拟高流量，高并发，让自己能更多学习到实际场景中的一些问题。（老师建议不断思考场景，不断想象，不断折腾，参与到互联网公司环境，建议跳槽）
+  *我在厦门，这里的名企不多。而我就职的公司又属于半传统半互联网的公司，互联网技术经验不够，我想进这些名企，有什么建议。
+  *在一个具体的城市，如何定位自己能力和这个城市这个职业的薪资水平，有哪些点需要注意。
+  *电商实战项目，云服务器要不要提前买下，快到双十一了
+  *全国分舵有线下交流活动，厦门这边好像是没有，能不能组织下。
+
+？Jenkins如何做到实时提交单独的文件
+
+--------------------设计模式 begin----------------------------
+*单例模式中的饿汉模式能保证线程安全，即在多线程并发访问该实例都是同一个对象
+ 而懒汉模式则不能，因为它是延迟创建实例机制，所以多线程同一时刻有可能创建多个实例。
+
+*懒汉模式用synchronized解决线程安全问题时，在创建实例的时候性能很低。
+ 懒汉模式用内部类解决线程安全和性能低问题，但会有单例反射攻击问题可以参照LazyThree类处理
+
+*序列化实现单例，要求被序列化的类添加readResolve方法，以保证反序列化时是同一个对象。相对比较复杂
+
+*最科学最推荐的单例实现方案是内部类实现法。此法需要放反射构造函数注入，需要用final固定死getInstance方法
+ ？在此法中，如何在防反射构造函数攻击时使用到标志变量，此时又该如何防止此标志变量被反射攻击呢。
+   tom直接将这个标志变量设置成非静态的即可，即必须有实例才能访问。
+
+*双重检查锁定（这种方式是比较常用的一种方式） if (instance == null) {synchronized(）{if (instance == null) {xxxx}}} 
+ 详见CSDN收藏《Java单例模式中双重检查锁的问题》 https://blog.csdn.net/chenchaofuck1/article/details/51702129
+
+*在动态代理实践中，在intercept拦截方法内部断点，监控到代理生成对象时会调用它的toString方法，
+ 因此这个拦截方法会再被执行一遍，而且不会走到你打的断点处，感觉莫名其妙，但其实很合理。
+
+*动态代理后的代理对象无论怎么转换还是直接用Object接收，其getClass()都是com.sum.proxy.$Proxy0类型，非常重要
+ 这也是Proxy.isProxyClass()方法的判断依据
+
+*动态代理，其实是生成一个目标类或接口的代理对象，这个代理对象所有方法（即目标对象对应的方法）里都是调用Invocation实例的invoke方法
+ 并且把当前代理对象和目标对象的方法及参数传递过去。在代理对象类的invoke方法里，一般就是添加一些附加逻辑代码
+ 然后在将目标对象的原始方法执行一遍（即将原始方法invoke以下）
+ 其实这个代理对象的类是动态生成类字节码（字节码重组）然后加载到内存，这个动态类一般都是$ProxyX,X是数字，$ProxyX是继承java.lang.reflect.Proxy
+
+*明白动态代理原理后，应该知道如果目标对象有私有成员变量，如name，但代理对象是没有name这一变量，但是如果目标对象遵循java get set规范
+ 则代理对象会有getName和setName方法。所以在spring环境下的bean要反射得到私有成员变量不能通过Field而应通过Method，这就是Tom老师的方式
+
+*JDK中有个不成文的规范：只要是带$开头的类就是自动生成的，如$Proxy0
+
+*委派模式其实就像一个不干事的中间调度器，Spring中带有Dispatcher、或Handler的一般是用委派模式
+
+*在java中带Decorator或Wrapper的类都是采用装饰器模式，或者说是包装器模式
+
+*注意适配器模式和装饰者模式的区别：
+ 适配器模式注重通过扩展旧的类型来使新的数据能适应就类型方法的数据要求
+ 装饰者模式注重于在一个新的类中将旧的类实例传入，对就类实例的方法进行加工扩展，比如游戏放大招方法增加发光效果。
+ java中适配器类型处理的旧类型经常会用@Deprected标记过时类或过时方法
+
+*观察者模式≈发布订阅模式≈事件模式  
+ Spring中的ApplicationListener就是观察者模式
+
+*Spring常用的几种编程思想：AOP、OOP、BOP、IOC、DI  具体看咕泡的截图摘要
+ Spring加载步骤：定位，载入，注册，再确定要不要初始化Spring
+
+*各种设计模式的区别看《咕泡学院_Tom_JavaVIP课程_Spring源码分析(第二版)_第一章.pdf》
+
+*多线程测试demo中常用countDownLatch，类似loadrunner里的集合点。 可以阻塞主线程，然后都其它线程达到计数器的数后才继续执行主线程。
+ 
+
+？复习下 java封装、继承、多态的几种实现方式，如抽象...
+
+
+？咕泡还介绍了一种在java类里对进行注解以获取sessionfactory的使用mybatis形式，如MybatisConfiguration.java
+
+？注册式实现单例时，使用ConcurrentHashMap还是不能保证单例安全，怎么解决
+ 
+？实践：
+  懒汉模式下保证线程安全，用synchronized，性能问题
+  synchronized，这个关键字需要学习
+  内部类的初始化过程、java类加载过程原理
+  反射入侵是个什么问题
+  枚举类
+  Vector 
+
+？通过反编译工具ProxyGenerator来获取动态代理生成的代理类的字节码，然后输出到文件中
+？策略模式中具体的策略能不能放入Spring的ioc容器，在代码中用ioc容器获取多个具体策略实例
+？实践用intellij查看接口的实现类图
+
+
+
+--------------------设计模式 end------------------------------
+
+--------------------Mybatis begin------------------------------
+
+*lombok  可以通过一些注解使得书写类代码时省略掉 get、set、toString等方法，但实际是有生成的。
+
+*mybatis使用的代码生成器generator生成的会生成一个XxxExample，它会将开发者书写的条件生成sql然后执行。
+ 对于开发者是好事，但会有一些问题，不推荐使用。
+
+*sqlsession是线程级别或者说是request/response级别的，也就是说这个sqlsession是存活在一次web请求中的。
+ sessionfactory是application级别的，是整个web应用启动后创建并存活的。
+ ？一个service多个dao是在一个线程里吗？ 
+
+*mybatis的sql语句可以书写到mapper类的注解或者mapper.xml，这两种方式可以兼容吗  
+  ！是可以的，但是这种方式里的id不能一样。如mapper.xml有<sql id="getUserById"/> 那用注解的mapper类就不能再有getUserById方法
+  一般我们也不会将sql语句写到mapper类的注解里，如果sql复杂则mapper类很混乱，不好维护。
+
+*mybatis插件原理学习：
+ *mybatis原理请看CSDN收藏《Mybatis之工作原理》、博客园收藏《MyBatis插件原理----从<plugins>解析开始》
+ *使用时可看官网文档，并且像mybatis-config.xml可查看其DTD文件
+ *结论：1.mybatis插件中@Intercepts是描述定位了要拦截的类和方法
+        2.intercept(Invocation invocation)是提供了一个拦截点供实现，其中invocation包含了当前目标拦截的方法的实例、参数等信息
+          invocation.proceed();即执行了当前目标拦截方法（原有的）。在此我们可以做要拦截的处理。
+        3.plugin(Object target)中target即要包装的目标实例。在此方法中一般我们用return Plugin.wrap(target,this);直接返回当前
+          拦截器作为代理对象。其实也可以自己通过对target的做代理包装，然后返回，此时intercept(Invocation invocation)可直接
+          用return invocation.proceed();
+ *整个过程：mybatis用ExamplePlugin1.plugn()包装后的对象作为原始对象的代理对象，然后执行相关方法时其实是用ExamplePlugin1.intercept()执行
+
+*嵌套查询和嵌套结果
+ 嵌套查询，指在resultMap里嵌套通过当前查询结果的外键字段再去映射另一个mapper里的sql查询，已达到关联查询的目的
+           会产生1+N次查询问题，产生性能问题。 如果要避免无谓的查询，可以用懒加载。
+ 嵌套结果，指在一个mapper里就把主实体和关联实体的字段通过join方式一次性查询出来，并映射到resultMap上，已达到关联查询的目的
+
+*在spring web环境下，一个request就是一个线程，并且controller、servic、dao都是单例，但此时sqlsession是通过ThreadLocal实例和当前线程绑定的
+ 注意一个service里可能用到多个dao，但他们应该都是同一个sqlsession。但是每个dao应该都知识有一次连接（即connection）
+
+*mybatis的二级缓存是以实体的命名空间为单元的，如Student 完全限定名为com.cny.Student，则以此为单元。当这个单元的任何内容有增删改才会清除这个单元的缓存
+ 如：其中有一个getStudenById，那它的缓存key应该大概就是com.cny.Student.getStudenById。
+ 注意，如果getStudenById结果集关联包含Teacher，则Teacher的也是缓存在com.cny.Student.getStudenById这个key下。 此时如果去增删改com.cny.Teacheer单元的缓存
+       则com.cny.Student.getStudenById里的Teacher是不会被更新的，即会有脏数据。
+
+*method.getDeclaringClass()调用方法的getDeclaringClass()是获取方法的声明类型
+
+*jdk1.8后接口中可以用default修饰方法，相当于C#中的虚方法有默认的实现
+ 这样要扩展接口方法后，之前已实现该接口的类不会受到影响，否则编译会报错。
+
+*mybatis架构几个重要的类或接口
+ Sqlsession 
+ Configuration 
+ Excutor
+ StatementHandler
+ ParameterHandler
+ ResultSetHandler
+ TypeHandler
+ BoundSql
+ MapperStatement
+ MapperProxy 
+
+**一般一个抽象类实现一个接口，通常是用到了模板模式。即抽象类对接口规约的方法的实现里包含了一些流程（如a->b->c）。
+ 此时a、b、c又被抽象类定义为抽象方法供子类实现。相当于子类参与了整个流程的一部分，即模板模式。
+ 注意：mybatis大量使用这种设计模式。如果这个接口有多个抽象子类，则相当于有多个分类。
+ 注意：Executor、CachingExecutor、BaseExecutor就属于这种情况
+ 
+*BaseExecutor#query第1行代码什么意思，课程上没听明白。
+*ErrorContext就是利用ThreadLocal变量记录当前线程的相关信息，包括执行到哪、以及报错信息等。等到程序出错时则可以输出这些信息。
+*ErrorContext的工作过程， 和Exception一直往上抛后内存溢出问题有什么关系。
+  《VIP-20180331-源码分析之3.3源码解读.vep》48分处有讲解到
+ 寻找答案的过程：
+  1.明白它的作用后，我构造一个mybatis使用过程中的错误，即在执行查询方法前，将sqlsession关闭。
+  2.此时在ErrorContext的toString方法上打断点，当进入到该断点就可以查看它的调用栈了。
+
+* sqlsession、excutor、configuration、StatementHandler、ResultsetHandler、MapperProxy的关系。
+  *查看excutor的类层次关系，发现它归为2大类CachingExecutor和BaseExecutor。
+   而CachingExecutor是用于装饰BaseExecutor的子类，使之拥有缓存功能。
+  *sqlsession持有excutor和configuration实例，然后将相关工作交给他们两去做
+   SqlSessionFactory在创建sqlsession之初会先创建configuration，再由configuration生产excutor
+   然后将configuration和excutor交给sqlsession，sqlsession尽情的调用这两个去实现功能。
+  *MapperProxy.invoke()时 调用sqlsession调用cexutor调用StatementHandler调用ResultsetHandler
+
+
+？UML图的学习
+
+
+？spring环境下mybatis的mapper类即dao类是单例，是如何实现的
+  这里注意数据库的connection是肯定是多例
+  如果说并发很高，一个request就对应一个数据库连接吗 
+  ！mysql的最大并发连接数跟硬件配置有关也跟所做操作和服务配置有关：
+
+
+？BaseExecutor#queryFromDatabase 322行这行代码的意义
+占位符，当延迟加载时，会先判断一级缓存中是否存在结果，如果没有结果或者为占位符，则将此延迟对象加入延迟队列，
+否则直接从一级缓存中获取结果
+
+？UML图的学习
+
+？梳理调试StatementHandler、ResultSetHandler等过程。
+
+--------------------Mybatis end------------------------------
+
+--------------------Spring begin------------------------------
+*spring有一个大的设计思想特点，它把很多的功能实现都集中在一些具体的实现类，如ClassPathXMLApplication，然后通过
+ 许多不同的多层次的接口来划分这些功能，并通过一些多层次的抽象类来规定不同的流程模板。所以在spring中一个实现类有
+ 可能扮演着多种“角色”
+
+*spring IOC容器大概的过程：定位->加载->注册
+ 具体过程详见博客园收藏 https://www.cnblogs.com/ITtangtang/p/3978349.html#a1
+
+*spring IOC容器相关的一些类
+ 带resource的是关于资源的描述类，用于定位
+ 带BeanDefinition是bean加载后的描述类
+ 带Reader的是加载相关的类
+ 带Factory、Context是注册bean信息的相关类
+
+*beanFactory和factoryBean的关系
+ factoryBean是一个接口，自定义一个实现它的类，然后将类配置到spring xml里就可以得到一个代理目标对象的bean并放入ioc容器。 
+            例如在spring mabatis整合过程中SqlSessionFactoryBean就是对原生的mybati的ssqlsession的代理
+ beanFactory是生成bean的，包括有些beanFactory也是由其它beanFactory生产出来的bean（它会带有&符号），即factoryBean
+
+*在spring生产原生bean时，要用beanDefinition和beanWrapper对原生的bean对象进行对象创建和属性赋值，beanWrapper是一个接口，
+ 她规定了原生bean的属性访问器和编辑器等操作（BeanWrapperImpl是其实现类），有了它就可以对原生bean进行属性进行填充。
+ 注意beanWrapper也只是在spring内部使用，开发者并不会使用它进行业务开发。
+ 
+
+*spring中lazy-init默认是false，在源码中，它有一个finish...方法进行自调用，其实就是调用getBean方法。
+
+*springmvc中的DispatcherServlet.onRefresh()调用了initStrategies(),这里初始化了springmvc的“9大组件”，这些组件所用的策略
+ 其实是在spring的xml配置的，如视图解析器组件一般都是配置org.springframework.web.servlet.view.InternalResourceViewResolver
+
+*springmvc的DispatcherServlet.init()经过层层调用初始化了9大组件后（放在成员变量），
+ 然后在用户请求调用DispatcherServlet.doGet() 时依次调9大组件，最后返回结果给用户
+
+*spring事务中，Datasource是对Connection的包装，Connection的实现其实是通过Socket进行数据库连接
+ DataSource中其实是对事务的开启，隔离级别，回滚，提交等操作做了封装和规整。
+
+**spring可以配置事务在一些异常出现的情况下进行回滚（rollback-for属性），但要求在业务service里不能把可能异常的代码try-catch掉。
+
+**spring的service层的方法如果有相互的调用要特别注意会有事务传播问题，这个需要开发者注意。
+
+*实际上数据库的事务的底层原理也是通过操作日志来做数据回滚，如mysql的里有一个binlog就是干这个事情的。
+
+*spring的aop切面配置时，使用xml和annotation方式的区别：annotation可以额外配置匹配目标方法是否包含某个参数名的参数
+
+*？在spring环境中通常一个Service里包括多个Dao处理，他们公用一个Connection，在一个事务中，此时Connection底层应该有多个socket对应
+  不同的Dao操作，而每个socket可理解为一个Sql语句。这些语句在操作是在数据库内存中有个临时区域，等事务提交后才能更新到原始表。
+  此时如果有其它事务访问原始表，则可能出现所谓的脏读，不可重复读，幻读的情况。而隔离级别就是规定了在这个事务期间原始表可访问情况。
+
+
+？Tom的泛型操作类要研究学习下 javax.core.common.utils.GenericsUtils
+
+？练习：Junit4和spring的集成、并复习Junit的使用
+
+？元旦节后将spring最后这几节课的笔记再复习一遍
+  元旦节后找spring相关的面试题做做，到咕泡论坛上找找
+-------------------------------------------------------------
+？下午复习下Spring事务的相关配置及事务传播和隔离级别
+
+？<tx:annotation-driven>、<mvc:annotation-driven>和<context:component-scan>功能上的关系
+
+*学完源码后要找相关的面试题做一做
+
+？在描述DefaultListableBeanFactory到BeanFactory的关系时，他们是继承关系，tom说这是委派模式，但个人感觉不是。 
+  委派不应该是调用的关系，而不是继承或实现的关系。 
+
+？spring的aop在实际中有什么应用
+？原生bean经过beanWrapper包装有什么用处，是为了aop吗
+
+？RandomAccessFile类的使用学习，网上找了都比较简单
+
+？spring在getBean()得到的是包装后的代理对象，没有原始对象的注解信息，如果开发者要用到原始对象的注解信息怎么办
+
+？多数据源共存的情况下，如何去处理多个数据库的事务，应该属于分布式事务。
+
+--------------------Spring end------------------------------
+
+--------------------分布式 begin------------------------------
+
+*领域驱动，个人理解：即按照不同行业业务，将业务里的功能拆分细化，即拆分为不同的领域。如dubbo源码里就分了不同的模块，有admin有rpc等，这应该是就是不同的领域。
+ 应该说是按照行业领域去建立模型，比如将烟草采购这样一个业务抽象成模型或者说是类，在这个类模拟了这个业务，具体的一些过程操作等都做这样的模拟，做面向对象。
+ mic在课程中提到领域案例代码是在service层和dao层添加领域层，这个领域层个人理解就是按照业务划分了细颗粒度的模块并在一些聚合模块进行组装，从而供service层用。
+
+*分布式环境下，数据的一致性怎么保证。 其实一般会用一种中间状态做处理。 比如下订单业务，一般是要支付完后才算下订单完成。但是由于支付是一个相对耗时的操作，这
+ 时就会先返回给用户“下订单成功”，然后在订单中的支付状态是支付中，而不是支付完成。这种中间状态是一种软状态。 等到支付完成后会通知更新订单去更新支付状态。
+
+*A/B测试（灰度测试），大概就是内部的测试，软件公司会征集一定范围的用户去试用新的产品功能，以达到测试新功能的目的。
+
+*socket时讲到NIO和BIO时，其实同步和异步一般是对于客户端来说，而阻塞和非阻塞一般是对于服务端来说。
+ *对于BIO进行通信时
+  1.客户端和服务端分别需要有发送缓冲区和接收缓冲区，服务端不将接收缓冲区内容读取到内存，接收和发送缓冲区都不会清空，客户端就不能继续发送剩余字节。
+  2.在此时如果别的客户端要连接服务端也进行通信就不行，因为已经被上述客户端占用，直到这个客户端处理完，对于所有客户端来说就是阻塞的
+ *对于NIO进行通信时（应该和NodeJs的事件轮询机制是一样的）
+  1.客户端和服务端在通信前，会建立一个个通道，每个通道对应了一个客户端和一个服务端。通道里保存了客户端和服务端的一些操作。
+  2.在通信时会有一个线程去轮询这些通道，发现那个客户端的发送缓冲区清空了，就去执行对应通道里的动作，网发送缓冲区去写。
+  3.由于轮询线程的速度是非常快的，看起来就像是所有客户端都能同时和服务端进行通信，达到异步的效果。 
+ 
+
+*常见的序列化工具 Jackson、FastJson、GSon、Hesian（dubbo用的是它的扩展Hesian2）、
+ dubbo除了Hesian2以外还提供了很多序列化的实现方案（实现类）
+ Protobuf是mic推荐，独立语言、可跨平台交互等诸多优势，但它要实现比较麻烦，需要学习成本。
+ 序列化方案的选型考虑的点：1.开销，大小和性能 2.计算耗时  3.是否跨平台 4.学习成本
+
+*Protobuf 官方支持C++、JAVA、Python等三种编程语言，但可以找到大量的几乎涵盖所有语言的第三方拓展包。
+ javascript前端可以使用protobuf 详见https://blog.csdn.net/arvin_kai/article/details/77532595
+ 行业已有的实践：Protobuf+Websocket做一些行业应用、Protobuf+Redis做缓存
+
+？测试Controller调用分布式的service实例时想service传递对象参数是通过序列化和反序列化传递的
+ ！通过debug 在Controller的service方法调用之前 和之时查看参数对象的内存地址
+
+*？通过课程了解RPC框架RMI的原理
+   个人初步理解RPC远程通信实现Controller里获取Service实例并调用的过程（以HiController、HiServiceImpl、HiService为例）：
+   HiServiceImpl实例通过固定的RPC框架的规范进行注册，RPC框架会生成HiServiceImpl的代理（HiServiceImpl_stub），并在宿主进程里保留HiServiceImpl实例
+   通过序列化和反序列化途径，HiController可以反序列化得到这个HiServiceImpl代理并用HiService接收。
+   在调用HiServiceImpl代理对应的HiService方法时都会通过RPC规范去掉用远程RPC框架的东西，再invoke远程HiServiceImpl里的方法
+   以上纯属个人理解，未看过源码，纯属猜测。
+
+*RPC不一定是用tcp协议也有用http协议的，但大多数会用tcp协议用socket，性能会比较好。
+
+？在一般RPC框架中，每一个服务（service）实例都用一个线程池线程去处理，如果这样服务多的话不是非常占用资源？ 
+ Socket socket=serverSocket.accept(); //监听服务
+ executorService.execute(new ProcessorHandler(socket,service));//通过线程池去处理请求
+
+
+*zookeeper
+ 分布式过程中出现的问题：
+  *协议地址维护：一个服务的集群或多个服务都需要有地址，这些地址多了就难以维护，就需要一个服务器
+  *负载均衡，请求一个服务，而这个服务是集群，则需要进行负载均衡，进行合理的转发请求
+  *服务动态上下线感知，一个服务的集群或多个服务，他们上线或宕机都需要被客户端所感知，需要通知到位。
+  *分布式时共享资源调用问题：多线程是线程间共享资源安全问题，而分布式则是进程间的共享资源安全问题。
+  *三态问题：除了事务中的成功与失败状态外的未知状态，可能由于网络通信、延迟等原因造成的。
+  *数据一致性，应用集群中各个节点数据保持一致，保持同步
+  *保证一些一次性远程调用只在一个应用集群节点执行。
+  *应用集群中一个节点挂了，其它节点如何接替它的任务。 
+ 解决方案：
+  *利用zookeeper的数据存储方式以及特性解决分布式过程中出现的问题（分布式协调服务）
+  *由于作为分布式环境下的协调者，所以要用集群和一些特性来保障zookeeper的高并发高可用。
+  *分布式服务在zookeeper集群上注册，则这些注册数据在这些集群节点间的同步是个问题（增强版2pc来解决）。
+ zookeeper特点
+  *树形结构存储，例如一个orderservice存储在一个节点上，而其集群中每个服务器的地址存储在这个节点的子节点
+   底层是基于ConcurrentHashMap的一个数据存储，包括以下类型：
+    *事务日志，每个事务请求都会记录日志，一般这些日志会单独挂载在磁盘上而不放在临时目录里
+    *快照日志，其实相当于对数据的一种备份，可以通过它恢复数据。
+    *运行时日志，在运行时产生的一些日志
+  *zookeeper中心化， 就是leader-follower模式集群，这时候就出现了读写分离，leader选举等一些问题。
+  *zookeeper树形节点特性（每个节点都叫znode）：
+   *同级节点唯一性，和windows的文件夹文件的结构特性一样，同一层目录下的文件夹或文件名不能重复
+   *临时节点特性,一个客户端连接zookeeper服务后创建了一个临时节点（临时节点不能有子节点），在会话结束后，该节点会自动删除
+   *有序节点特性，通过命令可以创建一个节点下的有序子节点，这些子节点会有一些特性，如有序....？后续补充下。
+   *节点要逐层删除，不能删除一个目录，只能逐层删除
+   *持久化节点，和临时节点相对
+   *节点监听，客户端可以订阅节点的相关事件watcher，当节点产生相应的变更时会触发客户端相应的操作。
+  *watcher特性
+   特点：当数据变化时会产生一个watcher事件，发送至客户端。但客户端只会收到一次通知，如果数据再变化，则客户端不会再
+         接受到消息。相当于是JQquery的一次性事件。如要永久事件，则需要循环去注册事件。 
+   绑定事件的3个操作：getData、Exists、getChidren
+   如何触发事件：凡是事务操作都会触发事件
+   事件类型：None(-1)、NodeCreated(1)、NodeDeleted(2)、NodeDataChanged(3)、NodeChildrenChanged(4),注意各个事件触发的时机    
+  *zookeeper集群角色
+   *除了一般中心化集群的leader、follower以外还有一个observer
+   *leader负责事务请求（zookeeper节点增删改查），投票选leader
+   *follower负责非事务请求（查），事务请求会转发到leader去处理，投票选leader
+   *observer增强集群性能，增强查，功能基本和follower一样，但不进行事务投票和leader选举投票。
+  *客户端与zookeeper建立连接过程中的几个状态：
+    NOT_CONNECTED,CONNECTING,CONNECTED,CLOSE
+    当连接成功后为CONNECTED时，如果断开了连接，会变成CONNECTING状态，此时在尝试n次重连后连上就是CONNECTED，否则是CLOSE
+ zookeeper节点事务提交过程（增强版2pc协议，二阶提交，即分两次处理）：
+    当leader节点收到客户端事务请求（增删改）生成zxid，它会给所有follower发一个要提交事务的携带zxid的消息（proposal），
+    follower接受到消息会将这个事务写到本地磁盘并返回一个同意的ack给leader。当超1/2的节点同意时，leader通知
+    包括自己在内的所有节点提交事务（即发起commit请求）以及将事务提交成功结果返回给客户端。还有同步给其它节点。 
+ zookeeper奔溃恢复（当leader挂了或leader失去过半follower联系即崩溃）（用zab协议解决）
+    在上述事务提交过程中，如果有的follower已经收到commit请求而有的没有，此时如果leader挂机，则此时这个事务已经有被某一个
+    follower提交了，所以是不能丢失的。 如果在leader还没发起commit请求前就挂了，则这个事务消息要被丢弃。
+    zab的设计思想：1.当有的follower接收了commit请求并提交事务而有的没有，此时有提交事务的follower的zxid会最大。
+                   2.zxid是在新产生leader后生成的64位数，高32位代表epoch（年号，即新的统治时期），低32位表示消息计数器。
+                   3.zxid最大会被选为leader，因为它代表了当前节点的事务是最新的，数据是最新的。
+ zookeeper的leader选举：
+    影响因素：
+     zxid最大会被设置为leader，zxid包含epoch和计数号两部分。这个事务id越大表示数据越新。
+     myid越大权重越大
+     epoch越大权重越大，每一轮选举epoch都会递增。
+    选举过程：
+     选举开始时每个zookeeper都会将自己的zxid、myid、epoch三项数据广播给其它zookeeper。
+     每个节点收到其它节点的三项数据，依次检查zxid，myid并进行投票
+     统计投票
+ zookeeper实际应用场景：
+  *当一个服务集群，如orderservice，会有一个orderservice节点和多个集群点地址子节点（临时节点），当orderservice中一台挂掉，
+   其对应的zookeeper临时子节点也会删除，此时会有通知到对应有订阅通知的客户端（orderservice的消费者）。
+  *配置中心，如应用有很多properties文件就可以通过zookeeper管理，当znode产生变更会通知到客户端（properties使用者）
+  *负载均衡，kafka集群可以在zookeeper上注册有序节点，此时节点序号小的为leader，当leader挂了又通过zookeeper又重新选举leader
+  *注册中心，如rpc的注册中心过程：
+   *服务端在zookeeper为serviceX服务创建一个节点，底下临时子节点对应一个服务主机地址，如addrA、addrB...
+   *客户端通过zookeeper获取所有serviceX服务的子节点，并通过zookeeper提供的负载均衡策略选出一个来使用，如选到addrB
+   *服务端和客户端通过zookeeper进行注册、获取、负载均衡，再加上动态代理等技术就可以实现高效的RPC调用
+   *客户端还可以监听serviceX服务的子节点增删，以此来更新本地内存对应serviceX的地址列表addrA、addrB、addrC....
+  *分布式锁，利用事件watcher等特性进行实现。有2种方式：
+   羊群效应方式：在zookeeper创建一个锁节点，所有客户端通过zookeeperApi去监听锁节点增删，一旦锁节点删除，所有客户端会再去抢锁（即抢注），抢到者即拿到锁。
+   依次监听方式：每个客户端再尝试拿锁时都去抢注创建一个临时有序子节点，所有子节点只监听它前面节点的增删，最小节点则认为是拿到锁，当最小节点释放锁，
+                 则第二小节点会监听到并去拿锁，以此类推。即再抢注环节，所有客户端的先后顺序已经排好，这应该就叫做公平锁。而羊群效应则是非公平锁。
+   分布式锁假想应用：在销售抢单过程中，通过请求创建zookeeper的临时有序子节点，如果抢到第一子节点的人进行业务处理，即抢到单，将单保存再该人名下。
+                     此方案还可将zookeeper请求改为单独的API，前端每次抢单前都去请求API，拿到权限再去请求真正的业务。不安全，但对于内部后台系统问题不大。
+ zookeeper实操点：
+ 集群安装、客户端zkClient.sh常规命令操作、集群下个点的数据一致性（数据同步）、更新数据时的版本号
+ watcher测试（用一个客户端连接并用get 节点名 true，这个命令就是开启watcher，然后再开一个客户端进行数据修改）、
+ sh zkServer.sh status查看zookeeper状态、查看zookeeper的epoch用命令vim zookeeper/version-2/currentEpoch
+ 利用javaAPI调用zookeeper增删改查，事件。 
+ 注意：
+  *当使用get命令去查看zookeeper的节点值时，会有一些当前节点的信息，如cZxid、mZxid等
+   cZxid是节点创建时产生的id，mZxid是节点修改时产生的id，pZxid是子节点变更产生的id
+   cversion是子节点的版本，dataVersion是节点值发生变更的版本，aclVersion是节点权限变更的版本，这些版本都属乐观锁
+   ephemeralOwner当前会话的信息 
+   dataLength节点值数据的长度
+   numChildren当前节点下子节点的数量 
+  *zookeeper每个节点建议只保存少量的数据
+  *zookeeper事务请求（增删改）都会转发给leader，而读请求可以放在任意节点
+  *磁盘的读写速度决定了zookeeper的性能。
+  *Mic在讲zookeeper的2pc处理事务的过程时，这个事务是指zookeeper数据的增删改事务
+  *看zookeeper的事务日志要用mic课程上讲的一个命令
+   03.分布式专题\04.分布式协调服务\录播视频\第二次课\20180606_了解zookeeper的核心原理（下）.vep  在11:12处
+  *特别注意javaAPI调用zookeeper时，sessionTimeout不能过小，否则在操作会出错，可能是中间有断开重连发生
+  *zookeeper在扩容时比较麻烦，需要将所有机器停机，做扩展配置再启动。或逐台机器配置重启。
+  ？zookeeper方面面试题在哪里
+
+*线程锁之Lock，详见博客园收藏《Java并发编程：Lock》，此文章很好，还涉及读写锁等知识点
+  *Lock只是一个接口，java中唯一的实现是ReentrantLock。
+   注意Lock只有少量方法供使用，ReentrantLock提供了isFair、isLocked、isHeldByCurrentThread、hasQueuedThreads等实用方法
+  *Lock接口有3个获取锁的方法，当多个线程同时（一定要保证同时）获取锁时，3者表现各不一样：
+    *lock.lock() 未获取到锁的线程会选择等待
+    *lock.tryLock() 未获取到锁的线程可以选择放弃或做其它操作
+    *lock.lockInterruptibly() 未获取到锁的线程会等待，但该线程可用thread1.interrupt()终止等待，
+                              必须在线程调用lockInterruptibly()的方法上声明异常而不是try-catch。
+                              而终止等待后的操作可以在捕获上述异常的地方进行处理。
+
+
+*dubbo （具体看学习笔记）
+ *分布式中遇到的问题（其实就是服务治理问题，而dubbo就是一个服务治理工具）：
+  *服务地址维护
+  *服务被请求时负载均衡
+  *服务请求限流/容错/降级
+  *监控
+ *常用配置（只列出其中几个）：
+  *注册中心配置,dubbo支持的注册中心zookeeper、redis、multicast、simple。支持多种类型注册中心同时使用，这里说的不是集群。
+           *dubbo在zookeeper上注册的节点结构大致如下
+            -dubbo
+              -com.gupao.userService
+                -consumers
+                  -...
+                -configurators
+                  -...
+                -routers
+                  -...
+                -providers
+                  -...
+  *缓存配置，dubbo的消费端可以配置服务列表的缓存，避免每次都去请求。？这个缓存的调用和维护时机后面讲
+  *协议配置，dubbo支持的多协议：rmi、hessian、webservice、http、thirft、dubbo
+  ？hessian是http协议是否说明app等其它客户端也可以直接调用
+    网上资料回答是肯定的（Hessian：使用HTTP协议，允许穿透防火墙，使用自己的系列化方式，支持JAVA、C++、.Net等跨语言使用。）
+    《dubbo组成原理-http服务消费端如何调用》
+    《Dubbox的介绍和简单示例》 https://wosyingjun.iteye.com/blog/2320127
+  *启动检查配置，dubbo服务的循环引用时启动时会报错，此时可以设置check="false"，启动不检查依赖服务是否启动
+   ？dubbo怎么通过zookeeper配置负载均衡的策略的。默认是随机负载策略
+  *服务集群容错配置（cluster这是分布式面试常有）
+   *由来：在分布式环境下serviceA调用serviceB调用serviceC，如果serviceC出错或不可用，则会导致serviceA、serviceB阻塞住。此时就需要一种容错机制
+   *容错机制：failsafe等6种，通过cluster属性配置  ??这里需要补充学习下 
+   *配置的优先级别：消费端和服务端都有相同配置的情况下，消费端较高。如都配置timeout，则以消费端为准。
+    1.消费端>服务端
+    2.方法配置>接口配置>全局配置
+   另外一个服务的配置可以具体到这个服务的具体方法中，即可通过<dubbo:method>进行配置
+  *服务集群的降级配置（mock）
+   *场景：比如一页面有算法推荐职位，当推荐服务出错，则web层就直接返回给页面一些默认的数据或静态的数据。 此时用户看到的并非真实算出来的推荐。
+         再如在大促销活动前，将一些非核心功能关闭（并且给用户一些友好提示），以保证核心功能在当前硬件环境下高可用高性能。
+         加验证码、12306在不同地区分时段分车次开放购票
+   *目的:为了保证核心服务可用。当在经过容错机制处理错误后可能自己吞掉错误，也可能交给服务降级mock去处理。
+   *类型：自动降级、人工降级。
+   *dubbo的mock：降级方案的配置。如服务端Service1实现IService1，然后消费端配置一个mock="ServiceMock"实现了IService1的本地类，当消费端调用
+                Service1服务时如果出错，则转而调用ServiceMock的实现，这就达到了所谓的服务降级。
+		注意，如果摸个服务访问流量超限制，这种情况是无法通过dubbo服务降级处理的
+                ？？但是服务多的话不是要一个个配置降级方案，那不很多。
+
+ *SPI机制：插件的一种规范，是dubbo框架的一个重要机制。
+     *java SPI机制
+ 	1.配置META-INF/services/接口全路径文件
+   	2.按照全路径对应的接口写对应实现类
+     *dubbo SPI机制，是自己的插件规范，每个可扩展的地方都称为"扩展点"（Extension），和spring的ioc容器，依赖注入di异曲同工。 
+        *起步：引入dubbo，然后通过按照dubbo规范通过ExtensionLoader.getExtensionLoader(Serialization.class).getAdaptiveExtension()调用做入口
+        *几个重要的类概念（假设扩展点接口IA，对应实现类有A1、A2）：
+	  ExtensionLoader<T>：是一个泛型的类，主要用于加载和实例化A1、A2，如果A1的属性也是扩展点则会用injectExtension()方法做依赖注入
+          IA对应一个ExtensionLoader实例,在这个实例会去缓存IA的实现类A1、A2的class
+          IA$Adaptive：IA实现类的适配器，用于适配具体的实现类以供开发者调用，比如适配是根据程序运行时的url参数对A1、A2的判断选择其一的过程。
+		     在ExtensionLoader实例中可以对AdaptiveExtension的类代码动态生成和编译（类型形如：IA$Adaptive），创建单例并缓存。
+		     也可在spi资源文件自定义适配器则用自定义的适配器。IA中如果@Adaptive放在类上则用自定义适配器，放方法则用动态生成编译。
+                     在ExtensionLoader相关操作方法:createAdaptiveExtension()、getAdaptiveExtensionClass()、createAdaptiveExtensionClass()
+          	     IA、ExtensionLoader、AdaptiveExtension是1:1:1关系。
+    	  Wrapper类：在定义IA的实现类中，若有一个带IA ia参数的构造函数的，则dubbo认为他是一个包装类，则所有的非包装类的IA的实现类都会被它包装	        
+	*几个注解：
+          @SPI("defaultValue") 表示当前被注解的接口类是通过SPI获取实现，即是一个可扩展点。
+          @Adaptive 加在接口类上表扩展点接口的实现类的适配器是在SPI的META-INF资源里自定义的适配器。加在方法是用动态字节码按一定规则生成的适配器。
+	*思想启蒙：适配器模式、双检查锁实现单例模式、SPI插件、动态字节码和编译、规范、泛型、Wrapper装饰器、缓存单例			   
+ *实操点：
+   dubbo发布服务的demo、dubbo服务用hessian和http协议发布的demo、负载均衡配置、粗略看源码（2.5.0-版本，之后）
+   服务的Version、mock（设置timeout=1来构造超时执行降级方案）、负载均衡、SPI、
+   通过ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension()源码来研究dubbo的SPI应用过程、
+   课程都学习完后去看mytotal和爱定家dubbo代码
+ *注意：
+   *分布式服务一般会将服务接口类作为一个单独的jar发布以供消费端使用。
+   *dubbo底层是用Netty进行通信
+   *dubbo下的服务可以不用打war和依赖Tomcat等web容器，可直接打jar包然后通过dubbo特定代码启动
+    注意dubbo支持了spring、jetty、log4j的container容器，用于启动服务的应用。默认spring容器
+ *问题：
+  ？容错和降级同时配置时是怎么样一种表现，还有在事务性服务链链是什么表现，这些应该是比较重要的内容
+  ？如果有很多个服务消费，那岂不是要配置和编写很多个mock	
+  ？双重检查锁定 if (instance == null) {synchronized(）{if (instance == null) {xxxx}}}  单例模式里有
+  
+***20180623_分布式服务治理Dubbo源码分析（上）.vep 15分
+--------------------分布式 end--------------------------------
+
+
+*到时候准备面试时，是否考虑到福州进行练手面试，缺乏大型互联网项目实战是一个很大的坎。
+
+*有时间的话，到后面可以按章节刷刷咕泡的问题论坛和qq群。
+
+*整合淘淘和jeesite形成自己的框架。
+
+*后期如果有需要用大量的数据做压力测试，可以找郭总或者找咕泡老师
+
+*职业方向：把业务功能做熟悉，再研究分布式重构。
+
+？？分布式环境下的事务处理、服务调用链出错等问题。这些必须进行系统深入的学习
+？？字节码重组，动态编译技术是否要深入的学习

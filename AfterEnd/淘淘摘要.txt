@@ -1,0 +1,250 @@
+﻿*8月10号
+
+*传统行业一般用普通技术，如数据库用oracle，容量大，速度快。
+ 
+*互联网项目用的技术新、范围广、分布式、高并发、集群、负载均衡、高性能、高可用、海量数据、业务复杂、安全性要求高
+
+*电商模式：
+ B2B 商家2商家  阿里巴巴、慧聪网、铭万网
+ B2C 商家2个人 京东
+ C2C 个人2个人 淘宝 
+ B2B2C 商家2商家2个人 天猫
+ O2O 线上2线下 百度外卖、美团、饿了么
+
+*集群：一套代码在多个服务器部署。假如用tomcat，则要求多个tomcat间用广播的形式来同步session，这将直接导致tomcat效率下降。
+ 分布式：一个系统按功能拆分成多个子系统，部署在不同服务器。会涉及到各个子系统间的调用（通信）。如果那个子系统并发量高就可以单独加服务器
+
+*上述子系统或服务间通信有webservice、restfull等。 淘淘商城使用double是基于soket通信的。
+
+*LAMP架构：liux+apache+mysql+php
+
+*taotao-manager是包含pojo、dao、inteface、service的聚合工程，其中service是web工程，有依赖其它子工程，如果要运行不要运行service工程
+ 而应该是运行taotao-manager工程，它会聚合最新的子工程，
+
+*taotao商城项目可以看所有工程的pom.xml文件来了解架构
+
+*一般互联网项目都用mysql而不用oracle，因为oracle开始不用钱，数据量大性能下降后需要oracle公司维护就需要钱，总之就是贵。
+
+*在单一个spring应用就会在web.xml配置ContextLoaderListener生成一个spring容器
+ 当加上spring-mvc时又会在web.xml配置DispatcherServlet生成一个spring容器
+ 第一个spring容器是第二个spring容器的父容器，在这里子容器可以访问父容器的内容，而父容器是不能访问子容器的内容
+ 所以在spring-mvc的配置里只配置controller的bean扫描，而在spring的配置里只配置dao和service的bean扫描。
+ 也就是说如果服务层和表现层分离，则表现层直接用spring-mvc的ioc容器即可，不需要配置spring这个大的父容器。
+ 注意：这个知识点要注意，因为父容器里的bean会配置事务，可能会引发一些问题。
+
+*doubbo可以理解为用socket传输，效率高，可以统一管理、监控，是阿里开发的。
+ 缺点是只能是两个java应用的相互调用，不能像webservice跨语言
+
+*zookeeper就是一个集群管理工具，和doubbo结合用，只是作为注册中心（也可以用Redis，但doubbo官方推荐用zookeeper）
+
+*课程中的mybatis插件pagehelper是有bug，老师修改产生了自己的版本。
+
+*使用MyBatisReverse反向生成mapper和pojo时，默认每个实体类都会生成一个对应的XxxExample附加类用于设置查询条件
+ 如要去掉附加类，可设置modelOnly 如<table schema="" tableName="tb_content"><property name="modelOnly" value="true"/></table>
+
+*dubbo也有一个@Service注解，所以在服务层使用spring的@Service注解要注意检查下导入的包是spring的
+
+*dubbo+zookeeper集群实践要点：
+ *xml配置dubbo服务时，需配置多个zookeeper<dubbo:registry protocol="zookeeper" address="192.168.1.245:2181,192.168.1.245:2182,192.168.1.245:2183"/>
+ *dubbo-admin-2.5.4.war部署后访问出现404，最后自己下载了dubbo-admin-2.6.0.war并将jdk8改为jdk7后成功
+ *dubbo-admin部署后，再用nginx做反向代理，后来用火狐访问时会出现401，但是在Chrome上却不会。
+ *在dubbo-admin上查看相关的服务注册成功并且处于可用状态，但消费者应用却启动报错，提示相关服务没法使用。 最后发现注册服务的dubbo端口没有开启（如:20880、20881...）
+ ?dfds上传图片后地址不正确http://192.168.1.236/group1/M00/00/00/wKgB7FvRhTWAGc9zAABQp7RoEMo279.png
+
+*a静态资源访问性能nginx>apche>tomcat
+
+*在用淘淘老师提供的图片服务器虚拟机时，需要改成25网段并且NAT网络，但我win7虚拟机是1网段，？似乎不好改，需要注意尝试下
+
+*按照淘淘FastDFS部署教程部署后，在其自带客户端测试上传前，出现以下错误
+ ERROR server: 192.168.20.175:22122, response status 2 != 0.....
+ 解决：在linux执行下列命令
+       pkill -9 fdfs
+       /usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf
+       /usr/bin/fdfs_storaged /etc/fdfs/storage.conf
+ 应该是配置没有生效的原因，需要刷新配置文件
+
+*按照淘淘FastDFS+Nginx部署教程部署后，Nginx启动不了，报80端口被占用，
+ netstat -apn | grep 80直接找到占用进程49944，然后kill -9 49944
+
+*测试图片上传功能时发现直接用springmvc @ResponseBody返回上传结果对象对于有些浏览器是不兼容的，需要将对象转为json字符串再返回。
+ 详见https://blog.csdn.net/xxssyyyyssxx/article/details/72841472
+ 
+*FastDFS上传后的文件放置在 storage安装时配置的store_path0=/home/FastDFS/fdfs_storage里
+ 上传后的文件不能直接下载，而要结合Nginx才能能被外网下载访问。在
+*重启linux后再启动Nginx可能报错“nginx: [emerg] open() "/var/run/nginx/nginx.pid" failed (2: No such file or directory)”
+ 此时只需要新建/var/run/nginx/目录，然后再重启Nginx即可
+
+*在上传文件或者图片时，数据库存储的url如果是带域名的全路径，则以后查询不用转换，但域名如果更换则需要清洗数据
+ 如果数据存储的url是不带域名的相对路径，则在查询时就需要再将域名拼接上去，比较耗时。
+
+
+*nginx的每个虚拟机或反向代理配置先后顺序对于访问结果是有影响的。也就是说nginx的路由配置是有匹配顺序的
+
+*tomcat、nginx等应用在启动、运行过程中都会有日志记录，通过这些日志可进行快速排查错误异常。
+
+？FastDFS在安装过程中会报一些函数未定义的错误，没法解决，安装实践失败。
+
+*淘淘项目将taotao-manager-web等一些子项目放到聚合项目taotao-manager的目录下，
+ 其实这样的处理我个人觉得不妥（不过实际项目很多人都这么用，可能是因为eclipse建聚合工程是这么默认的）
+ 因为聚合项目只是为能够统一编译多个项目，而不是因为多个项目有很强的内在业务联系。
+ 在目录结构上taotao-manager-web等子项目和聚合项目taotao-manager可以是平级的关系，
+ 如此在另外的聚合项目中去聚合taotao-manager-web等子项目才不会显得唐突。
+ 另外taotao-manager-web继承的是taotao-manager而不是taotao-parent，我觉得也有问题
+ 因为这样直接依赖了taotao-manager，如果taotao-manager-web要被其它聚合项目单独引用怎么办？
+ 如果出现这种情况，就必须还引用taotao-manager
+ ？？研究为什么是否可以聚合工程不作为子模块的父工程，实践证明是可以的。
+
+*当服务器重启，zookeeper如果没有重启（查看状态），则将其data下有一个.pid后缀的文件，将其删掉即可再启动。  （没实践过，需要实践。）
+
+*Redis不适合保存大数据，它主要用于解决高并发问题。因为它是单线程
+ Redis的持久化方案有两种方式rdb和aof，其中一般用rdb性能好但丢失率会高，aof则相反。 
+ 所谓丢失率是因为定期存储到硬盘时可能中间间隙会断电等突发状况出现。 
+
+*部署至少6（3台备机），投票宕机机制（投票达到50%+就认为他挂了）,备机去链接。如果只有2台则无论怎么样宕机都没有超过50%
+
+*查看Redis启动状态命令 ps aux|grep redis
+
+*redis是以key-value形式存储，只是value有5中数据类型。无论value是哪种数据类型，存储时key是不能重复的，否则可能发生覆盖或错误
+
+*商品详情使用redis缓存的思考：
+ 如果全部商品不管热不热点都往redis加，redis是内存型缓存就很容易爆满。
+ 如果要根据商品点击率判断是热点商品，再往redis加，则还需统计点击率，增加数据库压力，反而失去使用redis缓存的意义。
+ 我们可全部的商品都往redis加，但是设置较短的过期时间，如果是热点商品则会在过期时间之前再加时，而非热点商品就会因为长期不访问而过期删除。
+
+*redis中String类型存储是可以设置过期时间，而如果是Hash类型的是不能单独对每个列设置过期时间的。
+
+*solr的索引库在自动导入数据库数据时，可以用DataImporte插件，但是一般我们不用而用自己手工导入，因为
+ 1.它的管理要在solr的后台，而这种导入数据功能一般是放在业务管理系统的后台
+ 2.在solr做集群时，DataImporte插件配置比较麻烦，而且可能会有一些问题。
+
+*solr的业务域，主要是用来定义业务相关的数据列，如id、title等。
+ 如要进行分词的数据列其数据类型要定义为fieldType（注意fieldType这个是要在schema.xml里定义）
+ 如果数据列的数据类型是String类型则可以索引，但是不进行分词
+ 其中复制域是包含其它业务域的一个域，如果我们要在多个域里搜索就可以配置一个复制域，就只要在一个复制域里搜索。
+ 业务域定义示例：<field name="item_title" type="text_ik" indexed="true" stored="true"/>
+ 其中name指定列名；type指定列类型，只要用分词器定义的fieldType才能分词；indexed为是否建索引即存储到索引表；stored为是否存储到原始记录表。
+ indexed相当于决定该字段值要不要想分词表里添加分词索引，而stored相当于要不要存储该字段的值到原始记录表里
+ 在增加业务域列时，注意原本的schema.xml已经有一些列了，如id、title
+
+*solr在增加索引库里已有的数据，是先删除后添加，里面有一个_version_字段用于表示更新的版本，相当于是一个时间戳。
+
+*在做solr集群时候千万不要复制已经用过的tomcat-solr包，否则solr里一旦有数据就不好处理。
+
+*在实践部署淘淘商城中，测试solr集群一直不能写入，后来先后发现两个问题：
+ 集群版solr连接配置constructor-arg有错，修正后还是不能写入。
+ 检查发现之前zookeeper有保留之前solr部署的一些配置，写入solr时会写入到以前236机子上的solr。
+ 一直找不到原因，以为solr集群或zookeeper集群配置有误。 后来在检查代码里的集群版solr连接配置
+ 才发现<property name="defaultCollection" value="collection1"/> 写成之前236的solr上的collection2
+ 所以一直链接到236
+
+*在部署单机或集群solr时，可以复制solr-4.10.3/example/resources/log4j.properties到tomcat下classes以便于输出一些错误日志，否则都不输出。其它应用也是如此。
+
+*在部署taotao-sso时，热部署、普通部署都没办法正常启动项目，检查了tomcat相关配置也并未发现问题，最后发现项目里的相关配置文件都未正确配置，导致了启动卡住
+
+*单点登录逻辑：
+ 在controller里掉userService做登录，在userService里生成token并存储到redis。
+ 在controller里将token存储到cookie里，其实只是针对前端是web的情况
+ 在controller里将token返回，这样可适用于各类的前端，如web、app等
+ 应用服务的登录验证拦截是通过应用服务项目里的springmvc的拦截器统一拦截，
+ 判断请求是否携带token并与redis里的token做对比。
+ 注意:在sso-web项目中设置cookie时，domain应设置为所有二级域名的一级域名，即taotao.com或.taotao.com。以保证所有子域名下都可访问。
+ ？以后调研下CAS方案
+
+*zookeeper集群启动全部的批处理start-all.sh可以这么写，start-all.sh放在solr-cloud目录下。但是tomcat集群好像不能这么写
+cd zookeeper01/bin
+./zkServer.sh start
+cd ../../
+cd zookeeper02/bin
+./zkServer.sh start
+cd ../../
+cd zookeeper03/bin
+./zkServer.sh start
+cd ../../
+ 
+*同步搜索索引库的思考：
+ *如果在manager服务中添加商品时调用solr的接口去实现索引库同步，显然重复了serach服务里关于solr的封装。
+ *如果在manager服务中用dobbo依赖serach服务，那么依赖性太强，就必须要求manager启动前一定要启动serach服务。
+ 
+**MQ（如ActiveMQ）使用的场景（以下场景在电商行业经常用到）：
+  如：一个用户购买商品生成订单后，就马上向订单表插入一条记录。还要做一些附带的操作：通知同步搜索索引库、扣库存、记账扣款、发货...
+  如果这些操作在一个事务里面做，不管是本地事务还是分布式事务，都会让响应给用户的时间变长，导致体验变差。
+  此时可以先插入订单记录成功后直接响应给用户成功信息，然后其余附带操作用MQ给相应的服务发消息，如果相应的服务没有
+  正常处理消息，则MQ会再次发送，直至该消息被响应的服务正常处理才结束。
+  ？如果消息没正常处理成功，MQ一直发会不会造成消息队列一直阻塞在这个消息这里。如果丢弃这个消息，又不能保证业务事务的完整性。
+  ？如果是搜索用的是solr，需要有搜索功能的业务数据保存后是不是也是通过MQ通知到solr服务，然后solr进行业务数据保存？
+
+*ActiveMQ里queue和topic的区别要特别注意。 
+ queue的生产者可以先启动并发送消息，消费者可以后启动再接收消息。因为queue有持久化。
+ topic的生产者启动并发送消息前，消费者必须已经启动并保持启动状态。因为topic是无持久化的，发完即没了。
+  
+
+*slf4j是一个平台，相当一些接口。 而log4j是slf4j的一种具体实现。
+
+*大多数java的包都用log4j做日志记录，但不一定有log4j.properties配置文件，如没有可以在resources目录下添加，否则一些信息不回输出。
+ 如在dubbo+zookeeper使用过程中，如果zookeeper服务挂了，dubbo服务启动只会有warn警告信息，而不会有错误信息，有可能不回输出。
+
+*大型分布式电商项目架构 面试前可以看看 https://my.oschina.net/editorial-story/blog/1808757
+
+*mysql数据量达到千万级别时，速度会变慢。如果上亿就特别慢。
+ 可以MyCat做水平分库分表，注意不同业务表在不同的分库里时不能做跨库的join
+
+*利用apche的tomcat7插件进行热部署时注意，如果是使用dubbo发布的服务项目热部署后还是得重启tomcat。而表现层项目不用。
+
+*javaee出现406 有可能是因为请求url后缀是html而返回的是对象，浏览器不知道如何解析。也有可能是jar缺失。
+
+*linux下一般项目部署是在什么目录下，应该不会给root权限吧？ 
+
+~~~~明天或晚上了解下为什么商品添加mq通知同步索引库为什么用topic不用queue，另外如何保证事务完整性。
+
+*tomcat8+maven做热部署时，点击tomcat服务首页的Manager App不能弹出管理员登录框而直接报错
+ 可将tomcat下的tomcat/webapps/manager/META-INF/context.xml里的context节点下的内容注释掉即可
+ ？用intellij+tomcat7-maven插件热部署经常造成整个tomcat不可用，这是为什么。！可能是该tomcat应用还有相关进程在运行，用ps 和 kill干掉即可。
+
+
+
+
+？测试各种java的引用类型值对比， 如long 并不是直接使用==做对比，而是要获取对象的longValue()
+
+？研究mytotal在订单、购物车、sku、支付等电商业务的实现。 
+
+？597网站首页的缓存是缓存数据还是缓存页面的html字符串？
+
+*当准备面试时要整理一些东西：
+ 常用软件应用的端口，如Redis、FastDFS等
+ 常用管理工具SVN、Git的基本应用
+ 架构师级别在架构过程中遇到的问题和解决方案。
+ java一些现在在用技术对应的老技术，注意时间点，我有8年java经验。 
+ 电商类、cms类等类型网站的一些需求的解决方案，如秒杀活动
+
+？使用dubbo，那ios、Android等客户端如何调用，一定要中间加个web服务层吗？ 其中涉及到dubbo是tcp长连接问题
+！dubbo只是做 内网调用，对于ios、Android等客户端调用还是要调用表现层。
+
+？dubbo的服务要做权限验证怎么做？ ！应该是内部系统调用
+？dubbo注册服务，一个服务就要暴露在单独的一个端口，那服务器有那么多端口吗
+
+？597的索引库里的数据是手工导入还是在业务保存时插入到索引库，应该是定时导入。
+  597的索引库更新同步是通过linux自带的任务定时5分钟增量更新一次。
+
+？597的数据库好像就是用读写分离，淘淘老师说读写分离解决数据库并发是很low的。 所以用MyCat做水平分库分表的方式。
+
+？使用zookeeper、redis、solr、FastDFS等应用时，单机版和集群版的迁移是否需要练习下，或者有什么需要总结下。
+？在一般应用集群中要启动多个应用，可以用批处理，那一般怎么写？ 是不是要保证第一个启动完再启动第二个...
+
+？dobbo、kafka、solr等都需要用到zookeeper，那是可共用一个zookeeper还要分开用多个zookeeper
+
+？MyTotalWorld是如何让ftl替代jsp的,网上找资料做spring配置即可使用。
+
+? CDN原理和应用
+  在网络运营商那边买服务器，然后把静态资源缓存在网络运营商那边。
+
+？redis集群是如何重启的：
+  1.单台redis服务挂掉重启后加入集群  https://blog.csdn.net/shukebai/article/details/65979718
+  2.全部挂掉如何重启  https://blog.csdn.net/jiahao1186/article/details/81038884
+
+？redis有运行、访问日志吗
+  网上说设置redis.conf里的logfile 实践后发现似乎只有记录了启动日志。
+  ！如果没有运行和访问日志的话，我们在程序代码中用到redis的地方都要try-catch输出到应用程序日志
+
+？分布式环境下的事务
+
+？Nginx并发是如何突破socket 65535的限制？
