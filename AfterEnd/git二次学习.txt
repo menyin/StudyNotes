@@ -1,5 +1,12 @@
 ﻿*使用git时，尽量将项目的文件编码改为utf-8，以避免使用git过程中出现乱码的情况
 
+*解决项目目录和文件名中有中文乱码
+ 在 Git Bash 中使用以下命令设置来支持 UTF-8 编码。
+ git config --global core.quotepath false          # 显示 status 编码
+ git config --global gui.encoding utf-8            # 图形界面编码
+ git config --global i18n.commit.encoding utf-8    # 提交说明编码
+ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
+
 *常用命令
  git add --help打开 git add的帮助文档
  cd f:/进入f盘
