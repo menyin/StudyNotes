@@ -6,3 +6,12 @@
 *线上文档  
  后台 https://demos.creative-tim.com/bs3/material-dashboard-pro/documentation/tutorial-components.html?_ga=2.205780243.1633257749.1545634604-172135603.1545634604#tutorial
 
+
+*预定义颜色全局修改，在修改文件都会做cny注释
+ *在_colors.scss、_variables.scss几个基本颜色进行了替换，在_buttons.scss里对btn-info和btn-danger做边框修改
+  default #1d1d1d  
+  primary #91959a 
+  info #1d1d1d  边框
+  success #f7235e
+  warning #ff7e8f
+  danger #f7235e 边框
