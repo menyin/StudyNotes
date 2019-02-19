@@ -1,0 +1,35 @@
+﻿js实现继承的方式：
+function Person(){}
+Person.prototype.say=function(){alert('hi')}
+
+方式一：
+function Student(){
+ Person.call(this,arguments);
+ this.sId='120001';
+}
+方式二：
+function Student(){}
+Student.prototype=new Person();
+Student.prototype.getScore=function(){alert('99分')}
+
+方式三：混合方式
+function Student(){
+ Person.call(this,arguments);
+ this.sId='120001';
+}
+Student.prototype=new Person();
+Student.prototype.getScore=function(){alert('99分')}
+
+
+*万物皆继承Object
+ Array String会对Object的toString重写
+ 所以我们一般用Object.prototype.toString.call(obj)来做类型判断
+
+*js继承原理
+ 1、类型A的实例的__proto__属性会指向类型A的prototype
+ 2、而A类型的prototype的__proto__属性指向类型B的prototype，则A继承B
+ 因为A的实例会在A构造函数里查找属性，如果没有则去找__proto__,
+ 如果__proto__这个对象的构造函数没有相关属性，则会去__proto__的__proto__找
+ 即父类型的prototype.__proto__
+ function Person(){}
+ 
