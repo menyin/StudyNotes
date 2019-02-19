@@ -1,0 +1,60 @@
+【传智 76期Android】 
+
+*做Android的都会在www.umeng.com上注册账号，对自己的app进行一些访问的数据统计。
+
+*Android几个重要版本 2.3支持NFC  3.0仅支持平板   4.0整合2.3和3.0
+
+*Android系统的4层架构：
+  Application，放置用户的各种app和应用的地方
+  Application Framework 包含Android开发的各种类库，是Android程序员主要开发的一层。
+  libraries 和 dalvik ： 函数库和虚拟机层，  c/c++ 
+  linux kernel : linux 内核驱动层， c
+
+*Application Framework包含内容：
+  ActivityManager相当于Java里的selvelet，
+  ViewManager相当于Java里的jsp。 
+  WindowManager用于调用一些对话框等
+  ContentProviders内容提供商
+  PackageMananger用于应用安装卸载等
+  TelephoneyManager用于电话相关功能
+  ResourceManager用于获取手机上的一些资源
+  LocationManager位置相关的功能
+  NotificationManager通知消息相关功能
+
+*Android的虚拟机和Java虚拟机发展和区别
+ jvm ： java虚拟机 sun
+ dvm ：  dalvik虚拟机  google
+  
+*Eclipse下Android项目目录结构：
+ src 源码
+ gen 稍后解释。 其中有一个R.java文件需要注意
+ Android4.3/Android5.0...即Android的jar包，供编程调用
+ Android Dependencies Android相关依赖，与libs目录对应（内容一致）
+ assets 资产目录，xml、音频等
+ bin 编译目录，包含Java文件编译成的class.dex
+ libs 是外部链接的jar包，如百度地图API相关的jar包
+ res 资源目录 如图片等。每个资源在gen目录下的R.java文件代码里有对应变量引用。其中还有一个  AndroidManifest.xml清单文件相当与J2EE里的web.xml(用于配置selvelet)，AndroidManifestxml也类似
+
+*注意：Android环境部署的位数要和电脑位数相对应，同64或同32，包括Jdk、eclipse等
+
+*基本的调用过程：src/MainActivity.java进行编程处理，通过gen/R.java将数据传递到res/layout/activity_main.xml视图进行渲染。
+
+*Android下的Eclipse在部署到虚拟机时已经用Platform-tools里的各种工具进行编译打包
+ 如需要在CMD里手工编译打包应用则需要配置Platform-tools环境变量，相关工具命令如下：
+ adb kill-server 杀死adb链接服务
+ adb start-server 启动adb链接服务
+ adb install test.apk 安装应用，要先进入到apk的目录
+ adb uninstall cny.heima.test 卸载应用。其中cny.heima.test是应用的包名。
+ adb shell 进入手机的终端 在此命令后就可以再进行手机目录访问等操作。
+ adb push test.txt /mnt/sdcard 将文件推送到手机的/mnt/sdcard目录下
+ adb pull /mnt/sdcard/test.txt 将手机里/mnt/sdcard/test.txt拉到当前cmd所在的目录下
+
+*cmd命令下将文本标记后敲回车就复制了cmd里面标记的文本
+
+ 
+ 
+
+
+
+   
+ 
