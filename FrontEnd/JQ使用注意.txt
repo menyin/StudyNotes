@@ -1,0 +1,14 @@
+*JQ.animate()不能设置背景色动画。  一般用CSS3 transition设置，支持CSS3浏览器显示动画，不支持CSS3则显示简单hover效果。
+
+*动画效果兼容：如果不考虑IE个人一般用CSS3的transition，在CSS里定义hover或者在Js给Dom添加class，如果考虑IE则使用JQ动画效果
+
+*$(window).ready(function());  $(function(){}); $(window).on('load',function(){});三者区别
+
+*swiper.js做上下轮播时.swipert-container元素必须指定高度，如果轮播的图片是要自适应屏幕宽度时，则单张图片高度并不确定，此时必须用js在swiper初始化之前设置swiper-container高度。
+ 原理：经过个人测试，swiper插件上下轮播必须指定swiper-container高度，然后使得swiper-wrapper元素在其中上下运动。特别上述自适应情况，实际上swiper-container高度已经被多个swiper-slide撑开，所以必须动态设置。
+       可是为什么左右轮播为什么不用指定？因为在此时swiper-container已经撑开到100%，只能框在body父级内。而swiper-wrapper是绝对定位，宽度不受父级限制，他的宽度是多个swiper-slide撑开。
+
+*JQ.css()设置属性时并不能设置calc()计算表达式、filter等一些特殊属性。JQ.animate()也是不支持transform相关的动画
+网上找下有没有JQ扩展来支持CSS3的运动库，或另外总结一份CSS3运动库
+
+$('').animate(translateX:'-=150')

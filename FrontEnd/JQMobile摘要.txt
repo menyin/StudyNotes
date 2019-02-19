@@ -1,0 +1,101 @@
+**具体视频教程在黑马9期里找。但此部分视频有部分损坏。
+
+*WebApp、HyBridApp、NactiveApp三者区别：
+ 1.webApp是用html、css、js开发，在浏览器上运行，不能调用移动端本地接口，如摄像头等。
+ 2.HyBridApp是混合型App是WebApp和NactiveApp的结合，是将WebApp打包成各个平台可用的安装包(如安卓的apk)。
+ 但是HyBrid和原生的NactiveApp还是有一些体验上的差距，对于游戏类的app就可能不适用。如果是企业应用就可以满足。
+ 最流行的打包开发HyBridApp的平台PhoneGap。
+ 3.NactiveApp是采用Java、objectC等原生平台开发语言开发的App。
+
+*Dreamweaver本身有自带PhoneGap但是版本都是比较低的。所以一般用Eclipse装PhoneGap。
+
+移动开发框架：
+ jqTouch 
+ jQueryMobile应用最广泛的移动开发框架、和JQueryMobi有区别
+ Sench touch最早的移动开发框架
+
+*JQMobile1.4之后去掉了Dialog组件，用Popup组件替代。Accodion组件也去掉了，可以用Collapsible-set组件(折叠控件集)替代。
+
+*Jsrender.js是一个前端输出html的模板引擎。
+
+*JQMobile几个常用自定义属性
+ data-role表示布局方面的一些角色，如页面用data-role="page"
+ data-inset表示内嵌式的，具体？
+ data-filter="true" 表示要在组件里添加搜索框
+ data-theme="a"表示组件或控件的主题颜色，默认有5种主题，分别用a、b、c、d、e表示。自定义主题用ThemeRoller应用程序。
+ 
+*JQMobile常用的几个布局组件
+ page、listview、button
+ 
+*JQMobile的API包括默认配置、事件、方法与工具、数据属性参考、主题
+ 默认配置，其中allowGrossDomainPages表示能否跨域请求，如果要调用打电话等API就必须设置为true
+ 事件，其中一般用pageinit事件来代替平常使用的$('document').ready();
+      tap一次触碰触发
+      taphold按住一段时间后触发，默认750ms。似乎是可以自定义设置。
+      swipe、swipeleft、swiperight事件，手指滑动事件
+      vclick等虚拟鼠标事件
+      orientationchange横屏竖屏切换触发
+      scrollstart、scrolltop滚动开始和结束触发
+      pagebeforeload、pageload、pagefailed页面加载前、后、失败触发。
+      pagebeforechange、pagechange、pagechangefailed页面改变前、后、失败触发
+      pagebeforeshow页面转换时，页面呈现之前触发；pagebeforehide页面隐藏之前触发；pageshow页面呈现之后触发；pagehide页面隐藏之后触发。
+      pagebeformcreate、pagecreate页面创建前
+      pageinit页面初始化后
+      pageremove页面删除后触发
+      updatelayout在布局发生改变是触发(相当于C#里是refresh())，可以自己触发改事件。如在隐藏了某元素要重新刷新布局$('#mou').hide().trigger('updatalayout');
+      animationComplete插件事件。在动画完成后触发。？？
+ 工具和方法
+      $.mobile.changePage('list.html',{transition:'slideup'});//用slideup过度效果切换到list.html页面，可设置跳转方式，切换效果，是否有历史记录和hash值等，具体看API
+      $.mobile.loadPage('getlistdata.ashx',{type:'post',data:$('from#search').serialize()});提交数据并把后台返回东西加载到当前页面。
+      $.fn.jqmData()  $.fn.jqmRemoveData()替代jq里的data和removeData() 用于在指定Dom对象上绑定缓存数据，缓存数据可以是任意对象。
+      url字符串操作相关方法
+      ...
+
+ 数据属性参考     
+     组件：
+        按钮data-role="button" 注意在工具栏里的链接或者input[type=button]的元素即使没有data-role="button"也会被渲染成按钮。
+        按钮放在data-role="controlgroup"的容器中会形成按钮组。
+        按钮放在data-type="horizontal"的容器，按钮就在左侧。
+        可折叠组件data-role="collapsible"。该组件可设置的属性有data-collapsed、data-collapsed-icon、data-content-theme内容的主题、data-expanded-icon展开后图标、data-iconpos、data-inset、data-mini、data-theme
+        可折叠集组件data-role="collapsible-set"。该组件可设置的属性和可折叠组件类似。
+        内容区域data-role="content"。只有一个可设置属性data-theme
+        控件组data-role="controlgroup"
+        弹出框：有data-role="dialog"或链接使用data-rel="dialog"。该组件可设置属性data-close-btn-text、data-dom-cache、data-overlay-theme弹出框遮罩主题、data-theme、data-title
+        表单控件组：data-role="fieldcontain"应该是有点想bootstrap的class="form-control"
+        工具栏：data-role="header"顶部工具栏、data-role="footer"顶部工具栏，工具栏设置data-position="fixed"可是工具栏固定。可设置属性有data-disable-page-zoom是否可缩放、data-fullscreen是否全屏、data-tap-toggle是否可切换、data-transition转换效果、data-updata-page-padding、data-visible-on-page-show
+        导航栏：data-role="navbar"
+        页面：data-role="page"
+        ...
+
+     属性：
+     data-role定义组件或元素的角色
+     data-rel定义组件或元素相关的一些东西。
+     data-corners是否是圆角
+     data-icon设置icon图标，可选值home|delete...
+     data-iconpos设置icon图标的位置，可选值left|right|top|bottom|notext
+     data-iconshadow设置icon图标的shadow  bool值
+     data-inline 是否是行内内嵌的，bool值
+     data-mini 是否是缩小版的样式，可选值true|false|-Compact|sized|version
+     data-shadow 是否有shadow bool值
+     data-theme 主题 可选值swatch|字母a-z
+     data-type设置样式是垂直或水平或其它。可选值horizontal|vertical...
+     data-enhance="false"或data-ajax="false"设置该属性将使得其不被JQMobile渲染，如主题等。
+     data-ajax="false"如a标签上添加该属性，则点击后跳转的页面就不会放在data-role="page"的元素里。就是不会渲染成JQMobile的page页面。
+     data-fullscreen="true"配合data-position="fixed"可作出header在触屏的时候隐藏，再触屏的时候再出现的效果。
+     data-dismissible="false"设置弹出框时，点击弹出框之外的地方会不会触发弹出框关闭。
+     ...  
+   
+*如果链接到的页面是多页请或者跨域在连接上加上data-ajax="false"或者rel="external"。 前者一般用于同域页面，后者一般用于跨域页面。
+*链接上加data-rel="back"时，跳转到目标页面后会在页面产生一个back按钮，返回时会刷新前一个页面。如不想刷新则再加上direction="reverse"即可。
+
+*JQMobile在不同个页面之间跳转时，只在主页面加载两个页面：主页面和副页面，主页面跳转到副页面时副页面产生，副页面再跳转到其它页面时会再将原本的副页面替换。
+ 设置$,mobile.page.prototype.options.domCache=true;则每次跳转的页面都会缓存下来，不会用副页面进行替换。
+
+*注意panel组件的dom要放到data-role="page"的dom里面。
+
+？？pageinit、pageload、pagecreate这些事件有什么区别 
+
+*当在页面渲染完后用Ajax动态请求数据并添加了一些Dom时候，这些新增Dom可能就没有JQMobile的样式。此时要用刷新方法刷新(不同组件调用方法名不一样，参数都是'refresh')，例如用$('.select').listview('refresh');来刷新列表。
+
+*官网查询常用的组件的属性：菜单APIDocumentation-Reference-Data Attributes
+

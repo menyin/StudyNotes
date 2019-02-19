@@ -1,0 +1,16 @@
+*FireWork 是Adobe推出的一款网页作图软件
+
+样式常见问题：
+1.在页面上的样式没有起作用：css中类选择器的点没有写
+2.在页面上的div元素跑位：可能是上面的div有使用浮动，需要在该div之前加清除浮动的<div style="clear:both;"></div>,也可能是上面的父div的高度小于其子div的高度。
+3.ul li中使用浮动使li在一行显示，则无法使得ulli总体居中：可以定义li的样式为display:inline并且设置ulli所在div的样式为text-align:center
+4.如何让ulli垂直居中？？
+5.设置ul li分隔符时候如果是利用li的背景图实现时，则在最后一个li会多出一个分隔符：可以单独为最后一个li设置background:none
+6.在ps切带有文字的图片时候，如果切出的图片文字不够清晰：可以设置文字图层的“aa”为无，如将“锐利”改为“无”
+7.设置标签的背景图像时可以用具体像素定位背景图片位置：background:url(../images/nav_bg.jpg) no-repeat center 90px;或者background:url(../images/nav_bg.jpg) no-repeat 90px 90px;
+8.在火狐下F12调试模式下选中对应标签 在界面上显示的黄色部分为外边距，紫色为内边距
+9.h标签里可以嵌套span标签
+10.ulli和span可以放置在同一行显示，可以做出“左右是图片按钮，中间是图片列表”的效果(时尚家居实例)
+11.nth-child等伪选择器不支持IE浏览器，此问题可用jQuery的选择器来用脚本添加样式。
+12.利用a标签样式display:block;可以将其变成块级元素，然后实现交互按钮效果
+13.如果在ul里的li中有一个单独命名类的li，如<li class="nopad"> 则要选择此li  用ul li.nopad;注意在li和.nopad之间是没有空格的！！

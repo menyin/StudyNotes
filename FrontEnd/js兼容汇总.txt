@@ -1,0 +1,158 @@
+﻿*关于window、document、body的宽高
+网页可见区域宽：document.body.clientWidth; 
+网页可见区域高：document.body.clientHeight; 
+网页可见区域高：document.body.offsetWidth   
+(包括边线的宽);
+网页可见区域高：document.body.offsetHeight 
+(包括边线的宽);
+网页正文全文宽：document.body.scrollWidth; 
+网页正文全文高：document.body.scrollHeight; 
+网页被卷去的高：document.body.scrollTop; 
+网页被卷去的左：document.body.scrollLeft;
+网页正文部分上：window.screenTop; 
+网页正文部分左：window.screenLeft; 
+屏幕分辨率的高：window.screen.height; //指的是电脑屏幕的，一般做移动端会用到。
+屏幕分辨率的宽：window.screen.width; 
+屏幕可用工作区高度：window.screen.availHeight; 
+屏幕可用工作区宽度：window.screen.availWidth;
+
+
+ *阻止事件冒泡：IE用window.event.cancelBubble=true；标准用ev.stopPropagation();
+  阻止默认事件：IE用return false；(事件绑定时使用)或window.event.returnValue=false;(事件监听时使用) 
+                标准用return false；(事件绑定时使用)或ev.preventDefault();(事件监听时使用)
+
+*事件对象IE用window.event,标准用事件方法的参数(如ev)，兼容处理var eventObj=window.event||ev;  var targetObj=eventObj.target||eventObj.srcElement;
+
+*obj.style.width形式只能获取到行间的非复合型样式，如果要获取计算后非复合型样式(注意js无法取到css里的复合样式如background)
+ 使用obj.style.width是无法获取到写在样式表里的样式，而要用currentStyle或GetComputedSytle 代码如下：
+ function getStyle(obj,attr){//obj对象，attr目标样式属性
+   if(obj.currentStyle){
+     return obj.currentStyle[attr];//支持IE Opera
+   }else{
+     return getComputedStyle(obj,false)[attr];
+   }
+ }
+
+
+*获取子元素：
+  1. obj.childNodes;获取所有子节点，包括文本节点(也包括空文本)，需要判断nodeTy!=3, 1为DOM元素，3为文本节点，注意IE8测试结果是childNodes是获取所有DOM子节点
+  2. obj.children;获取所有子元素，不包括文本
+  3. obj.getElementsByTagName('li');//获取指定标签名的子元素或所有Dom元素(用*号来匹配)
+
+
+*通过parentnode获得元素结构上的父元素，而通过offsetParent获取元素定位上的父元素(如position:absolute定位时的父元素)
+
+*getElementByTagName('*')方法里*号作为通配符来选取所有元素标签
+
+
+*document实际上是网页中最顶级的虚拟的父节点
+ 此处要注意document.body和document.documentElement区别
+ 1.document.body代表body节点、document.documentElement代表html节点。
+ 2. IE : document.documentElement.scrollHeight = document.body.scrollHeight + marginTop bottom高度 + 上下border宽度
+    firefox : document.documentElement.scrollHeight = document.body.scrollHeight + marginTop bottom高度
+ 3.在声明了<DOCTYPE>的html里，设置滚动条滚动高度document.documentElement.scrollTop=200;么有<DOCTYPE>声明的用document.body.scrollTop=200;
+   var scrollTop=document.documentElement.scrollTop||document.body.scrollTop兼容处理
+
+*元素的样式的width很多时候并不等于offsetWidth, width指的是元素样式里的宽，而offsetWidth=width+border+padding代表实际元素占用的宽度
+
+*计算机在存储小数时是模拟的，偶尔会出现一些问题如alert(0.07*10)，尽量避免使用小数,因为小数计算存在的误差会产生一些不可预知的问题。
+
+*this指向问题：
+ 一、this所在函数不在另一个函数内被调用。此时this指向window
+ 二、this所在函数在另一个函数内被调用，包括以下情况
+    1.this所在函数被对象调用指向该对象
+    2.this所在函数在事件函数里被调用，指向触发该事件的对象
+    3.IE用attachEvent('onclick',fn);绑定事件函数时，fn里的this会改变，指向window
+    4.通过call或者apply调用函数时，该函数里的this指向call或者apply的第一参数(如果该参数为null或undefined则还是找原来的规则指向)。
+
+
+*JS中继承过程中必须注意子类父类里有可能会出现事件冒泡，所以事件中要注意使用return false来解决事件冒泡
+
+*JS系统对象
+ 1.本地对象：非静态对象，常用的有Object、Function、Array、String...
+ 2.内置对象:静态对象，用到的就只有Global、Math
+ 3.宿主对象：由浏览器提供的对象，用到的就只有DOM、BOM
+
+ *鼠标滚轮事件，火狐下用DOMMouseScroll并且要用监听的方式注册。其它浏览器用onmousewheel可正常注册。
+
+*阻止事件冒泡IE用window.event.cancelBubble=true；标注用ev.stopPropagation();
+ 阻止默认事件IE用return false(事件监听时使用)或window.event.returnValue=false; 标准用return false(事件监听时使用)或ev.preventDefault();
+ 注意：在FF下事件监听方法注册事件时，return false;并不能阻止默认事件。
+  
+*在函数中如果不声明变量就直接给变量赋值即a=12;则系统会将a当成全局变量
+
+*js中出现undefined有2种情况：一是变量没有定义，二是变量定义了但没有放东西
+
+*Number(变量)和parseInt和parseFloat功能相似，但对于参数里的变量要求更为严格，要求被转换的都要是数字不能有其它东西
+
+*with语法的使用,用于简化代码写法，会有问题不推荐使用，如
+ with(oDiv.style){
+    width='200px';
+    height='200px';
+ }
+
+ 
+*DOM方法和innerHTML方法添加元素性能比较，chrome下前者优于后者，在Firefox下后者优于前者
+
+*oDiv.style.cssText='width:100px;heigth:200px;';此方法用于一次性添加多个样式
+
+*oDiv.href和oDiv。getAttribute('href');//区别在于前者为绝对地址，后者会是相对地址
+
+
+*内联元素在绝对定位或者浮动之后就会变成块级元素，也就是说就可以设置其宽高
+
+*对于img来说，动态调整期width而没有调整height，则height也会等比例缩放。
+
+*元素的min-width属性作用，当浏览器可视区域大于min-width时，则元素会随之撑开，如果浏览器可视区域小于min-width值则元素宽就等于min-width值，此时浏览器会出现滚动条
+
+*获取界面选中文字兼容处理
+function selectText(){	
+	if(document.selection){ //ie
+		return document.selection.createRange().text;
+	}
+	else{  //标准
+		return window.getSelection().toString();
+	}
+		
+}
+
+*文本框输入事件(只要有输入就触发，连续触发。注意：此事件在页面加载后就会触发一次)：IE用onpropertychange，标准用oninput
+
+ *判断是否是IE简单办法：var ie=!-[1,]; if(ie){alert('是IE');}
+
+  *margin兼容问题：
+ 1.在ie6下同时用float和margin后，ie6会解析为2倍margin
+ 2.在FF下，元素设置了margin-top则，margin-top会转嫁给该元素的父元素。
+
+*offsetParent属性返回一个对象的引用，这个对象是距离调用offsetParent的元素最近的（在包含层次中最靠近的），并且是已进行过CSS定位的容器元素。
+如果这个容器元素未进行CSS定位, 则offsetParent属性的取值为根元素(在标准兼容模式下为html元素；在怪异呈现模式下为body元素)的引用。
+当容器元素的style.display 被设置为 "none"时（译注：IE和Opera除外），offsetParent属性 返回 null 。 
+
+*获取浏览器可视区域var veiwHeight = document.documentElement.clientHeight;
+		var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+
+ *特别注意：在aspx页面中﻿<%@ Page %>标签之前如果有换行或空格则在渲染成html后会产生一块空白区域。造成样式问题。
+
+*关于html、body高度问题。
+ 个人理解：1.html标签的直接父级元素应该是浏览器窗口，所以html{height:100%;}直接结果是让html高度等于浏览器窗口高度，而不是文档内容高度。
+           2.如果html和body同时设置height:100%;则html和body的高度就都等于浏览器窗口高度。
+           3.当2点情况下，如果body内容高度超出浏览器窗口高度则会产生滚动条。此时其实是内容自己溢出自己父容器body
+           4.当2点情况下，再设置html的背景色，背景色的高度居然大于浏览器窗口高度，这点是无法解释的。
+           5.其实在内容高度小于浏览器高度时，html默认高度为浏览器高度，但是如果内容多就会撑开html高度。但是如果html{height:100%}则html高度固定等于浏览器高度。
+
+
+*注意css3 animation动画使用过程中时刻要注意操作的元素的transition值是多少，如果设置很短时间，则再用JQ的动画或其它动画就看不出效果。在做妙味官网就遇到过这样的问题。此问题可以作为面试难题。
+ 所以在使用transition时候尽量都要指定其样式参数
+
+*CSS设置3d空间时，注意外层box容器不要设置overflow:hidden;否则其内部进行3d变化的元素会看不见。
+
+*对于window下的alert、confirm都是阻塞当前js线程的，而且样式在各个浏览器不同以及不美观，所以一般都会使用自定义的弹出窗口。
+
+*函数表达式注意事项：
+ 1.一般我们使用自执行的函数表达式来生成一个作用域，如(function(window){//do samething})(window)
+ 2.如下代码会出现问题，因为第一行代码后面未加分号结束，所以js解析为 var fun1=function(){console.log(11111);}(function(){//console.log(2222)})//在此function(){//console.log(2222)}部分作为对象传入  (); 
+   var fun1=function(){console.log(11111);}  //第一行代码
+   (function(){//console.log(2222)})();  //第二行代码
+ 3.如下代码会报错，为什么第2个注意事项中第一二行代码会变成一个函数表达式，因为它用var fun1=...来赋值，结果后面的东西就变成函数表达式。而下面的代码没有用变量赋值，所以不能作为函数表达式自执行。
+   function (){//console.log(1111)}();
+ 总结：用小括号包裹、前面添加赋值变量或运算符(如！、+等)都可以使得函数变成函数表达式。平常我们都用小括号，但压缩工具压缩后都会用！或+，这样可以减少字符

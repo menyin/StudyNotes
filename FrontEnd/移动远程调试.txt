@@ -1,0 +1,7 @@
+*进行远程调试参考博客园《安卓手机移动端Web开发调试之Chrome远程调试(Remote Debugging)》
+ 原理：利用chrom插件(在地址栏中输入chrome://inspect即可进入该插件)，在USB链接的手机上打开chrome浏览器并输入网址即可调试。
+ 注意：1.需要翻墙；2.手机chrome版本要<=PC的chrome；
+
+*webstorm通过settings设置可以使得自身启动的服务，能够被同局域网的移动端访问到。
+
+
