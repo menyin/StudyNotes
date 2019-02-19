@@ -70,6 +70,8 @@
 
 *Mic等老师用了一款在线绘图工具，很方便，可绘制流程图、思维导图、原型图、UML、网络拓扑图、组织结构图等。详见 https://www.processon.com/
 
+*前人经验：https://gper.gupaoedu.com/articleContent?id=26    https://102.alibaba.com/downloadFile.do?file=1530517140411/Codelife.pdf
+
 ？《5月下旬学习指导.mp4》22分提到明天下午有英文课程，是指什么课程？
 
 Tom老师，你好，
@@ -546,20 +548,32 @@ Tom老师，你好，
      *java SPI机制
  	1.配置META-INF/services/接口全路径文件
    	2.按照全路径对应的接口写对应实现类
+	3.
      *dubbo SPI机制，是自己的插件规范，每个可扩展的地方都称为"扩展点"（Extension），和spring的ioc容器，依赖注入di异曲同工。 
         *起步：引入dubbo，然后通过按照dubbo规范通过ExtensionLoader.getExtensionLoader(Serialization.class).getAdaptiveExtension()调用做入口
         *几个重要的类概念（假设扩展点接口IA，对应实现类有A1、A2）：
 	  ExtensionLoader<T>：是一个泛型的类，主要用于加载和实例化A1、A2，如果A1的属性也是扩展点则会用injectExtension()方法做依赖注入
+			      其中用到ExtensionFactory的适配器实现类AdaptiveExtensionFactory，它的getExtension(Class<T> type, String name)
+			      就是通过名称name获取指定的扩展点实现类，而AdaptiveExtensionFactory内部维护了一个factories集合用于存储扩展点的
+			      所有实现类实例。总而言之，扩展点接口有多个实现类，而扩展点的适配器是用于从多个实现类中进行适配或选择其中一个
+			      具体实现类的角色，而Wrapper包装类在适配器之前对实现类进行的一层包装 
           IA对应一个ExtensionLoader实例,在这个实例会去缓存IA的实现类A1、A2的class
           IA$Adaptive：IA实现类的适配器，用于适配具体的实现类以供开发者调用，比如适配是根据程序运行时的url参数对A1、A2的判断选择其一的过程。
 		     在ExtensionLoader实例中可以对AdaptiveExtension的类代码动态生成和编译（类型形如：IA$Adaptive），创建单例并缓存。
 		     也可在spi资源文件自定义适配器则用自定义的适配器。IA中如果@Adaptive放在类上则用自定义适配器，放方法则用动态生成编译。
                      在ExtensionLoader相关操作方法:createAdaptiveExtension()、getAdaptiveExtensionClass()、createAdaptiveExtensionClass()
           	     IA、ExtensionLoader、AdaptiveExtension是1:1:1关系。
+		     目前理解的是凡是动态生成的适配器类它都是根据实际注册到注册中心的url里的对应参数进行扩展点实现类的选择和处理。
     	  Wrapper类：在定义IA的实现类中，若有一个带IA ia参数的构造函数的，则dubbo认为他是一个包装类，则所有的非包装类的IA的实现类都会被它包装	        
 	*几个注解：
           @SPI("defaultValue") 表示当前被注解的接口类是通过SPI获取实现，即是一个可扩展点。
-          @Adaptive 加在接口类上表扩展点接口的实现类的适配器是在SPI的META-INF资源里自定义的适配器。加在方法是用动态字节码按一定规则生成的适配器。
+          @Adaptive 加在接口类上表扩展点接口的实现类的适配器是在SPI的META-INF资源里自定义的适配器。用到扩展点时实际上是用这个适配器类。
+		    因为ExtensionLoader代码里默认就是去取它 ，而加在方法是用动态字节码按一定规则生成的适配器。
+	*服务发布过程：dubbo自定义了很多spring的xml标签，并通过ServiceBean(对应的标签为<dubbo:service/>)作为启动入口，进行一系列初始化过程。
+		       详见CSDN收藏《Dubbo源码解析之服务发布与注册》 https://blog.csdn.net/laravelshao/article/details/83655652
+		       注意：服务发布类调用时序图、Invoker是包含远程方法调用信息和动态代理类的信息类		    
+        *服务订阅过程：和发布过程类，<dubbo:reference/>是入口，详见CSDN收藏《Dubbo学习之路（五）：服务消费者发现和订阅服务源码解读》
+        		https://blog.csdn.net/jadebai/article/details/80684870
 	*思想启蒙：适配器模式、双检查锁实现单例模式、SPI插件、动态字节码和编译、规范、泛型、Wrapper装饰器、缓存单例			   
  *实操点：
    dubbo发布服务的demo、dubbo服务用hessian和http协议发布的demo、负载均衡配置、粗略看源码（2.5.0-版本，之后）
