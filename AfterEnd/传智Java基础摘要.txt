@@ -260,6 +260,8 @@ jar文件的作用：
  this.getClass().getResource(pathString),如果pathString是以"/"开头代表从classpath路径开始，否则是以当前类所在包路径开始
  this.getClass().getClassLoader().getResource(pathString), 该方式是以classpath路径开始的。不能以"/"开头，否则结果为null。
 
+*Thread.currentThread().getContextClassLoader()注意它的使用，详见CSDN收藏 https://blog.csdn.net/u012569119/article/details/45954543
+
 *java当前路径，即执行java命令时，控制台的当前路径
  java绝对路径，即物理路径，一般包含盘符，但是有些系统是没有盘符的
  java类文件相对路径，即相对于classpath的路径。可以这样获得相对于classpath路径的一些文件输入流：Calss clazz=DBUtil.class;InputStream inputStream = clazz.getResourceAsStream("/db.properties");

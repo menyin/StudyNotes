@@ -1,6 +1,8 @@
 ﻿*学习教程 https://www.imooc.com/learn/924
 *破解教程：https://blog.csdn.net/qq_32595075/article/details/79675380
 
+*哲敏给的intellij2017 注册服务器 http://idea.xlet.org
+
 *intelliJ的project相当于eclipse里的工作空间  module相当于eclipse里的工程
 
 *intellij两个项目同时开启两个tomcat时要更改不同的端口号，包括JMX Port

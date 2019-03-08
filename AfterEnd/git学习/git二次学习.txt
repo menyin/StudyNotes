@@ -1,4 +1,19 @@
-﻿*常用命令
+﻿*使用git时，尽量将项目的文件编码改为utf-8，以避免使用git过程中出现乱码的情况
+
+**git工作区和暂存区在多个本地版本库之间可以理解为公用的，当a分支库和b分支库最初版本是一致的情况下，a版本状态下修改并未commit的内容其实是在工作区或暂存区。
+ 此时切换到b分支不会报错，因为a b分支最初版本状态一致。 而如果a b分支最初版本状态就不一致时则这个场景下会出现报错。因为最初状态一致时，a修改未提交的内容
+ 在切换到b时，git知道把这部分修改的内容添加到b的哪个位置。而如果a b分支最初版本不一致时，a修改未提交的内容在切换到b时，git并不知道将这部分修改的内容放在
+ 哪里，又不能把修改内容丢弃，所以只能报错强行要求开发人员提交掉。
+ 注意：所以在两个最初版本一致的两个分支，修改的内容并且未提交时去切换分支会可能造成内容提交非期望的分支上。所以尽量做完的内容一定要提交到当前分支。切记~
+
+*解决项目目录和文件名中有中文乱码
+ 在 Git Bash 中使用以下命令设置来支持 UTF-8 编码。
+ git config --global core.quotepath false          # 显示 status 编码
+ git config --global gui.encoding utf-8            # 图形界面编码
+ git config --global i18n.commit.encoding utf-8    # 提交说明编码
+ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
+
+*常用命令
  git add --help打开 git add的帮助文档
  cd f:/进入f盘
  git int 生成空的本地仓库
@@ -17,7 +32,7 @@
  git commit -m '注释'  提交所有暂存区的文件
  git commit 文件名 -m '注释' 提交暂存区指定文件
  git clone -b 分支名 仓库地址  克隆指定分支的仓库
- 
+ git push 推送本地版本库到线上，只要没有commit的文件都不会被推送。
 
 *一般实践：
  1.本地可以新建仓库然后会自动创建一个master分支：创建一个文件夹，然后git init
@@ -34,6 +49,8 @@
 *开启一个端口：
  firewall-cmd --zone=public --add-port=80/tcp --permanent   （--permanent永久生效，没有此参数重启后失效）
  firewall-cmd --reload
+
+*已经做了gitlab+jenkins部署实践，gitlab部署在250，jenkins部署在240
 
 *git的项目不能设置某个目录的访问权限，这是由其分布式特性决定的。 
  如果要达到这个目的，可以将各个目录做为单独的项目仓库，然后设置权限。
@@ -103,10 +120,10 @@
 *597如果用gitlab+jenkins做源码版本管理和持续集成的可行方案：
  *所有源码目录还是保持原样在192.168.1.10上，做目录权限控制
  *每个源码目录在gitlab上新建一个项目仓库，并设置成员权限，包括访问权限和行为权限
- *每个源码目录都对应gitlab上一个项目仓库，用.git初始化项目仓库
+ *每个源码目录都对应gitlab上一个项目仓库，用.git初始化项目仓库。注意尽量在10机子上操作初始化
  *每个成员都有自己的git账号，去操作192.168.1.10上的源码，谁最后push，gitlab就认为谁push
  *以上步骤可以保持以前的测试环境，实时查看代码修改结果
- *当需要上线功能，开发人员将相关源码push至gitlab，并在gitlab提交merge request给管理员
+ *当需要上线功能，开发人员将相关源码push至gitlab的test分支，并在gitlab提交merge request给管理员
  *管理员收到merge request后，进行审核，确认，合并到master主分支，并触发持续集成钩子
  *jenkins持续集成钩子，拉取相关项目（目录）代码往线上服务器部署
 

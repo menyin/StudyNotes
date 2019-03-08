@@ -1,0 +1,85 @@
+*git是一个版本管理工具(和svn一样)。github是一个网站，网络社交平台，充当远程仓库。
+
+*下载Git - Powershell 而不是git
+
+*git和svn区别：
+ 1.svn同一个版本服务器控制一个版本
+ 2.git在本地都维护一个版本，如果要协作开发，如果局域网连接则连接两台开发电脑即可进行各自版本的获取，如果非局域网则可以先提交到github的远程库，这样其它电脑就可以在github上获取了。
+
+*github首页    Explore推荐的一些项目
+
+*在git命令工具里的命令行尾部有[master]代表源码版本的主分支，简单理解就是源码最稳定的一个版本
+
+*git可以通过命令在本地可以设置全局的用户名和邮箱，以便于上传下载代码 注意以下命令行如果不加"menyin"或"845257580@qq.com"然后回车是查看用户名或邮箱
+ git config --global  user.name "menyin" 回车
+ git config --global user.email "845257580@qq.com" 回车
+
+*git log 查看添加和提交的历史记录
+
+*使用GitShell需要先在GitHub客户端登录到相应的用户并配置好用户名邮箱。  
+
+
+*一般在查看工作区、暂存区、版本库的状态时，红色字体是版本库、绿色字体是暂存区、白色字体是工作区
+
+*提交不能直接从工作区到版本区，必须经过暂存区
+
+*git -log 查看commit历史，并且在commit后面都跟着一串版本号，这个版本号可以用于还原指定版本到工作区的操作(git checkout commit_id <file.name>)
+
+*在本地版本与远程仓库起冲突的文件里，可以找到<<<<<<HEAD   代码  =======  >>>>>>origin/master的标记。做下取舍，后直接提交到本地版本区然后同步到远程仓库既可。
+
+
+*TortoiseGit 使用教程 
+
+*在Git Shell里有信息提示如[master +1 ~2 -3 !4] 其中+、~、-、！分别代表增、改、删、冲突
+
+*当使用git merge <分支名> 将制定分支合并到当前分支过程中如果出现冲突，可用git status查看那个文件冲突，然后到该文件找HEAD进行修改合并
+
+*官方提供的github安装是在线版，由于是国外网站，各种因素造成网速慢，多次安装都失败。最终找了一个离线安装版本
+。直接双击即可。安装包在百度云
+
+*GitShell命令相关的提示信息译文：
+ Your branch is up-to-date with 'origin/master'.你的分支是最新的“远程仓库名/主分支”。
+ use "git reset HEAD <file>..." to unstage  使用。。。命令将本次添加到暂存区的东西回撤到工作区
+ Changes to be committed → 文件已暂存，这是下次提交的内容；
+ Changes bu not updated → 文件被修改，但并没有添加到暂存区。
+ use "git push" to publish your local commits 使用...命令将本地分支版本区同步到远程仓库
+
+
+？撤销相关命令测试没有效果  
+？在项目要求别人协作开发时，邀请后，被邀请的人不能push
+？如何忽略本地仓库里一些不需要提交版本的文件或文件夹，如bin目录
+？在push时遇到问题
+D:\Git\testgitrepository\testgithub [master +2 ~0 -0 !]> git push origin master
+To https://github.com/menyin/testgithub.git
+ ! [rejected]        master -> master (non-fast-forward)
+error: failed to push some refs to 'https://github.com/menyin/testgithub.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+
+*做练习：
+ 1.查找指定账号或项目，fork
+ 2.分配给组员一个分支及权限
+
+*总结常用的命令行命令
+ cd <目录>  进入指定目录  cd ..返回上一级目录
+ cls 清除屏幕
+ ls 查看当前目录结构
+
+？vim编辑神器  、MarkdownPad编辑器
+
+*用git config --list  可以看到所有配置，其中包括命令关键字的别名 alias.c=commit表示commit关键字可以用c代替
+
+
+*TortoiseGit的push只能在文件夹上push，在本人下载的版本是这样。
+
+*使用TortoiseGit的一些问题及处理
+1.汉化，暂时不做汉化
+2.push时需要填userneme、password  解决：在C:\Documents and Settings\Administrator\.gitconfig里追加配置 [credential]  helper =store 
+
+     
+3.上传txt文件里的中文乱码，更改txt文件编码为utf-8
+
+4.冲突的出现和解决。当会出现冲突时，在GitShell里要使用fetch后再用merge才会在文件出现冲突。在TortoiseGit只需点击pull菜单即可在文件中显示冲突
