@@ -8,10 +8,14 @@
 
 
 *预定义颜色全局修改，在修改文件都会做cny注释
- *在_colors.scss、_variables.scss几个基本颜色进行了替换，在_buttons.scss里对btn-info和btn-danger做边框修改
+ *在_colors.scss、_variables.scss几个基本颜色进行了替换，
   default #1d1d1d  
   primary #91959a 
   info #1d1d1d  边框
   success #f7235e
   warning #ff7e8f
   danger #f7235e 边框
+ *在_buttons.scss里对btn-info和btn-danger做边框修改
+ *在_sweetalert2.scss做了图标样式相关修改
+
+

@@ -1,18 +1,4 @@
-﻿*学习UI网站
-http://hao.xueui.cn/
-http://hao.xueui.cn/
-ww.dechengjx.com 
-
-*前端学习网站
- 妙味课堂
- 慕课网
- 极客学院
- WEB学习之家http://www.aiweb100.com/list-10-1.html
-
-*百度云搜索器http://www.bdsola.com/
-
-
-*兼容IE8+的相册插件http://photoswipe.com/ 
+﻿*兼容IE8+的相册插件http://photoswipe.com/ 
 
 *前端常用的点：seajs做js模块化加载、图片延迟加载、图片放大相册、截图工具、web打印功能、弹框组件、加载动画、分页组件
  
@@ -31,9 +17,8 @@ ww.dechengjx.com
 
 *前端框架
  H+（适合所有项目） http://yanshi.sucaihuo.com/modals/40/4078/demo/
- DWZ富客户端框架（适合做后台管理类项目） http://jui.org/#pagination2
+ DWZ富客户端框架（适合做后台管理类项目） http://jui.org/#pagination2    文档
 
-
-*前端常用插件
- *移动端轮播图 swiper
- *模块滑动插件IScroll
+*Chrome查看前端对象内存
+ https://jingyan.baidu.com/article/6b182309eb747fba58e159d1.html
+ https://blog.csdn.net/kingzone_2008/article/details/9083327

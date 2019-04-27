@@ -1,0 +1,293 @@
+﻿*教程：H:\StudyMaterials\前端\妙趣课堂全套(内含JS+HTML5)\VIP视频\Node.JS基础视频教程
+
+*JS语言：ECMAScript
+ 操作对象：BOM、DOM
+ 顶层对象：window 
+          
+*NodeJS：ECMAScript
+ 操作对象：OS、file、net、database
+ 顶层对象：global 没有window对象
+
+*上述两者其底层使用的都是ECMAScript，只是操作对象不一样。nodeJS用于做类似后端语言做的事情
+
+*如何运行node：在cmd里 输入node回车即可，ctrl+c一次后再ctrl+c即可退出node
+
+*注意在webstorm或者其他软件运行nodejs项目程序时必须保证已经安装了V8引擎，即保证已经安装了chorme浏览器
+
+*使用webstorm打开项目时，项目里的.idea文件夹里可能已经保存了node.exe的安装路径，如当前系统的nodejs安装路径和此路径不一致需要手动更改(webstorm会弹出提示)
+
+
+*常用的命令行命令：
+ 清屏cls
+ 查看当前目录下文件内容 dir
+
+*nodeJS使用的编辑器工具 WebStorm
+         
+*nodejs里模块概念(很重要)：一个js文件就是一个模块，其里面的代码都包含在这个模块的作用域。所以在一个js文件里最顶层声明的变量var a=1;不能通过global.a来访问。 而在js语言中是可以通过顶层对象window.a来访问全局变量。  所以nodejs声明全局变量应该global.a=1;来访问
+
+*nodjs模块加载(相当引用js)，用require('./2.js');其中./代表同级目录底下。 require的参数为相对或绝对路径
+ 注意路径问题：同级用./2.j，另外2.js加载的是nodeJS的核心模块(node_modules)
+
+*nodeJS模块加载机制：require('./2.js');和require('./2');都可以加载2.js模块
+ 1.先查找同级目录下文件名为2的文件，有则加载；没有则自动加上.js后缀在找。
+ 2.如果上步骤还没找到，则会在文件名后加上.json后缀继续查找。
+ 3.如果上步骤还没找到，则会在文件名后加上.node后缀继续查找。
+ 4.如果上步骤还没找到，则会抛出异常。
+
+*一个模块访问子模块的变量的方法：
+ 1.子模块内将变量定义在全局对象里，父模块就可以访问了。global.a=100;这种方式不推荐
+ 2.子模块里var a=100;module.exports.a=a; 父模块里通过var a2=require(子模块路径);就可以得到{a:100}对象。
+   注意：1.子模块中module.exports.a=a;和exports.a=a;都可以。  exports对象和module.exports对象是一样的，一样的引用
+         2.不要改变1点所述两个对象的引用关系。即不要给他们另外赋值，exports=[1,2,3];或者module.exports=[1,2,3];
+
+
+*nodeJS中文文档nodeapi.ucdok.com/api/    学习重点在于常用的一些api内置对象
+
+c是每个js模块都有的变量，但并不是全局的。它代表当前模块文件解析后的路径
+ _dirname是每个js模块都有的变量，但并不是全局的。它代表当前模块文件目录解析后的路径
+
+*全局对象都可以通过顶级对象global对象来访问，如global.process
+
+*process
+ process.argv表示在命令行执行node js文件 时所带参数。如进入对应目录后执行node 1.js a=1 b=2则t参数为[node路径，1.js路径，"a=1","b=2"]
+ process.exexPath开启当前进程的绝对路径
+ process.env返回用户环境信息,默认值应该是'development'
+ 
+process.pid返回当前进程的 PID
+ process.kill(pid, [signal])向进程发送一个信号。 ？官方描述是不仅是杀死进程还用于传输信号。额，怎么用？ 
+ process.stdin和process.stdout标准输入输出流(IO)，提供了操作输入数据和输出数据。(很重要)
+      标准输入设备：http://baike.baidu.com/view/632680.htm
+      标准输出设备：http://baike.baidu.com/view/632676.htm
+      process.stdin.resume();相当于C#的console.ReadKey();//等待用户在输入
+      process.stdin.on('data',function(inputData){console.log(inputData)});//接收用户输入的数据，事件触发型，此处注意inputData其实是Buffer对象。 如果用console.log("您输入的数据是："+inputData);则实际log输出的是字符串，因为inputData已经转为字符串了
+ process.nextTick()提一个功能，就是将复杂的工作的代码拆分为较小的事件。如下例子：
+      function doSomething(args,callback){
+        somethingComplite(args);
+        callback();
+      }
+      doSomething('123',function onEnd(){
+        compute();
+      });
+ 上述代码中如果compute()和somethingComplited()是两个较为耗时的函数，则以上程序会执行somethingComplited()再执行compute(),可改写为：
+     function doSomething(args,callback){
+       somethingComplited(args);
+       process.nextTick(callback);
+     }
+ 使用process.nextTick()后，callback里的东西会被丢到进程中(应该说是丢到事件队列里)，process.nextTick(callback)代码会立即执行完，程序立即往下走，减少执行事件，提高响应速度。 
+
+*Buffer
+ 1.和js中的数组类似，但js数组的长度可变，但Buffer对象长度是固定的，和其它后台语言是一致的。
+ 2.var bf=new Buffer("字符串"，"utf-8"); 注意nodeJS支持字符串的编码是有限的：ascii、utf8、utf16le、ucs2(utf16le别名)、base64、binary、hex
+ 3.Buffer对象bf.toString(16);//转化为16进制的格式。String.fromCharCode(bf[0]);//将Buffer对象元素转为字符
+ 4.Buffer的length指字节长度，字符串的length指字符长度，概念不一样。两者关系：看2点中初始化字符串Buffer对象的编码
+ 5.Buffer对象的bf.toString([encoding],[start],[end]);参数1为编码，参数2、3分别是bf的索引
+ 6.Buffer对象的bf.toJSON();其结果为{type:'Buffer',data:[1,1,3]}
+ 7.Buffer对象的bf.slice([start],[end]);截取操作。注意：截取的元素和原Buffer对象元素的引用还是一样的。
+ 8.Buffer对象的bf.copy();
+ 9.Buffer.isEncoding('utf-8');判断是否支持该编码。返回bool类型值
+ 10.Buffer.isBuffer(obj);判断对象是不是Buffer对象
+ 11.Buffer.byteLength(str，[encoding]);//返回字符串的字节长度
+ 12.Buffer.concat(listBuffer,[length]);//listBuffer是Buffer对象数组，length最好还是加上，否则改方法要计算，会消耗性能
+      
+*文件操作模块  var=require('fs');   
+ 注意：1.读写的时候注意flags是否正确。2.操作完文件最好关闭。3.nodeJS有很多操作都有同步异步之分。一般都通过返回值来进行下步操作。  
+ fs.open(path, flags, [mode], callback)//path路径，flags文件打开方式读或者写,mode文件模式：读/写/执行(此参数在windows环境下基本无效)，callback文件打开后触发(有2个参数，err打开失败错误，成功为null。fd被打开文件的标识)    
+ var f=fs.openSync(‘1.txt’，‘r’);//同步打开。
+ fs.read();和fs.readSync();
+ fs.wirteFile();和fs.wirteFileSync();
+ fs.appendFile();和fs.appendFileSync();
+ fs.exists();和fs.existsSync();
+ fs.readFile()和fs.readFileSync()
+ fs.unlink();和 fs.unlinkSync();删除
+ fs.rename();和fs.renameSync();重命名
+ fs.stat();和fs.statSync();返回文件的状态，包括大小、创建修改时间... 回调函数里arguments对象里的mode属性代表文件/文件夹的类型是文件夹或文件,文件夹16822 文件33206。
+ fs.watch();监听文件或目录是否改变。此方法并不问题，不同操作平台实现不一致，所以可能无效。另外，回调函数里的filename参数不一定存在，所以要判断
+ fs.mkdir();和fs.mkdirSync();创建文件夹
+ fs.rmdir();删除文件夹
+ fs.readdir();读取文件夹
+
+*http操作模块    var http=require('http');
+ 创建服务对象    var server=http.createServer();
+ 监听异常事件    server.on('error',function(e){console.log();});
+ 开启监听        server.listen(port，host);//port端口，host//主机ip
+ 开启监听成功事件server.on('listening',function(){console.log('listening...');};);
+ 查看当前服务地址 console.log(server.address());
+ 监听客户端请求 server.on('request',function(req,resp){});//req请求相关，resp相应相关。此回调可放在createServer()中。
+
+*http头信息，resp.writeHead(200,'提示信息',{'content-type:'text/html;charset=utf-8''...});
+ 注意：此方法必须在setHealer()之前end()之后调用，并且只调用一次
+ 参数1为状态码；状态码还可以通过resp.statusCode()进行设置
+ 参数2为提示信息；
+ 参数3为一个描述对象，包括content-type
+
+*http自定义头信息，resp.setHeader();一般不用。
+
+ content-type类型：text/plain纯文本，text/html是html格式，
+
+*resp.write()之后必须调用resp.end(),或者直接将响应正文写在resp.end('响应正文');不必写write();但系统一样会调用wirte()
+？？write()方法设置utf-8后还是中文乱码。解决：1.添加resp.writeHead(200, 'koo',{'content-type':'text/html'});2.在输入正文里前面添加<meta charset="utf-8">
+
+*req.url是客户端请求的url
+
+*url模块 var url=require('url');用于处理url的模块对象
+ 如：var urlParseObj=url.parse('http://www.baidu.com/b/a.html?name=cny&id=11#8989');
+
+*nodejs通过msi文件安装时候会在环境变量path添加"C:\Users\用户名\AppData\Roaming\npm"目录，此目录是node npm全局模块安装的目录
+
+*querystring模块
+ 序列化querystring.(obj, [sep], [eq]) sep参数分隔符如&，eq参数键值分隔符如=
+ 反序列化querystring.parse(str, [sep], [eq], [options])
+
+*在接收客户端post表单数据是需要缓冲过程。所以通过以下方式获取
+ server.on('request',function(req,resp){
+    var resultStr='';
+    req.on('data',function(str){
+       resultStr+=str;
+    });
+    req.on('end',function(){
+       console.log('最后的结果是'+resultStr);
+       //然后通过querystring对象进行处理
+    });
+
+});
+
+
+
+*Express 是一个基于 Node.js 平台的极简、灵活的 web 应用开发框架，它提供一系列强大的特性，帮助你创建各种 Web 和移动设备应用。
+http://www.expressjs.com.cn/
+Express在NodeJS的接口之外提供了更多的功能：路由控制、模板解析支持、用户会话、CSRF保护、静态文件服务、错误控制器、访问日志、缓存、插件支持等
+基本安装：在cmd里，到项目文件夹的父级目录下
+ 1.安装express模块命令：
+   npm install express --save  //加--save则express模块将被添加到 package.json 文件 dependencies 依赖列表中，到时候启动应用(用命令npm install)时会自动安装
+   或者npm install express         //不加--save则只是临时安装 Express，不想将它添加到依赖列表中
+
+ 2.自动生成web应用框架命令(注意要先进入项目文件夹父目录下)：
+   npm install express-generator -g  //初始化express项目目录
+   express myapp或者express ejs myapp//myapp为项目文件夹名称，其中ejs是表示使用ejs模板引擎
+   cd myapp                          //进入到项目文件夹
+   npm install                       //初始化npm，检查package.js里的依赖模块都有哪些没有下载并下载，其实就是生产node_modules文件夹。
+ 3.调试并启动生成器生成的项目(如不调试直接npm start)
+   set DEBUG=myapp & npm start   //MacOS 或 Linux 平台启动用 DEBUG=myapp npm start
+   用浏览器访问 http://localhost:3000/ 即可。
+ 4.停止项目
+   npm stop   //同样要注意要先进入项目目录
+ 备注：上述过程个人应该只有第2步命令要在项目文件夹父目录下执行。
+ 另外：好像调试还要安装一个全局模块，用于监听文件是否更改。执行命令：npm install supervisor -g 
+       安装这个调试模块，再更改package.js的配置"start": "node ./bin/www"改为"start": "supervisor ./bin/www"
+       这样，只要代码有改变程序就会自动监听大代码变化并重新编译启动，不需要我们手动停止程序-编译-启动程序。
+ 注意：因为npm下载包是默认访问外网，很慢，所以通过以下方式使用cnpm替代默认的npm
+       在cmd里执行 npm install -g cnpm --registry=https://registry.npm.taobao.org
+       而后凡是用npm的命令都用cnpm替代
+ 注意：npm start是根据当前项目的package.json的启动项js配置来启动应用，我们也可以直接用node命令直接启动启动项js（如node www或nodewww.js）
+ 
+
+基本使用：
+ 1.配置安装其它模块：在 package.js配置"mongoose": "*"，然后到cmd里 npm install执行下就会自动安装(装完后会有模块版本提示，最好再回到package.js里将*号改为对应版本号)。
+ 2.路由相关配置：
+   注意：基本的页面路由配置应在session路由配置之后，在错误页路由配置之前
+
+*自动化工具gulp
+ 项目目录下启动cmd输入gulp serve可以在一个服务器里启动该项目
+ 在启动项目后cmd里会输出一个项目访问的地址和一个UI地址，这个UI地址是管理服务器的一个总平台（可以刷新访问用gulp启动的项目的所有访问的客户端）
+
+*NVM Node版本管理工具   因为可能不同前端框架需要不同版本的node，所以就有人弄出来这个工具用户node版本环境的切换
+ 这个工具要求安装node时，不能使用常用的exe进行安装。
+ NVM使用：
+    1.复制NVM包到本地非中文目录下，解压到当前文件夹。不能用其他一些特殊方式或特殊解压软件，就用WinRAR
+    2.在NVM解压目录下的settings.txt，进行相关节点配置。  如果没有settings.txt文件可以以管理员身份运行install.cmd 将当前nvm目录绝对路径复制进命令行回车即可创建。
+    3.在NVM目录下打开cmd，运行nvm use 5.5.0 即使用5.5.0版本的nodejs环境。  如果系统是32位则用nvm use 5.5.0 32
+
+*gulp作为前端自动化工具，需要在本地项目中安装。因为它有包括一些开发的API。 
+ 使用：
+    1.在项目目录下，按照gulp语法编写任务语句。
+    2.编写一个入口任务，里面有包括对指定的文件的监听(一旦这些文件变化，即会执行指定任务)。
+ 注意：大部分自动化的功能都需要安装gulp插件，需要到英文官网查看下载插件，英文官网里面才有有具体使用文档。
+ 常用插件：   
+    gulp-connect  创建本地服务器，现在流行用browser-sync，它可以单独使用，但一般都和gulp一起用比较方便
+    gulp-concat   合并文件
+    gulp-uglify   压缩js文件  
+    gulp-rename   重命名文件
+    gulp-minify-css  压缩css文件，现在已经被gulp-cssnano取代了 
+    gulp-minify-html 压缩html文件
+    gulp-imagemin    压缩图像文件
+    gulp-file-include 文件内容包含
+    gulp-replace      文件内容替换，注意要讲dest输出路径设置为读取文件的路径。
+    gulp-insert       文件内容插入
+    gulp-insert-lines 文件内容中向前或向后插入行
+
+ 
+*Express中通过request对象获取客户端提交参数的方式
+ req.body.paramName
+ req.params.paramName
+ req.param('paramName')//无论哪种方式都可以获得参数，从路由，body，url参数里依次查找
+ req.query.paramName//url方式传参方式
+
+*Express中间件
+ 包含应用级和路由级中间件
+ 可以这样用app.get('/page',中间件A，中间件B，中间件C)，相当于拦截器或过滤器，可用做权限过滤
+
+*对于普通项目要转化node项目，可以在项目目录下执行npm init 生成pakeage.json等相关的配置。 注意项目目录应该要为空目录，否则执行npm init会有问题
+
+*对于自己的电脑环境变量的配置，因为一般都只有一个用户，所以自己电脑一般都配置在用户环境变量里面
+
+*设置npm下载包的安装位置。本地的用户目录下有个.npmrc的文件，在里面进行设置
+
+*bower安装库时指定安装目录：在项目新建.bowerrc文件，内容为{"directory":"public/libs"}   注意express项目里的静态目录配置要更改
+
+*node访问数据库
+ 方式一：npm安装mongodb 直接访问操作，练习项目 GitHub/blog_project
+ 方式二：npm安装mongoose，它会附带安装mongodb。通过建模，从而达到操作数据库的目的，教程详见博客园收藏《Mongoose全面理解》。练习项目GitHub/MovieCms或GitHub/Star/Imooc 
+
+*mongodb安装在windows下，不能在本地计算机启动MongoDB，错误代码 100，解决方式是删除安装目录下的\data文件夹下的mongod.lock和storage.bson
+
+*session 当session存到应用服务器内存时，服务重启则session会丢失，如果持久化到数据库则会继续保留
+ express使用session可以配置持久化到数据库：
+ 注意：在使用connect-mongo来持久化session时出现两个问题：
+         1.connect-mongo只能兼容mongodb数据库3.2以下版本，因此我讲3.2.8换成了3.0.15。问题解决
+         2.在启动应用后session可正常持久化，但重启服务后会报错，删除掉数据库的session表再启动服务又可以。问题无法解决，于是换connect-mongodb-session插件
+
+*总结express的会话保持方案、MVC分离方案
+
+*express里express实例app中app.locals可以存放一些全局的变量供模板引擎使用，如app.locals.userName=“aaa”
+
+*关于package.json版本号规定
+指定版本：比如1.2.2，遵循“大版本.次要版本.小版本”的格式规定，安装时只安装指定版本。
+波浪号（tilde）+指定版本：比如~1.2.2，表示安装1.2.x的最新版本（不低于1.2.2），但是不安装1.3.x，也就是说安装时不改变大版本号和次要版本号。
+插入号（caret）+指定版本：比如ˆ1.2.2，表示安装1.x.x的最新版本（不低于1.2.2），但是不安装2.x.x，也就是说安装时不改变大版本号。需要注意的是，如果大版本号为0，则插入号的行为与波浪号相同，这是因为此时处于开发阶段，即使是次要版本号变动，也可能带来程序的不兼容。
+latest：安装最新版本。
+
+*npm包可以固定网站查看使用教程，如https://www.npmjs.com/package/express-session
+
+*form标签有属性enctype="multipart/form-data" 是设置表单的数据可以支持多种类型，如file类型。多种数据类型需要通过express.mutipart()中间件做解析。
+
+*表达保存数据如果有流数据，如图片，表格等数据，这时候会有一定时间，可以用中间件来处理这些资源，再把资源路径写到request对象，交给路由业务中间件处理。
+
+*Express应用设置生产或开发环境方式：
+  1.在app.js代码中些app.set('env', 'production');
+  2.在启动应用的命令行中输入NODE_ENV=production node app 
+  3.在命令行输入export NODE_ENV=production（set NODE_ENV=production）
+
+*jshint是一个javaScript语法和风格的检查工具，但检查不出逻辑问题。
+
+*node执行原理：
+  -说是单线程，是指对于开发者的所有代码都是在node主线程做。
+  -说是多线程，是指对于开发者的代码之外的阻塞操作是交给node维护的一个线程池里的线程来执行，如文件流操作
+  -事件机制：在主线程会注册很多回调（包括阻塞和非阻塞的），这些回调会被丢到node事件队列中， 当主线程代码执行完会到事件队列中取第一个事件回调执行并移除，
+             如果该事件回调里包含另外的异步回调(此时该事件回调里的代码可看作另一个主线程代码)，则同样会将里面的异步回调再放到node事件队列中，等这个
+             主线程执行完再去事件队列里获取第一个事件回调执行并移除，其中阻塞的东西都会让node线程池里的线程去执行，如此循环反复，从而达到高效运转。
+  -web单线程，假如在node构建的web应用中，针对A用户访问时会在代码会产生一个死循环，从而浏览器卡住，此时B用户再去访问web应用也会卡住，因为node是单线程的。
+   个人理解：node就是将I/O和网络等阻塞性的操作交给自己维护的线程池里的线程去处理，谁需要多线由node说了算，而开发者只能用单线程。
+
+*node潜规则：
+  1.应用一般回调函数中的错误参数是放在第一个参数。在给异步事件传递回调函数参数一般是放在最后一个参数。
+  2.因为所有的I/O和网络操作的模块都采用异步编程方式，所以在主线程(开发者代码所在线程)是捕获不到异常，因此在回调函数第一个参数通常为错误参数。
+  3.载入的模块一般用ES6的const常量关键字声明以使其不能修改。如const fs=require('fs'); 另外var可以都用ES6的let替代，如for循环里的i也用ES6的let关键词定义
+
+*node网站部署到阿里ECS云服务器windows上时，需要为网站端口添加安全规则，设置教程为https://help.aliyun.com/document_detail/25471.html
+*阿里云账号密码  梵音雨梦/xiaoxiao142536
+
+*开源网站：
+ www.github.com
+ code.google.com
+ www.codeplex.com
+ www.codeproject.com

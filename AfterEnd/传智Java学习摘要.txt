@@ -56,6 +56,13 @@
 
 *Java中有StringBuffer和StringBuild，两者类似，常用于大量的字符串拼接，但前者线程安全。(推荐StringBuild)      相当于C#中的StringBuild
 
+*集合类的contains()方法是使用对象的hashCode()和equals()方法依次比较，如相等则认为相等。
+ 而==是直接比较内存地址，所以如果一个集合里有"jack"对象，则collection.contains(new String("jack"))为true。
+ 因为String类重写了hashCode()和equals()方法，其内部都是用字符串里的字符作为基准比较。
+
+*红黑二叉树，每插入一个点都是从树根开始往下比较再插入，总的原则是"左小右大，上边中间"
+ TreeSet类是通过comparable的比较规则进行查重，如果比较返回值为0则视为相等
+
 *线程安全：在同一时刻，只允许同一个线程来操作同一份代码。
 
 *Java   System.Exit(int status) status为0正常退出，非0异常退出。 status对于Java开发者无意义，但对于操作系统统计有意义
@@ -79,7 +86,9 @@
      2.实现接口的run方法，将任务代码写在run方法里
      3.创建Thread类对象并且将1步的自定义类对象作为实参传递到Thread构造函数
      4.调用Thread类对象的start方法
-
+     方式三：
+     ExecutorService线程池 详见博客园收藏《Java 四种线程池...》https://www.cnblogs.com/winkey4986/p/5726472.html
+     另外如果执行的线程要有返回值，可用Callable接口，详见博客园收藏《ExecutorService 的理解与使用》 https://www.cnblogs.com/liaojie970/p/8080595.html
 *Java父类方法没有抛出异常(没有抛出异常标识)，其子类重写该方法时就不能抛出异常，即只能捕获异常
 
 *Java解决线程安全问题方式(推荐方式一，灵活可控，只同步需要同步的代码)

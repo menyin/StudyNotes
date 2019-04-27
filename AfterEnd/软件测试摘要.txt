@@ -1,4 +1,6 @@
-﻿*教程在StudyMaterials/最新全套软件测试/第四阶段
+﻿*597郭总使用的是ab测试工具进行压力测试，详见博客园收藏《压力测试工具ab - Apache HTTP server benchmarking tool》
+
+*教程在StudyMaterials/最新全套软件测试/第四阶段
 
 *主流测试管理工具：QC、禅道、Jira
 

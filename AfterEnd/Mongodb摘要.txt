@@ -1,0 +1,124 @@
+*教程：H:\StudyMaterials\前端\妙趣课堂全套(内含JS+HTML5)\VIP视频\Node.JS基础视频教程\补充学习\Mongodb视频教程
+
+*mongodb里 一条记录就是一个json就叫做一个文档，一个表就是一个集合
+
+*mongodb特点：高性能、易部署、易使用、存储方便....
+ 支持动态查询
+ 支持完全索引，包含内部对象
+ 支持复制和故障恢复
+ 存储二进制数据搞笑，如视频、图片
+ 自动处理碎片，支持云计算层次扩展
+ 存储格式为BJSON，是json的扩展
+ 数据里value的类型：null、布尔、数字(int32、int64、float64)、
+                    字符串(符号在mongodb控制台不支持，会转化为字符串)、
+                    数组及对象(ObjectId、new Date()、正则如/.*/i、代码如函数{"one":function(){/**/}}、文档)
+
+*常用的命令行查询语句
+ use dbblog 切换到dbblog数据库
+ show dbs 显示数据库列表 
+ db 显示当前数据库
+ show tables或者show collections 显示集合列表
+ db.c1.insert({name:"chenny"});无需再另外创建一个c1的集合，直接写这句代码即会自动创建集合c1并插入文档
+ db.c1.save({name:"chenny"});也是插入集合，与insert不同在于如果插入数据的_id值在集合中已有存在则更新文档数据。而insert则对于这种情况是反映是插入失败
+ db.c1.find();查询记录
+ db.c1.find({name:"chenny"});查询name="chenny"的文档
+ db.c1.findone({name:"chenny"});查询name="chenny"的文档的第一条
+ db.c1.find({name:"chenny"},{age:0});查询name="chenny"的文档,并且只返回除了age以外的所有列(默认_id是必须返回的列)
+ db.c1.find({name:"chenny"},{age:1});查询name="chenny"的文档,并且只返回age列(默认_id是必须返回的列)
+ db.user.find({age:{$gt:12}});条件查询age>12的记录，符号$gt为大于，$gte大于等于，$lt小于,$lte小于等于，$ne不等于，$all包含(主要针对属性值为数组的情况)，$exists筛选某字段有存在的记录，$mod取余数筛选.....其它网上学习
+ db.user.find().sort({age:1});排序，其中1位升序，-1为降序，和js的数组排序一样，也可以传一个函数参数
+ db.user.find().limit(4);获取前4条记录
+ db.user.find().skip(5).limit(4);跳过前5条记录获取4条记录
+ db.user.find().skip().limit(4).count(0);跳过前5条记录获取4条记录后统计find()后的记录总数，注意count(0)代表不看find和count之间的条件
+ db.user.find().skip().limit(4).count(0);跳过前5条记录获取4条记录后统计skip和limit后的记录总数，注意count(0)代表要看find和count之间的条件
+ db.c1.remove()移除所有集合
+ db.c1.remove({name:"chenny"})移除所有name="chenny"的集合
+ db.c1.update({name:"chenny"},{name:"chenny250"});修改集合，被就该的集合的其它属性会被覆盖掉
+ db.c1.update({name:"chenny"},{$set:{name:"chenny250"}});修改集合(也可以增加属性)，被就该的集合的其它属性不会被覆盖掉，只是改变了name属性值
+ db.c1.count();或db.c1.find().count();文档总数
+ db.c1.find({"tname": {$regex: '测试', $options:'i'}})  正则匹配查询
+ db.c1.find({"tname": {$regex:/测试.*/i}}) 正则匹配查询  
+ db.c1.find({name:/查询包含的字符串/}); 模糊查询
+ 
+*一个文档(一条记录)里的_id值ObjectId是由4部分随机组成：机器码、进程号、时间、命名空间编号，不可能冲突
+
+*mongodb里的数据库和集合都是隐式帮我们创建的
+
+*mongodb增删改的高级应用：Capped Collection(固定集合)、GridFS(大文件的上传下载)
+
+*mongobooster查询界面，ctrl+shift+enter执行全部sql，ctrl+enter执行选中sql
+
+*js里的类的方法是静态方法，其类的实例是不能访问，类可以访问。类的原型方法是实例方法，其实例可以访问。如：
+ function Person(){ };
+ Person.find=function(){ console.log("此方法是静态find")};//只有通过Person.find();才能调用
+ Person.protype.showName=function(){console.log(this.name)}//可以通过实例范文
+ var per=new Person();
+ per.name="cny";
+ per.showName();//通过实例访问
+
+*mongoose是用于辅助node连接mongodb数据库的建模工具
+ 几个概念：
+ Schema 模式，定义表的数据类型及相关的方法，相当于orm框架的数据模型映射的xml
+ model 模型，定义了模式对应的类型，可以理解为面向对象的类。相当于orm框架里的实体类型
+ 
+ 注意：1.在使用mongodb时，mongoose、mongobooster等工具需要版本对应，否则工具有特性不能使用或会出现问题。
+       2.mongoose定义模型时 mongoose.model("Movie",MovieSchema)的model方法首字母小写；定义模式MovieSchema = new mongoose.Schema({})的Schema首字母大写
+       3.在node代码中根据指定的_id字符串查询：var ObjectID = require(‘mongodb’).ObjectID; User.findOne({_id:ObjectID(id)},function(err,doc){…});
+       4.定义外键关联可以这样var PersonSchema=new Schema({name:String,department:{type:ObjectId,ref:'Department'}});然后通过Populate方法就可以获得外键Department实体。教程详见http://mongoosejs.com/docs/populate.html
+       5.mongoose提供多种修改器（$inc、$set、$push等等），如增减修改器$inc 如：Model.update({‘age’:22}, {’$inc’:{‘age’:1} } );
+
+*MongoBooster快捷键
+
+　　Ctrl-A开始行
+
+　　Ctrl-B反向字符
+
+　　Ctrl-C退出shell
+
+　　Ctrl-Ddelete-char（或exit shell）
+
+　　Ctrl-E行结束
+
+　　Ctrl-F正向字符
+
+　　Ctrl-G中止
+
+　　Ctrl-J接受线
+
+　　Ctrl-K杀线
+
+　　Ctrl-L清除屏幕
+
+　　Ctrl-M接受线
+
+　　Ctrl-N下一个历史
+
+　　Ctrl-P前历史
+
+　　Ctrl-R反向搜索历史
+
+　　Ctrl-S前向搜索历史
+
+　　Ctrl-T转置字符
+
+　　Ctrl-Uunix-line-discard
+
+　　Ctrl-Wunix-word-rubout
+
+　　Ctrl-Y。
+
+　　Ctrl-Z暂停（作业控制在linux中工作）
+
+　　Ctrl-H（即Backspace）向后删除字符
+
+　　Ctrl-I（即Tab）完成
+
+　　Meta-B反向词
+
+　　Meta-C大写字
+
+　　Meta-D杀死字
+
+　　Meta-F前向词
+
+*高级课程详见咕泡学院笔记

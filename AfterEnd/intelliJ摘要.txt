@@ -3,6 +3,8 @@
 
 *哲敏给的intellij2017 注册服务器 http://idea.xlet.org
 
+*intelliJ在阅读第三方框架时，打开.class文件时会出现download source 提示，可以下载源码。源码上有注释
+
 *intelliJ的project相当于eclipse里的工作空间  module相当于eclipse里的工程
 
 *intellij两个项目同时开启两个tomcat时要更改不同的端口号，包括JMX Port

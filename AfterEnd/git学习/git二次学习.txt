@@ -1,10 +1,35 @@
-﻿*使用git时，尽量将项目的文件编码改为utf-8，以避免使用git过程中出现乱码的情况
+﻿
+*使用git时，尽量将项目的文件编码改为utf-8，以避免使用git过程中出现乱码的情况
 
 **git工作区和暂存区在多个本地版本库之间可以理解为公用的，当a分支库和b分支库最初版本是一致的情况下，a版本状态下修改并未commit的内容其实是在工作区或暂存区。
  此时切换到b分支不会报错，因为a b分支最初版本状态一致。 而如果a b分支最初版本状态就不一致时则这个场景下会出现报错。因为最初状态一致时，a修改未提交的内容
  在切换到b时，git知道把这部分修改的内容添加到b的哪个位置。而如果a b分支最初版本不一致时，a修改未提交的内容在切换到b时，git并不知道将这部分修改的内容放在
  哪里，又不能把修改内容丢弃，所以只能报错强行要求开发人员提交掉。
  注意：所以在两个最初版本一致的两个分支，修改的内容并且未提交时去切换分支会可能造成内容提交非期望的分支上。所以尽量做完的内容一定要提交到当前分支。切记~
+
+*git在本地init后是个空的项目，此时没有分支，只要有了文件并且有commit后则会自动创建一个master，如果没有文件则其实没有分支，用git branch是创建不了分支的。
+ 
+**origin是指远程的代码仓库，是指自己的那个代码仓库，如果别人fork我的代码仓库A则他自己会有一个对应的a仓库，然后他用a仓库clone下来本地后，origin就指向a
+ 最好是直接git clone仓库 在做分支pull，如果先git init后再直接pull test分支，而不是pull master分支，则本地的master分支会下载到的是线上test分支。
+ 此时如果master修改提交后用【git push】命令不能提交，一般人会直接用【git push origin master】则是提交到线上的master分支， 这个是个坑。
+ 此时本地master和test其实都对应线上的test分支，如果本地test分支提交push到线上test分支则本地master分支再提交到线上的test分支就回被拒绝，push线上master分支也一样。
+ 原因：https://blog.csdn.net/zuofanxiu/article/details/82598029
+
+*其实如果是git init并且用git fetch origin cny:cny方式只能检出cny与origin/cny  其它master分支是没有检出的，此时用git branch -a就可以发现只有cny和origin/cny两个分支
+ 而如果你用git fetch一下 就会检出所有的分支。或者直接用git clone url 也会把所有的线上线下的分支全部检出。此时用git branch -a就会全部显示
+
+*合并分支原理：
+ 首先用git clone载下来的项目，git会在.git目录里保存线上线下的所有分支的版本信息。 如果用git init +git fetch cny:cny或git init+git check -t origin/cny就只能保存cny分支信息
+ 其次要让一个分支，如test分支与cny分支合并，就必须保证test分支再本地有被载下来并且是最新的，这样冲突解决后提交到cny分支并push到线上cny分支就不会有问题。此时线上cny和线上test在线上合并不会有问题
+ 再次被合并的test分支要保证本地有最新的版本信息就必须在它与cny分支合并前先git fetch test，否则老的本地test分支与本地cny合并，cny push到线上，线上cny与线上test在线上合并依然会冲突。
+ 所以按照郭总的git使用流程，我做了优化：本地只需要在合并前去git fetch origin test 而不用git fetch origin test:test 后者是利用线上的test再更新或创建本地的test。 因为我们只需合并用，所以就只fetch线上test即可。
+ *其实一般本地会有线上线下所有版本
+
+*冲突：
+ 在线上线下合并时候引起的冲突，就要在自己线下下载对最新的线上目标版本与自己本地的版本合并，然后push自己线上版本再去合并
+ 在线下版本push到线上时引起的冲突，就要git fetch线上自己最新版本到本地的线上版本，然后本地版本与本地线上版本合并就会有冲突标记，然后解决后push上去即可。
+
+***总的来说就是一个分支，如cny，他有线上的分支，本地分支，本地的线上分支副本，一共有3个分支。
 
 *解决项目目录和文件名中有中文乱码
  在 Git Bash 中使用以下命令设置来支持 UTF-8 编码。
@@ -14,6 +39,7 @@
  git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 
 *常用命令
+ start . 打开当前目录Windows资源管理器
  git add --help打开 git add的帮助文档
  cd f:/进入f盘
  git int 生成空的本地仓库
@@ -33,18 +59,34 @@
  git commit 文件名 -m '注释' 提交暂存区指定文件
  git clone -b 分支名 仓库地址  克隆指定分支的仓库
  git push 推送本地版本库到线上，只要没有commit的文件都不会被推送。
+ git checkout -t origin/cny 检出远程cny分支并在本地创建一个同名分支与之关联。
+ git checkout cny 如果用git branch -a 可以查看到origin/cny分支的话，则此命令是直接检出origin/cny来创建本地分支cny
+
+*在拉取远程非master分支（如cny分支）时候，不要有pull，它会覆盖master分支和cny分支。
+ 可以用git fetch origin cny:cny 或git checkout -t origin/cny
+
+*几个常用命令注意区分
+ *git fetch 更新所有分支到本地
+  git fetch origin test:test 是fetch远程的test分支到本地并创建本地同名分支，此时本地有两个分支：test和origin/test
+  git fetch origin test 只fetch远程的test分支到本地，即更新本地的origin/test分支
+ *git push <远程主机名> <本地分支名>  <远程分支名>
+  git push origin test 表示将本地分支推送到与之存在追踪关系的远程分支（通常两者同名），如果该远程分支不存在，则会被新建
+  git push origin 如果当前分支与远程分支存在追踪关系，则本地分支和远程分支都可以省略
 
 *一般实践：
  1.本地可以新建仓库然后会自动创建一个master分支：创建一个文件夹，然后git init
  2.将本地分支和线上仓库的master分支相关联：git remote add origin 远程仓库地址
  3.从线上仓库的master分支拉取代码： git pull origin master
 
-*origin是指远程的代码仓库，是指自己的那个代码仓库，如果别人fork我的代码仓库A则他自己会有一个对应的a仓库，然后他用a仓库clone下来本地后，origin就指向a
+
 
 *在push之前一定要fetch+merge  
 *在各个命令操作前可以用git status命令查看下装
 *当冲突解决后要commit时只能commit全部，而不能单独文件commit。可以加i参数，如git commit test.txt -i -m '注释'
-
+ ？？A版本对于B版本来说，更新了a文件并且增加了b文件。在A版本合并到B版本过程中，只有a文件冲突，B版本解决了a文件冲突后
+     在commit时是要commit a和b文件而不能单独commit a文件，否则对于git cmd或intellij工具都会报错，此时如果push A版本会出现问题
+     另外必须特别注意冲突解决完还必须add 所有文件，再commit，此时还是不可以commit部分的文件的。
+     如果提交部分文件则则会出现“cannot do a partial commit during a merge”错误
 
 *开启一个端口：
  firewall-cmd --zone=public --add-port=80/tcp --permanent   （--permanent永久生效，没有此参数重启后失效）

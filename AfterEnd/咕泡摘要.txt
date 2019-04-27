@@ -120,7 +120,29 @@ Tom老师，你好，
   6、进名企要去一线城市，可以找找所在城市的分公司
   7、了解行业水平可以去各大招聘网站，看招聘需求。现在来了咕泡，要好好利用好这个圈子。
 
-  
+----------------------------2019课程 begin-------------------
+*james
+2017 1k+学员
+2018 3k+学员
+*mic说
+ 3期可能增加 训练营方式，创建一个21天的临时群做任务。
+ 学习方式：知识链，知识体系。推导式
+ 提到的东西：ConcurrentHashMap、阻塞队列、
+ 跳槽频繁差不多一年一次，清楚自己的方向。
+ 阿里P8 可能不只是技术可能还有30%的产品思维、管理能力等
+ 面试过程中，如果遇到一个需求问题，首先需要了解好动机、需求、目标（性能、并发等），场景等，最后在做方案细则。
+*tom说
+ 增加创业扶植项目源码
+----------------------------2019课程 end-------------------
+
+*版本冲突后
+
+*测试直接test分支开发的问题、测试test分支再分出dv1分支开发的问题。
+
+*测试版本回退与当前版本
+ 三期课程大纲，注意和一二期对比
+ 课程体系：内功心法.....
+
 
 ？Jenkins如何做到实时提交单独的文件
 
@@ -301,7 +323,8 @@ Tom老师，你好，
  许多不同的多层次的接口来划分这些功能，并通过一些多层次的抽象类来规定不同的流程模板。所以在spring中一个实现类有
  可能扮演着多种“角色”
 
-*spring IOC容器大概的过程：定位->加载->注册
+*spring IOC容器大概的过程：定位->加载->注册  
+ 大致流程可以看自己的demo代码
  具体过程详见博客园收藏 https://www.cnblogs.com/ITtangtang/p/3978349.html#a1
 
 *spring IOC容器相关的一些类
@@ -372,6 +395,8 @@ Tom老师，你好，
 --------------------Spring end------------------------------
 
 --------------------分布式20190110 begin------------------------------
+*咕泡分布式项目实例 http://git.gupaoedu.com/java-vip/vip-project-space
+
 **dubbo的官方文档多研究多看，可以窥探到分布式环境下的许多知识点以及编码风格和习惯。
 
 *领域驱动，个人理解：即按照不同行业业务，将业务里的功能拆分细化，即拆分为不同的领域。如dubbo源码里就分了不同的模块，有admin有rpc等，这应该是就是不同的领域。
@@ -391,7 +416,7 @@ Tom老师，你好，
   1.客户端和服务端在通信前，会建立一个个通道，每个通道对应了一个客户端和一个服务端。通道里保存了客户端和服务端的一些操作。
   2.在通信时会有一个线程去轮询这些通道，发现那个客户端的发送缓冲区清空了，就去执行对应通道里的动作，网发送缓冲区去写。
   3.由于轮询线程的速度是非常快的，看起来就像是所有客户端都能同时和服务端进行通信，达到异步的效果。 
- 
+ *BIO就像以前没电话搬运工找工作，每天都各个码头需不需要搬运工。BIO就像有了电话后，然后你就给码头留个电话说有需要再打电话找我。
 
 *常见的序列化工具 Jackson、FastJson、GSon、Hesian（dubbo用的是它的扩展Hesian2）、
  dubbo除了Hesian2以外还提供了很多序列化的实现方案（实现类）
@@ -518,15 +543,7 @@ Tom老师，你好，
   *zookeeper在扩容时比较麻烦，需要将所有机器停机，做扩展配置再启动。或逐台机器配置重启。
   ？zookeeper方面面试题在哪里
 
-*线程锁之Lock，详见博客园收藏《Java并发编程：Lock》，此文章很好，还涉及读写锁等知识点
-  *Lock只是一个接口，java中唯一的实现是ReentrantLock。
-   注意Lock只有少量方法供使用，ReentrantLock提供了isFair、isLocked、isHeldByCurrentThread、hasQueuedThreads等实用方法
-  *Lock接口有3个获取锁的方法，当多个线程同时（一定要保证同时）获取锁时，3者表现各不一样：
-    *lock.lock() 未获取到锁的线程会选择等待
-    *lock.tryLock() 未获取到锁的线程可以选择放弃或做其它操作
-    *lock.lockInterruptibly() 未获取到锁的线程会等待，但该线程可用thread1.interrupt()终止等待，
-                              必须在线程调用lockInterruptibly()的方法上声明异常而不是try-catch。
-                              而终止等待后的操作可以在捕获上述异常的地方进行处理。
+
 
 
 *dubbo （具体看学习笔记、官网、博客园收藏《dubbo用户指南-总结》）
@@ -552,8 +569,9 @@ Tom老师，你好，
   *协议配置，dubbo支持的多协议：rmi、hessian、webservice、http、thirft、dubbo
   ？hessian是http协议是否说明app等其它客户端也可以直接调用
     网上资料回答是肯定的（Hessian：使用HTTP协议，允许穿透防火墙，使用自己的系列化方式，支持JAVA、C++、.Net等跨语言使用。）
-    《dubbo组成原理-http服务消费端如何调用》
-    《Dubbox的介绍和简单示例》 https://wosyingjun.iteye.com/blog/2320127
+    《dubbo组成原理-http服务消费端如何调用》、《Dubbox的介绍和简单示例》 https://wosyingjun.iteye.com/blog/2320127
+    实际上dubbo服务的调用是远程过程调用，就必须有一个代理做发送请求及序列化等工作。而所谓的http协议只是在通信时的协议。
+    而并非真正能直接用浏览器进行调用。 如果非要实现这样的功能，可以用dubbo的泛化调用来做一个统一网关，或用当当网的dubbox
   *启动检查配置，dubbo服务的循环引用时启动时会报错，此时可以设置check="false"，启动不检查依赖服务是否启动
    ？dubbo怎么通过zookeeper配置负载均衡的策略的。默认是随机负载策略
   *服务集群容错配置（cluster这是分布式面试常有）
@@ -582,7 +600,7 @@ Tom老师，你好，
    *dubbo的mock：降级方案的配置。如服务端Service1实现IService1，然后消费端配置一个mock="ServiceMock"实现了IService1的本地类，当消费端调用
                 Service1服务时如果出错，则转而调用ServiceMock的实现，这就达到了所谓的服务降级。
 		注意，如果摸个服务访问流量超限制，这种情况是无法通过dubbo服务降级处理的
-                ？？但是服务多的话不是要一个个配置降级方案，那不很多。
+                ？？但是服务多的话不是要一个个配置降级方案，那不很多。一般是一个个配置，但若是一些公共降级其实就相当于统一拦截，可在nginx层面去拦截。
 
  *SPI机制：插件的一种规范，是dubbo框架的一个重要机制。
      *java SPI机制
@@ -670,7 +688,7 @@ Tom老师，你好，
       只mock只有在容错机制抛出PPCException情况下才能接受处理，？这个要验证下
   ？如果有很多个服务消费，那岂不是要配置和编写很多个mock	
   ？双重检查锁定 if (instance == null) {synchronized(）{if (instance == null) {xxxx}}}  单例模式里有
-  ？再去将dubbo学习的18点内容复习下
+  ？再去将dubbo学习的18点内容复习下，老师提的内容要点。
   ？淘淘项目服务端pom里排除了netty，那在默认protocol=dubbo协议情况下  duboo协议底层又是通过什么通信？ 
   ？dubbo课程像没有讲到线程模型，等多线程编程学完再重新回到dubbo学习下。
   ？<dubbo:service>的executes、actives、threads、connections、accepts设置，他们的区别和关系
@@ -791,7 +809,447 @@ Tom老师，你好，
 
 ？BlockingQueue的学习，应该在多线程部分会涉及吧。在dubbo容错方案ForkingClusterInvoker设置并行请求时源码涉及。
 
+
+*Redis 
+ *结合淘淘和咕泡的文档和中文官网进行学习实践。
+ *5种数据类型中的list，提到了“双向链表”：每个数据在内存中存储位置是不连续，但每个数据节点都存储了上一个和下一个节点的指针。
+  双向链表在插入和删除复杂度低，但是内存开销大。“压缩列表”：和双向列表相反，内存中是连续，内存空间小，插入删除复杂度高。
+  redis3.2前都是用上2种一种，redis3.2+就是quicklist，是上2种的综合。
+
+ *守护进程的方式运行：守护进程一般在系统启动时开始运行，除非强行终止，否则直到系统关机都保持运行。
+  常见的守护进程包括系统日志进程syslogd、 web服务器httpd、邮件服务器sendmail和数据库服务器mysqld等。
+ 
+ *fork一个子进程：相当于复制一个子进程，和github的fork项目仓库差不多。 
+
+ *2种持久化方式
+  rdb快照，在一些自定义或系统自身的条件下会执行快照，此时可能会阻塞主线程造成其它客户端不能访问redis
+  aof文件，没次操作都写入操作日志文件到磁盘，性能不会有大的影响。但是文件会一直增大，
+           特别是当有一些冗余操作如执行"set foo 1"再执行"set foo 2"，但redis会有优化方案：重写aof文件。
+
+ *内存回收策略
+
+ *Lua脚本相当于一段sql语句集或存储过程，可以让redis一起执行多个命令语句，从而减少多个单语句在网络传输中的消耗。执行lua脚本实例如下：
+  如 EVAL   "return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}"     2         key1      key2     first      second
+     [命令] [脚本内容]                                [参数个数]  [参数名1] [参数名2]  [参数值1]  [参数值2]
+
+ *lua脚本可以由redis客户端发送到redis服务端执行并保存，其它客户端可以直接复用。  
+
+ *redis是单线程，这是就只能用到CPU的一核心，如果要充分利用服务器CPU的多核，可以在同一台服务器上部署redis集群。
+
+ *redis是通过NIO实现异步，即多路复用。
+
+ *Redis存在最终一致性，原子性问题。 例如：age=1两个客户端同时访问Redis 执行age++;最后age可能等于2或3
+  在单体redis中，可以通过MSET命令保证多个命令同时成功或失败，保证最终一致性。但是在集群下这个命令无法保证一致性。
+ 解决方案：使用lua脚本，例如上面的age++;命令，把这个命令编写在lua里面，两个客户端AB都执行过lua而不是直接执行命令。
+           此时A执行lua时是不受B的影响的，并且等到A执行完后，B执行的也是同样的lua，因为Redis可以执行过的lua保存起来。
+ 问题：如果lua脚本复杂，执行时间很长，则其它客户端连接会被阻塞掉并返回错误。用script kill去终止lua脚本的执行
+
+*Nginx
+ *nginx.conf的server_name和location配置规则需要补充学习。 
+  server_name和location的匹配是相互独立的，如果www.s1/location1匹配到server1但是找不到location1的匹配则会报错，而不会去server2里看有没有location1
+  server_name匹配优先级：完全匹配>通配符在前>通配符在后>正则>listen配置项后有default或default_server的>前面的都没匹配到则找到listen端口的第一个server
+  location匹配优先级：  
+ *Nginx安装第三方扩展模块需要重新编译，在第三方扩展模块添加后要进行编译时，原来编译的相关的参数也要加上去，不能省略。
+  为了不覆盖原有安装后的相关配置（如：nginx.confg），可以将编译后objs/nginx目录拷贝到原本安装sbin目录（如：/usr/local/nginx/sbin）
+
+ *C语言的应用，在linux下 用make命令是编译，make install命令是安装的意思。
+
+ *./nginx -V 查看nginx版本及相关信息，如扩展模块信息。在添加新的扩展模块时，可通过此命令查看当前现有的一些扩展模块。
+
+ ？学习要点：
+  ？要学习常见的Nginx扩展模块：状态统计http_stub_status_module、限流ngx_http_limit_req_module
+  ？proxy_pass模块下的各种常见参数配置，如proxy_set_header Host $host;proxy_set_header X-Real-IP $remote_addr;等等
+    proxy_set_header相关设置可以让目标服务器从nginx那边获取到真正客户机的一些请求信息，而不是获取nginx的请求信息
+  ？负载均衡中ip_hash策略的应用场景，详见csdn收藏 https://blog.csdn.net/xqhys/article/details/81788358
+    其实可以举例917使用又拍云，我们做了一层服务器缓存，此时就要求根据ip或url进行hash，让客户端相对固定的访问统一个真实服务器。
+  ？io 模型，epoll、select....是什么鬼
+  
+ *nginx.conf里面也可以用include 来包含其它的配置文件，从而达到分类治理的效果。
+
+ *用nginx或tomcat做静态资源服务器时，静态资源的header里会添加ETage和Last-Modified两个信息以供浏览器决定如何做缓存，如：
+  ETag: "5b0ce6b0-570b"
+  Last-Modified: Tue, 29 May 2018 05:35:44 GMT
+  但实践中一般会指定明确的缓存策略，如设置expires为1d。 597的静态资源是设置expires为30天
+
+ *nginx中的gzip压缩是可逆的，无损压缩，但是会消耗一定的CPU资源，这个如何去权衡。
+  图片、音频、视频用gzip压缩的后大小基本不变，只能做有损压缩，如降低分辨率和质量。或者可以用第三方的服务应用。
+
+ *nginx进程模型：一个master进程加多个worker进程组成，worker进程是从master进程中fork出来的。
+  通过ps ef|grep nginx 可以看到nginx默认开启了master和worker两个进程
+  工作进程数通过worker_processes设置，一般建议设置为linux的CPU核心数
+  worker_connections=1024说明一个worker进程可以处理的连接数，即并发数，理论上如果有3个worker进程，则总并发可达1024*3
+
+ *fork进程是UNIX关于进程管理的一个术语，本质是新开一个进程，但是不从磁盘加载代码，而是从内存现有进程复制一份。
+
+ *如果nginx的并发/吞吐量不够用了怎么办
+  *简单方式：在nginx做集群，然后dns做轮询
+  *昂贵方式：nginx做集群，然后F5做负载均衡
+  *复杂方式：dns做地域性的解析，指向当地的机房。
+
+
+*NIO 先看博客园收藏《Java NIO：NIO概述》，在看咕泡课程笔记，再看博客园收藏《Netty序章之BIO NIO AIO演变》
+ *同步/异步，阻塞/非阻塞概念可参考简书收藏《深度解读Tomcat中的NIO模型》
+ *其中司机-售票员-乘客 可以很好的解释NIO和BIO的区别。BIO有点像每站必须停的公交，而NIO有点像中长途巴士，根据乘客要停的地方在停。
+ *BIO模型下，如下代码ServerSocket需循环接收到客户端Socket实例，然后new Thread()去处理。这时候对于客户端是阻塞的，
+  while (true) {
+     Socket socket = serverSocket.accept();
+     new Thread(new ServerHandler(socket)).start();
+  }
+ *NIO模型下，客户端请求服务端时并留下事件，而服务端用一个线程去轮询这些事件，当数据准备好了就触发对应的事件。 
+  这就是同步非阻塞，同步体现在事件轮询，非阻塞体现在客户端不必等待服务端。
+ 
+
+ *BIO是面向流的，而NIO是面向Buff的。
+
+ *堆外内存：即不被jvm管理的内存空间。堆内内存则相反。
+
+ *系统调用，我们的java应用要调用到操作系统内核的api时候就叫系统调用。
+
+ *操作系统的内核是管理我们的内存，操作CPU、管理文件系统等主要资源的程序。
+  而操作系统就是由内核和外围的一些程序组成的。
+ *内核态，只能由操作系统内核来调用的资源，如文件系统。
+ *用户态，和内核态相反。
+
+ *系统调用的时候，一旦应用程序调用到内核的api的时候，就会处于阻塞状态。
+
+ *BIO 同步阻塞
+ *NIO 同步非阻塞
+
+ *阻塞是对于客户端，同步对于服务端。 这里的客户端和服务端，可以理解为应用程序和操作系统内核。
+
+ *NIO的chanel是双向的，而BIO的流是单向的。
+
+ *NIO的buff简单理解成为一个数组。
+
+*NIO理解可以参考博客园收藏《支撑Java NIO 与 NodeJS的底层技术》
+
+*堆内内存 是由jvm管理的内存  堆外内存是不被jvm管理而是由操作系统管理的内存
+
+*个人理解同步与异步，阻塞与非阻塞
+ *对于服务端来讲是同步与异步，也就是说服务端如果"停滞"了则为同步，否则异步
+  对于客户端来讲是阻塞与非阻塞，也就是客户端如果"停滞"了则为阻塞，否则非阻塞
+  注意，对于底层来讲java进程和系统io内核api来说，java进程为客户端，而系统内核为服务端。
+        此时对于java进程和系统内核交互时，分为系统内核有数据准备阶段和数据赋值两个阶段。
+        在数据准备阶段，java进程请求io数据时如果能立即返回则为非阻塞，反之为阻塞。
+        在数据赋值阶段，系统内核如果是立即处理，则为同步，否则为异步。
+        这个过程可以结合大白老师的nio_demo进行理解。
+  *宏观的看：有客户端，服务端，系统内核3方，客户端和服务端其实都有一个os系统内核。这两个系统内核通过io交互然后把数据通过事件推给客户端和服务端。
+
+ *BIO是面向字节的，就是只能一个字节一个字节操作
+  NIO是面向buff的，就是可以块块数据进行操作
+
+ *java是不允许直接操作地测内存相关的东西，但是有一个unsafe操作类可以让我们操作。 程序员一般不用。但是一些Nio框架会用到。
+
+ *Nio的buff相关概念（详见csdn收藏《JAVA NIO缓冲区(Buffer)------ByteBuffer常用方法详解》）：
+  capacity 整个buff的容量
+  position 读或写操作时的起始指针位置
+  limit 读或写操作时的限制长度
+  flip()当写操作时要转为读操作时，通过flip()方法将limit设置为position的值，然后将position指针调整到buff首位即0的位置，从而达到可以读取已写数据
+  rewind() 似乎和flip类似  具体百度下或直接看方法源码即可清楚 
+  marke
+
+
+ *Nio的selector也有点像rpc一样，其实是在服务端和客户端的一个代理，用于屏蔽细节。
+  对于客户端和服务端把相应的事件handler注册到它的selector上，而服务端的事件由操作系统去触发，然后顺理成章的触发客户端的事件。
+  简单的比喻：clientA、clientB找server下订单，server去找系统内核os工厂真正制造数据产品dataA和dataB。
+  server有一个线程轮询的问dataA和dataB好了没？ 如dataA好了，server就打电话给clientA说好了，把dataA通过事件传递给他。
+  注意：一个selector实例既可同时注册客户端和服务端的channel的相关事件。它其实是一个事件容器，当注册的事件的数据准备好了，操作系统会将对应的状态
+       设置为true（如：selectionKey.isWritable()为true），而开发人员只要轮询selector的selectionKey的状态即可根据状态进行相应的读写等操作。
+  
+
+*注意socketChannel.write(writeBuffer);并不一定会将writeBuffer里的内容一次性写入到socketChannel中，
+
+*Arrays.copyOf(byte[] original, int newLength)可以拷贝原数组的指定长度的元素
+
+*Netty4.x版本是比较成熟稳定的版本，使用的是NIO，而Netty5.x用的却是AIO，但是由于操作系统支持及性能表现没比4.x好，所以主流都是用Netty4.x
+
+*Netty学习 找不到大白的相关笔记，可学习网上
+ 博客园收藏《netty入门（一）》 https://www.cnblogs.com/sky-chen/p/10497166.html 这里面有对大白代码的剖析
+ 教程系列《Netty入门教程——认识Netty》https://www.jianshu.com/p/b9f3f6a16911  （图片显示不出来，执行$('.image-view img').each(function(){$(this).attr('src',$(this).attr('data-original-src'))});）
+ 博客园收藏《Netty框架入门》 代码部分可不看
+
+*Netty的几个组件
+ EventLoopGroup 事件循环器组，它可包含一些线程。 他可以传递给Bootstrap或ServerBootstrap作为主事件循环器组和工作事件循环器
+ EventLoop 事件循环器，一个线程可对应多个EventLoop
+ Bootstrap/ServerBootstrap 客户端服务端的帮助启动类
+ Channel 和Nio的channel对应，有做了一些封装
+ Handler 用于非业务和业务的一些逻辑处理，相当于事件的方法体
+ ChannelFuture是一个Future接口对象，在channelFuture.channel().closeFuture()代码实际返回的实例还会是一个promise对象。
+ 
+*网上说Netty需要一段时间才能预热，但是它能够处理比NodeJS每秒多40％的请求。 只是代码量要比NodeJS多很多。
+
+*serverBootstrap.childHandler()和handler()的区别，是面试中常考的一个问题。
+ handler是服务端channel接收连接及初始化等相关的事件业务处理逻辑，是与bossEventLoopGroup相关的处理产生的事件。
+ childHandler是处理客户端连接生命周期中的一系列事件处理，也就是workEventLoopGroup相关处理产生的事件。
+
+*一般Tomcat默认还是Bio的io模型，可配置Nio 
+ 使用NIO方式处理并发性能好的前提是 每个请求耗时不能高，但是这样对现有的request response处理要有额外处理。 
+ 如果不能达到这个要求，用 NIO反而会是整体性能下降。
+ 现在一般的处理流程： 请求进来，查数据库，执行业务逻辑，渲染，然后返回。整体耗时很长。所以……
+
+*Nio_Demo中serverSocketChannel.configureBlocking(false);实际上就是让serverSocketChannel.accept()方法非阻塞，即同步非阻塞模式。
+ 如果设置为true则serverSocketChannel.accept()方法阻塞，此时如果serverSocketChannel.regist()内部会判断blocking为true则抛异常。
+ 即设置为true实际上就相当于BIO的模式，并且serverSocketChannel不能注册到selector上
+ 注意：serverSocketChannel是可以不注册到selector上的。 个人理解selector是一个轮询载体，也是系统调用过程中所产生事件的接收体
+
+*Nio通信的整体过程：
+
+
+*netty源码中有些方法是带有0的(如channelRead0)，一般是真正干活的，而不干活的是如channelRead
+
+*netty可以实现3中Reactor模型：单线程模型、多线程模型、主从多线程模型。详见咕泡文档《09-Netty 源码分析之EventLoop.pdf》
+
+*handler实现类上的@Sharable注解主要是为了这个handler可以被多个channel安全地共享。
+ 因为handler里是业务逻辑代码（如业务逻辑A），而多个客户端channel他们可能在EventLoopGroup里的不同线程，他们要共同访问A，所以A代码要保证线程安全。
+
+*Netty可在任何系统上运行，但对于不同的系统会有不同的折中，Linux系统中的epoll具有高可扩展的I/O的事件通知，Linux上的JDK的NIO则是基于epoll，
+当使用epoll取代NIO时，可以使用Netty中的EpollEventLoopGroup取代NioEventLoopGroup，使用EpollServerSocketChannel.class取代NioServerSocketChannel.class。
+https://www.cnblogs.com/leesf456/p/6895145.html
+
+*沾包问题：详见CSDN收藏《Netty4实战 - TCP粘包&拆包解决方案（这个文章解决了自己想解决的问题）》
+
+*在快速重连的图解中，HandlerShakeHandler、FastConnectHandler是netty自带的组件
+
+**研究下ChannelFuture和Future接口   juc里线程池操作有使用到Future
+
+*CompletableFuture此接口需要学习下，详见https://www.jianshu.com/p/6bac52527ca4
+*RecursiveTask需要学习下
+**juc常用的api都需要学习下
+
+*大白老师代码研读 begin-------
+？大白老师留的3个问题：
+ 1.netty服务端默认启动多少个线程，什么时候启动
+ 2.Netty是如何解决jdk空轮询的bug
+ 3.netty如何保证异步串行化
+？ServerChannelHandler#channelRead问什么能将msg转化为Packet，是不是客户端是直接对象序列化 Packet packet = (Packet) msg;
+？项目中是如何解决分包或者粘包问题的
+？ServerBoot(Server server, ServiceNode node) 这里的ServiceNode node具体作用和使用。大白只让node做注册中心注册使用，是不是应该让server去依赖node
+？GlobalChannelTrafficShapingHandler详见简书收藏《Netty 那些事儿 ——— Netty实现“流量整形”原理分析及实战》
+？com.google.common.eventbus.EventBus的作用和使用，它在整个系统中充当的角色是什么
+？注意各个服务组件（如路由服务、网关服务）他们是分属不同的进程，因为他们各自启动一个服务进程。
+？app等前端是否能够直接查询zookeeper，然后自己做负载均衡？ 
+？this.holderFactory = heartbeatCheck ? HeartbeatCheckTask::new : SimpleConnectionHolder::new;这里SimpleConnectionHolder没有无参构造函数为什么还能用new
+  这是jdk8的语法，但是感觉有点奇怪，这样不算直接可以访问私有构造函数了？ 
+？为什么很多一些对象Xxx需要用XxxHolder进行包装
+？一般xxxHolder有什么作用，为什么要做一层包装。一般是做一些简单的逻辑包装
+？this.timer = new HashedWheelTimer(...时间轮概念 详见《使用netty HashedWheelTimer构建简单延迟队列》https://www.cnblogs.com/eryuan/p/7955677.html
+？学习jdk8的新语法
+？心跳逻辑，似乎没有什么特殊的逻辑和作用
+  如果heartbeatCheck配置为true，则代码中用了一个定时器去检查连接的状态，并且输出了对应连接的状态信息
+？NettyConnection的“读超时”isReadTimeout()是个什么意思
+  一旦netty通道建立即对应着一个connection对象，而这时候在一定时间内没有读操作，可以进行一些操作，如关闭连接。
+  这些连接上根据读写的状态而进行的一些操作放在连接管理器上处理，如ServerConnectionManager
+？ChannelFuture、ChannelFutureListener的使用    
+？ChannelHandlerContext ctx; ctx.writeAndFlush和ctx.channel().writeAndFlush的区别和联系
+  !详见CSDN收藏《Netty中ctx.writeAndFlush与ctx.channel().writeAndFlush的区别》
+？InboundHandler顺序执行，OutboundHandler逆序执行的执行顺序，要做测试。
+  大概是读事件按addLast时的顺序执行，而写事件则按addLast时的逆序执行
+            
+？NettyConnectionServer里 start(Listener listener)的listener研究下
+？注意epoll模式的server
+？CompletableFuture此接口需要学习下，详见https://www.jianshu.com/p/6bac52527ca4
+
+？LinkedList的poll pop remove peek等方法的比较
+  linkeList.remove("a");//删除时如无该元素则返回null
+  linkeList.pop();//删除顶部元素，如无该元素则抛异常 和push配合使用，实现堆栈数据结构
+  linkeList.poll();//删除顶部元素，如无该元素返回null，和offer配合使用，实现队列
+
+？tomcat是采用io多路复用的Nio吗？ 如果不是则一个客户端请求就要有对应的一个服务端线程。 
+  详见https://www.oschina.net/question/1240923_2202821
+      https://blog.csdn.net/fd2025/article/details/80007435
+      https://www.jianshu.com/p/76ff17bc6dea
+  
+？为什么DB不能用io多路复用技术，而是使用连接池技术。详见https://www.jianshu.com/p/61079795896b
+
+？明天过下bind()的源码过程、pipeline的结构、启动netty server demo  用shell  telnet连下、复习下传智网络编程tcp3次握手、sync()源码过程
+  学习完netty后回头过去看dubbo服务发布过程的源码
+
+？秘钥交换个人感觉只是保证了数据传输的安全性，那骑手客户端在连接推送平台之前应该是要通过业务系统注册登录并获取公钥（也可认为是token）
+  此时拿到这个公钥不就意味着可以直连服务端并获取响应的数据了。
+
+？？商家提交消息到 pushCenter，这个消息body里带的userId应该是目标骑手用户的id
+？？商家提交消息前先要连接到某台 网关服务器节点（也是连接服务器节点，也是连接管理节点），此时连接暂存map要么是互通的，要么就是直接转发到另外服务器节点，
+？？整个推送消息到下发消息的具体过程要理清楚，可以通过tester相关demo进行测试
+
+？编码过程中为什么要把package.body=null;
+？push-client属于服务端的sdk，主要可以用来做消息推送 ，甚至可以在Android里用这个sdk来发送消息。 但是ios就应该要做另外的sdk了
+？netty的连接如果没有手动断开就应该一直保持着，属于长链接
+？connection的心跳检测是判断读超时超过指定的次数就关闭连接。这样的话可以减少无用的连接，当骑手连接被关闭后，有需要再通过握手，秘钥交换等流程建立新的连接。当然连接的关闭和重建是伴随着本地路由和远程路由的更新的。
+？看下ping -> pong的具体心跳逻辑
+
+* nioEventLoopGroup.setIoRatio(100);//代表全部线程都用于操作Io的读写，而没有线程用于操作业务的读写？何为业务读写
+  !个人理解，在接收连接进来的消息后，由于业务需要，也需要另外的线程来执行任务，此时就会将这些任务放到netty的EventLoop里去，应该是共用线程的目的。
+   如代码：task.getExecutor().execute(task);里其实都是获取通道对象里面的eventloop对象
+*ConnectionServer#init里所有注册的命令类型都是由客户端发过来的，有点像springMVC的Dispatcher
+*6上30分钟
+*lion.conf完整的配置在哪里可以查看，其实可以看CC接口类和dabai-vip\conf\reference.conf
+
+
+*大白老师代码研读 end------- 
+
+
+
+
+？？各类常见分布式解决方案及其问题可看公开课，找启蒙。在学习完基础课后，先对基础再复习一遍，然后找启蒙问题做demo（可简单看公开课）
+
+？com.gupaoedu.vip.distributed.io.niodemo.channeldemo.ServerSocketChannelDemo里还有些代码疑惑，后面有空了解下
+  其中为什么socketChannel.write(writeBuffer);并不一定会将writeBuffer里的内容一次性写入到socketChannel中
+
+
+？明天自己百度下Nio的服务端demo代码的一些疑惑
+  自己学习下大白netty的demo代码
+
+？下午传智集合全部练习一遍
+  看一遍这个链接并做好intellij笔记  http://www.cnblogs.com/KnightKitt/p/8904001.html
+  
 --------------------分布式 end--------------------------------
+
+
+--------------------并发编程 begin------------------------------
+*进程和线程的概念，看传智基础课再看咕泡课程，如果再看不懂购买腾讯课堂课程https://ke.qq.com/course/343174
+ 可参考博客园收藏《Java多线程系列——从菜鸟到入门》
+
+*进程和线程的概念、wait\notify\notifyAll\join方法的使用和原理看传智。
+ 注意这些方法的调用对象。wait\notify\notifyAll是lockObj，join是threadObj
+ 
+
+*notify 仅仅通知一个线程，并且我们不知道哪个线程会收到通知，然而 notifyAll 会通知所有等待中的线程。
+ notify、notifyAll要在synchronized里进行使用，这样才能找到锁
+ 注意lockObj.wait(timeout)重载是指当超过了指定时间，则当前线程会继续加入到lockObj锁的竞争行列，如果获取到就继续执行自己的代码
+
+*threadObj.join()原理看csdn《Java中的join方法原理详解》,threadObj.join()其实是主线程将threadObj的作为锁对象synchronize并wait，知道子线程任务结束
+
+*Condition对象的await()\signal()\signalAll()相当于锁对象的wait()\notify()\notifyAll()。
+ Condition对象是和Lock实例lock()方法绑定使用，而wait()等方法是和synchronized及锁对象绑定的。 本质上都是让这些方法找到锁。
+
+*JUC线程池的Future<String> future = ex.submit(...)中的Future原理详见csdn《JUC FutureTask 分析》
+
+*总的说进程管理了应用所需的一些资源，如内存空间、cpu资源等，而线程则是在这些资源范围内去抢占资源。
+
+**假设A为主线程任务，A中有一个耗时操作b。此时可以启用了B线程以提高性能。其中可用join或Callable去保证一些业务的有序性。
+ 如果A任务最后用到了B的执行结果，则采用Callable
+ 如果A任务里并没用到B的执行结果，但又必须等B执行完才能结束A线程，则采用join
+
+*阻塞队列LinkedBlockingQueue的使用。 有一个使用调用链套路详见mic-vip\2018\20180810-并发编程第一节课\Demo.java
+ 线程池ExecutorService的使用
+
+*线程的6种状态，注意调用哪些api会影响它们的状态改变。如:Thread.sleep(100)会使当前线程进入超时等待状态。
+
+*线程的启动和终止，常问的面试题
+ 方式1：threadObj.stop()是暴力终止，已过时，有点像linux里的kill命令。有些资源可能还没释放或者还有一些地方在用此线程。
+ 方式2：threadObj.interrupt()是告诉当前线程可以停止了，至于什么时候结束要看自己。可用threadObj.isInterrupt()判断是否停止。
+ 方式3：一般线程里的任务都是用循环，如while，此时使用标志位方式是属于最优雅的方式，让线程自然停止。
+
+*threadObj.interrupt()内部原理是设置一个中断标志（假设为flage）以供线程内部判断此标志，如果在当前线程执行Thread.interrupted()则会将flage重置为false
+
+*java中用native关键字标志的方法其实就是用java调用c写的一些api函数。C#也有类似的语法
+
+*进程和线程的区别 详见博客园收藏《说说进程和线程的区别》 https://www.cnblogs.com/zhehan54/p/6130030.html
+ *进程是资源分配的最小单位，线程是程序执行的最小单位。如IO、CPU、地址空间等资源。
+ *线程是共享进程中的数据的，使用相同的地址空间，因此CPU切换一个线程的花费远比进程要小很多，同时创建一个线程的开销也比进程要小很多。
+ *线程之间的通信更方便，同一进程下的线程共享全局变量、静态变量等数据，而进程之间的通信需要以通信的方式（IPC)进行。不过如何处理好同步与互斥是编写多线程程序的难点。
+ *但是多进程程序更健壮，多线程程序只要有一个线程死掉，整个进程也死掉了，而一个进程死掉并不会对另外一个进程造成影响，因为进程有自己独立的地址空间。
+ 
+*线程的可见性、原子性、有序性（详见博客园收藏《Java中Volatile关键字详解》https://www.cnblogs.com/zhengbin/p/5654805.html）
+ 可见性：一个公共变量在多个线程中是可见的，表现是当这个变量在一个线程中的修改对于其它线程是能"同时看到"
+ 原子性：一个公共的变量的修改，如count++; 是作为一个整体不可分割。（一般count=0是原子的而count+即count=count+1;是非原子的），多个线程同时计算不会造成最后结果"误差"
+ 有序性：对于公共变量的修改，如count1++;count2++;这段代码在多线程环境下，指令重排，可能造成先执行count2++;再执行count1++;
+         有序性的经典案例就是abxy案例，详见咕泡文档或自己的练习。乱序问题也是看咕泡文档。
+ *可见性关心的是自己的变化能否立马被其它线程感知，原子性关心的是多个代码指令是否作为一个整体执行，有序性关心的是多个代码指令是否按顺序执行。
+
+*其实乱序问题
+
+
+*总的来说就是cpu的指令重排\高速缓存问题造成了多线程的可见性、原子性、有序性问题
+
+*单核CPU时代，是不会出现缓存一致性问题，多核CPU情况下就会出现真正的指令并行执行，此时共享数据的处理在并行下就会有缓存一致性、有序性问题
+
+*JMM内存模型提供的相关api用以解决可见性、原子性、有序性问题：
+ *volatile阻止了指令重排和高速缓存，保证可见性、有序性但不保证原子性，能保证count=0;安全，但不保证count++;安全。count++;是可分割的，是非原子操作。
+         内存屏障，只有一个cup核心时并不需要内存屏障。指令重排时不会将指令重排到内存屏障之前的位置。
+	 volatile修饰的变量与普通变量几乎相同，但性能较慢，因为他要在本地代码中差多许多内存屏障来保证执行重排造成的乱序。
+ *synchronized只允许同时只有一个线程可操作，可以保证原子性和可见性、有序性，其实就是让count++;或者一些代码块在多线程下是串行执行的。 使用了同步锁机制
+ *final可以保证可见性
+ *juc
+
+*JUC包是用于解决多线程编程方面的问题的，其下的体系详见博客园收藏《Java并发：多线程和java.util.concurrent并发包总结》
+
+
+*CPU和内存之间有一个叫高速缓存的东西。这个需要了解
+ 高速缓存分为L1、L2、L3。它缓存了内存的一些东西，如count=1;
+ 每一个CPU核心都有一组高速缓存，每组高速缓存之间的内容是相互不可见。如果把count=1;加载到每组高速缓存，当有个CPU改了count值，
+ 此时只有自己的高速缓存值改变了，其它CPU的高速缓存值没有改变。
+ 高速缓存的一致性导致了线程的可见性。
+
+*sychronized锁的优化补充学习详见博客园收藏《Java并发编程：Synchronized底层优化（偏向锁、轻量级锁）》
+
+*线程锁之Lock，详见博客园收藏《Java并发编程：Lock》，此文章很好，还涉及读写锁等知识点
+  *Lock只是一个接口，java中唯一的实现是ReentrantLock。
+   注意Lock只有少量方法供使用，ReentrantLock提供了isFair、isLocked、isHeldByCurrentThread、hasQueuedThreads等实用方法
+  *Lock接口有3个获取锁的方法，当多个线程同时（一定要保证同时）获取锁时，3者表现各不一样：
+    *lock.lock() 未获取到锁的线程会选择等待
+    *lock.tryLock() 未获取到锁的线程可以选择放弃或做其它操作
+    *lock.lockInterruptibly() 未获取到锁的线程会等待，但该线程可用thread1.interrupt()终止等待，
+                              必须在线程调用lockInterruptibly()的方法上声明异常而不是try-catch。
+                              而终止等待后的操作可以在捕获上述异常的地方进行处理。
+  *ReadWriteLock接口，juc中唯一实现类是ReentrantReadWriteLock
+   *注意reentrantReadWriteLock实例的readLock()和writeLock()方法获取的是单例的lock
+   *写锁是排他锁，而读锁是共享锁
+  *Condition的使用 详见博客园收藏《Java多线程系列--“JUC锁”06之 Condition条件》和咕泡练习
+
+*CountDownLatch用于制造指定个数的线程并发
+*Semaphore用于限流，限制指定个数的线程进行访问。
+
+*AtomicXX类的使用详见简书收藏《Java中atomic包中的原子操作类总结》，注意其中描述的ABA问题
+
+*CAS概念（Compare-and-Swap 比较和交换）与平台相关，它有三个操作数，内存位置值（V），旧的预期值（A），新值（B）。其实就是乐观锁的概念
+
+*for(;;){}和while(true){}的区别
+ 两者在一般的编译器编译后会进行优化，而优化后的字节码是相同的
+ 但是如果有一些编译器没有优化，则会会有一些差异for的字节码会更少
+
+*TimeUnit是juc提供的一个工具枚举类
+
+*AQS（AbstractQueuedSynchronizer）在谈到ReentrantLock涉及到AQS概念
+
+？学习阻塞队列LinkedBlockingQueue的使用
+
+  复习zookeeper实现锁的demo
+  协程概念的学习
+
+
+--------------------并发编程 end--------------------------------
+
+*类图中的关系连接符
+ —> 关联关系
+ --> 依赖关系
+ —▷ 继承关系
+ --▷ 实现关系
+ —◇聚合关系
+ —◆复合关系
+
+*源码阅读技巧：
+ *用intellij的Structure面板可以分类查看属性、构造函数、继承的东西
+ *看该类名称、接口规定“技能”，抽象父类规定“实现流程”。
+ *职责单一，公共的逻辑放父类
+ *利用装饰器模式、工厂等模式可以对对象的行为进行监控、拦截扩展等操作。
+
+*调试技巧：
+ debug时候，console输出的错误信息从上到下是对应最底层到最上层的代码。此时可在throw异常的地方前断点查看引发异常的原因。
+ 对于第三方框架来说，如果不了解底层的一些逻辑原理的话，很难判断是上层应用的什么错误代码导致了底层异常。所以需要学习底层框架原理。
+
+*@FunctionalInterface表明这个接口将是一个函数式接口，里面只能有一个抽象方法
+ 注意jdk8提供的Function、Predicate、Consumer、Supplier接口都带有@FunctionalInterface注解
+ 注意：以下方法参数handlerSupplier是可以传递一个MessageHandler对象或者Supplier<MessageHandler>接口实例
+       即可以传MessageHandler实例又可以传递一个返回MessageHandler类型实例的方法或lamda
+    public void register(Supplier<MessageHandler> handlerSupplier) { //do sth }
+
+*【597简历的求职意向-->搜索简历 】 功能的解决方案：
+ 需求：每份简历可以添加3个求职意向，而且每个求职意向有：城市、职位、...等5个条件
+       比如A简历有3个求职意向：北京+PHP...、杭州+Java...、厦门+DotNet...
+           B简历有3个求职意向：北京+DotNet...、杭州+PHP...、厦门+Java...       
+       此时搜索引擎搜索就必须满足搜索"北京" 能匹配到AB，搜索"北京PHP"只能匹配到A，等等等等多种情况。
+ ?要问下张阳，这些搜索关键词是通过 选择控件选择出来还是 输入关键词
  
 
 *大多数框架都是支持spring和api两种调用方式，而常用spring方式，为了更好了理解spring方式的相关配置，可以学习使用api方式。
@@ -805,6 +1263,7 @@ Tom老师，你好，
 *TPS 即每秒处理的事务数，很关键的指标，脚本定义什么事务，就按什么事务来计算。
 
 *幂等函数，或幂等方法，是指可以使用相同参数重复执行，并能获得相同结果的函数。这些函数不会影响系统状态，也不用担心重复执行会对系统造成改变。例如，“getUsername()
+*幂等，简单来说：重复调用多次产生的业务结果与调用一次产生的业务结果相同。分布式事务解决方案课中有描述
 
 *到时候准备面试时，是否考虑到福州进行练手面试，缺乏大型互联网项目实战是一个很大的坎。
 
@@ -817,6 +1276,29 @@ Tom老师，你好，
 
 *职业方向：把业务功能做熟悉，再研究分布式重构。
 
+
+
 ？？分布式环境下的事务处理、服务调用链出错等问题。这些必须进行系统深入的学习
 ？？字节码重组，动态编译技术是否要深入的学习
 ？？底层通信、多线程和并发要进行系统学习
+？org.projectlombok的使用
+
+*神州优车
+ 一般13薪，有kpi，框架集成，如果只是普通业务开发，是否考虑。
+ 不同级别能看到的框架源码不一样
+
+*面试宝典https://www.docin.com/p-2122232700.html、
+ https://blog.csdn.net/weixin_42248137/article/details/80395227、
+ https://www.cnblogs.com/xueSpring/p/8026875.html
+ 阿里面试题：https://gper.gupaoedu.com/answers/712
+
+*面试之前将一些知识文档全部打印进行复习。当做一次考试。    
+*今天面试碰到面试官问秒杀 我说用redis list结构push方法解决秒杀 他说10000个人进来会导致连接超时或者连接满拒绝吗？ 
+
+*整理实战项目：
+ 海晟相关系统
+ 质量检测系统，主要是设计模式应用
+ MytotalWorld电商平台，结合淘淘系统
+ 大白抢单中间件，伪销售抢单
+ 
+     
