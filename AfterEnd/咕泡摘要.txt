@@ -6,6 +6,9 @@
 提取码：tkah
 使用教程：https://gper.gupaoedu.com/gper-doc/tencentKT.html
 
+*git之前是存放源代码跟一些资料链接，所以现在都已经全部放到网盘了呢，git现在已经不用了呢
+ 咕泡百度网盘地址合集：https://gper.gupaoedu.com/gper-doc/java/vipResource.html
+
 *架构课程4.0
  源码分析专题（Tom/James）
  微服务架构专题（小马哥）
@@ -17,7 +20,7 @@
 
 *咕泡资源（这些资源在换工作及新工作解决问题中都是很好的资源）
  qq群：有众多的学员分享交流
- BBS、ASK、Gper生态圈：学员老师都会回答你的问题、分享面试经验。可以积分，积累经验
+ BBS、ASK、Gper生态圈：学员老师都会回答你的问题、分享面试经验。可以积分，积累经验 。Gper有招聘板块
  老师：主要解决个性问题，如职业生涯，工作碰壁，面试问题，沟通技巧...
  微信公众号：课程提醒、学籍信息、作业提交情况、毕业跟踪等
  GitLab：包含课程源码、问题集锦
@@ -372,7 +375,7 @@ Tom老师，你好，
 ？练习：Junit4和spring的集成、并复习Junit的使用
 
 ？元旦节后将spring最后这几节课的笔记再复习一遍
-  元旦节后找spring相关的面试题做做，到咕泡论坛上找找
+  元旦节后找spring相关的面试题做做，到咕泡论坛上找找 https://gper.gupaoedu.com/articles/766
 -------------------------------------------------------------
 ？下午复习下Spring事务的相关配置及事务传播和隔离级别
 
@@ -687,7 +690,7 @@ Tom老师，你好，
       dubbo官网说服务目录是 Dubbo 集群容错的一部分，也是比较基础的部分，所以大家应尽量搞懂。    
       只mock只有在容错机制抛出PPCException情况下才能接受处理，？这个要验证下
   ？如果有很多个服务消费，那岂不是要配置和编写很多个mock	
-  ？双重检查锁定 if (instance == null) {synchronized(）{if (instance == null) {xxxx}}}  单例模式里有
+  ？双重检查锁定 if (instance == null) {synchronized(）{if (instance == null) {xxxx}}}  单例模式里有，不过似乎会有问题： https://www.jianshu.com/p/8b580d20dd58
   ？再去将dubbo学习的18点内容复习下，老师提的内容要点。
   ？淘淘项目服务端pom里排除了netty，那在默认protocol=dubbo协议情况下  duboo协议底层又是通过什么通信？ 
   ？dubbo课程像没有讲到线程模型，等多线程编程学完再重新回到dubbo学习下。
@@ -1019,15 +1022,26 @@ https://www.cnblogs.com/leesf456/p/6895145.html
 *大白老师代码研读 begin-------
 ？大白老师留的3个问题：
  1.netty服务端默认启动多少个线程，什么时候启动
+   ！对于默认启动的是物理cpu个数*2个线程（源码中有），因为现代计算机一般都是双核以上。
  2.Netty是如何解决jdk空轮询的bug
- 3.netty如何保证异步串行化
+   ！老师讲的很含糊。具体解析可以看blog《NIO的epoll空轮询bug》
+ 3.netty如何保证异步串行化（无锁串行化，大概应该是一个EventLoop处理一个通道的事情保证了不进行线程切换）
+
 ？ServerChannelHandler#channelRead问什么能将msg转化为Packet，是不是客户端是直接对象序列化 Packet packet = (Packet) msg;
 ？项目中是如何解决分包或者粘包问题的
+  ！用编解码器 
 ？ServerBoot(Server server, ServiceNode node) 这里的ServiceNode node具体作用和使用。大白只让node做注册中心注册使用，是不是应该让server去依赖node
 ？GlobalChannelTrafficShapingHandler详见简书收藏《Netty 那些事儿 ——— Netty实现“流量整形”原理分析及实战》
+  ！用于netty环境下的固定全局流量整形
 ？com.google.common.eventbus.EventBus的作用和使用，它在整个系统中充当的角色是什么
+  ！是一个第三方的库，用于单机内存型事件派发，有点委派着模式/发布订阅模式/观察者模式
 ？注意各个服务组件（如路由服务、网关服务）他们是分属不同的进程，因为他们各自启动一个服务进程。
+  ！应该说他们都是属于同一个进程，但是监听了不同端口的服务。
 ？app等前端是否能够直接查询zookeeper，然后自己做负载均衡？ 
+  ！不能，从lion项目整体架构看，骑手app是直接连接到netty服务端。但是在连接之前会先去请求一下负载均衡服务（这个服务并不转发请求，而是返回一个可用的netty服务）。
+    而商家app在推送消息时，是先通过hppt请求pushClient服务器，pushClient去redis请求远程路由获得具体netty服务地址后再与其连接。
+    此时要注意Adriod app可以使用lion提供的pushClient SDK而iosApp就要另外写SDK了。 
+    注意SDK里并没有集成负载均衡功能。
 ？this.holderFactory = heartbeatCheck ? HeartbeatCheckTask::new : SimpleConnectionHolder::new;这里SimpleConnectionHolder没有无参构造函数为什么还能用new
   这是jdk8的语法，但是感觉有点奇怪，这样不算直接可以访问私有构造函数了？ 
 ？为什么很多一些对象Xxx需要用XxxHolder进行包装
@@ -1077,6 +1091,11 @@ https://www.cnblogs.com/leesf456/p/6895145.html
 ？connection的心跳检测是判断读超时超过指定的次数就关闭连接。这样的话可以减少无用的连接，当骑手连接被关闭后，有需要再通过握手，秘钥交换等流程建立新的连接。当然连接的关闭和重建是伴随着本地路由和远程路由的更新的。
 ？看下ping -> pong的具体心跳逻辑
 
+？当一台连接服务器down掉了，那它上面的连接怎么办。 有人说是补推，是不是每推送成功一条消息就写入一条日志。？具体解决方案。 找下gper社区
+  是不是可以每发送成功一条消息都需要骑手客户端响应，以明确的得知消息有被成功接收。
+？长链接是如何保持的，大白说用心跳，但是代码里的心跳检测只是检测是否读超时，超时则关闭连接，并没看到发送心跳包的代码。
+？future.channel().eventLoop().inEventLoop()代码深究下	
+
 * nioEventLoopGroup.setIoRatio(100);//代表全部线程都用于操作Io的读写，而没有线程用于操作业务的读写？何为业务读写
   !个人理解，在接收连接进来的消息后，由于业务需要，也需要另外的线程来执行任务，此时就会将这些任务放到netty的EventLoop里去，应该是共用线程的目的。
    如代码：task.getExecutor().execute(task);里其实都是获取通道对象里面的eventloop对象
@@ -1084,11 +1103,45 @@ https://www.cnblogs.com/leesf456/p/6895145.html
 *6上30分钟
 *lion.conf完整的配置在哪里可以查看，其实可以看CC接口类和dabai-vip\conf\reference.conf
 
+*几个相对重要的类：
+ *Packet：原始的数据包对象，和前端的Packet的json对象。并没有包含connection信息（即channel）
+ *HandshakeHandler：继承BaseMessageHandler<T>，属于一种消息处理类，
+ *HandshakeMessage：是对Packet的分类性包装，将connection包装进去。并将两者隐藏（transient），将两者必要的信息暴露在字段上
+ *Connection：是连接对象，主要存储了SessionContext、Channel... 规约了连接常用的操作方法，如发送消息、连接状态、是否超时...
+ *SessionContext：是Connection里的一个字段，存储了连接上下文，如客户端osName、osVersion、clientVersion、deviceId...
+
+*几个重要的过程：
+ *连接建立过程：ping-pong（可选），握手建立安全通道，绑定用户
+ *推送消息过程：业务系统通过PushClient->gatewayClient连接到 网关服务端GatewayServer，GatewayServer再去操作本机的connection进行消息发送。
+                注意PushClient就是提供给业务系统进行推送消息的SDK。GatewayServer是和ConnectionServer在同一台服务器上（同一个大服务里）。                   
+ *踢人过程：实际上只是发送了踢人的消息给骑手客户端，客户端自己关闭连接。显然这样的逻辑很别扭。
+ *路由存储逻辑：远程路由其实存储的是骑手用户所在连接服务器的网关GatewayServer的ip+port信息
+ 
+
+*ByteBuf
+ *ByteBuf用于通道读写数据时缓冲，和线程一样属于稀缺资源，因为它要占用堆内或堆外内存，因此netty采用ByteBuf池：ByteBufAllocator。
+  channel.alloc();和ctx.alloc();均可以获得byteBufAllocator实例
+ *heapBuf.hasArray()代码，只有在堆内内存才有数组，堆内内存归jvm管理，堆外内存归系统管理。 
+ *CompositeByteBuf相当于只是视图，它并没有拷贝普通缓冲区的东西，而只是"引用"，这应该就是"零拷贝"
+ *ByteBuf中以get开头的方法(getXxx)是不会改变读索引，而read开头的方法(readXxx)是会更新读索引（即不可重复读）
+ ？堆外内存的零拷贝问题
+
+*监控模块再性能优化专题会再讲，所以暂时大概浏览了代码，没有深究
+
+*netty源码中判断一个数是不是2的幂次（即2的n次方），采用了一个算法判断：一个数如果是2的n次方,如8，则8&(-8)==8
+ 这个-8在计算机中表示是8的补码，即8取反加一
+
+
+*Netty中EventLoop其实是一个线程或者线程池，当我们在业务的channelHandler里处理业务时如果需要使用线程执行任务，一般就用当前的线程或线程池执行任务，如
+ channel.eventLoop();eventLoop.execute(new Runnable() {...}）
+ 除了通过 execute 添加普通的 Runnable 任务外, 我们还可以通过调用 eventLoop.scheduleXXX 之类的方法来添加一个定时任务
+ 注：setIoRatio()就是用来设置io任务和这里的业务任务在这些线程池里执行的占比
 
 *大白老师代码研读 end------- 
 
+？netty中一个线程有几个eventloop
 
-
+？？HashedWheelTimer(ThreadFactory threadFactory, long tickDuration, TimeUnit unit, int ticksPerWheel) 中的ticksPerWheel参数有什么用？  在执行效果上，定义24个槽和  100个槽  有区别么？  
 
 ？？各类常见分布式解决方案及其问题可看公开课，找启蒙。在学习完基础课后，先对基础再复习一遍，然后找启蒙问题做demo（可简单看公开课）
 
@@ -1217,12 +1270,17 @@ https://www.cnblogs.com/leesf456/p/6895145.html
   复习zookeeper实现锁的demo
   协程概念的学习
 
+* ScheduledThreadPoolExecutor、Timer+TimerTask、HashedWheelTimer的优缺点
+  ScheduledThreadPoolExecutor比Timer+TimerTask误差小，支持多线程，任务执行时间超过延迟时间不会有问题，任务有异常时线程不中断
+  HashedWheelTimer可以定义时间的刻度和周期等
+  注意：Executors.newSingleThreadScheduledExecutor()内部也是包装了ScheduledThreadPoolExecutor
+ 详见csdn《定时任务ScheduledThreadPoolExecutor的使用详解》 《延迟任务的实现总结》
 
 --------------------并发编程 end--------------------------------
 
 *类图中的关系连接符
- —> 关联关系
- --> 依赖关系
+ —> 关联关系 一对多的关联
+ --> 依赖关系 一对一的关联
  —▷ 继承关系
  --▷ 实现关系
  —◇聚合关系
@@ -1251,6 +1309,7 @@ https://www.cnblogs.com/leesf456/p/6895145.html
        此时搜索引擎搜索就必须满足搜索"北京" 能匹配到AB，搜索"北京PHP"只能匹配到A，等等等等多种情况。
  ?要问下张阳，这些搜索关键词是通过 选择控件选择出来还是 输入关键词
  
+*现在有代码转流程图工具，可以用这种工具进行画流程图 如：https://code2flow.com/app
 
 *大多数框架都是支持spring和api两种调用方式，而常用spring方式，为了更好了理解spring方式的相关配置，可以学习使用api方式。
 
@@ -1258,12 +1317,28 @@ https://www.cnblogs.com/leesf456/p/6895145.html
 
 *在研究源码的时候可以最好调试，通过断点去查看接口接收的实例到底是什么，再去具体实例的实现类或其父类中去查看对应的方法。
 
+*Mockito是java单元测试中，最常用的mck工具之一，提供了诸多打桩方法和注解。
+
 *oom异常,内存溢出
 
 *TPS 即每秒处理的事务数，很关键的指标，脚本定义什么事务，就按什么事务来计算。
 
 *幂等函数，或幂等方法，是指可以使用相同参数重复执行，并能获得相同结果的函数。这些函数不会影响系统状态，也不用担心重复执行会对系统造成改变。例如，“getUsername()
 *幂等，简单来说：重复调用多次产生的业务结果与调用一次产生的业务结果相同。分布式事务解决方案课中有描述
+
+*mycat对这个mysql8支持不太好，可能会出现连接慢的问题
+
+*MySQL 每秒 570000 的写入，如何实现？https://mp.weixin.qq.com/s?__biz=MzUzMTA2NTU2Ng==&mid=2247486295&idx=1&sn=418312cb5429d21d09c7a6e23910832e&chksm=fa4974e6cd3efdf00fdc897af55c6a2c71ae651faab5509be918b9c27d703d1c18841d30a433&mpshare=1&scene=23&srcid=0217rMrBREycCz4GGv7F4AkS#rd
+
+*mysql据库在公网，mysql有固定的ip白名单。客户端在笔记本上会经常变换网络,怎么办
+为了安全，给几个建议参考
+1，服务端设置成非3306端口，尽量10000以上
+2，禁用root用户的远程访问权限
+3，新建一个普通用户，开通远程访问权限，同时普通用户限制一下权限
+
+*MongoDB管理工具Studio T3可以了解下
+
+*ETL，是英文Extract-Transform-Load的缩写，用来描述将数据从来源端经过萃取（extract）、转置（transform）、加载（load）至目的端的过程。ETL一词较常用在数据仓库，但其对象并不限于数据仓库。
 
 *到时候准备面试时，是否考虑到福州进行练手面试，缺乏大型互联网项目实战是一个很大的坎。
 
@@ -1276,12 +1351,74 @@ https://www.cnblogs.com/leesf456/p/6895145.html
 
 *职业方向：把业务功能做熟悉，再研究分布式重构。
 
+？怎么使用jstack查看线程阻塞情况
 
+？？白老师的项目有用过guava啊，用来做缓存和事件监听 可以蛮了解下guava
+？？spring security蛮去了解下
+
+？？JVM最多支持多少个线程，网上找找可以有一个量级概念。详见CSDN《JVM能够开启多少线程》
 
 ？？分布式环境下的事务处理、服务调用链出错等问题。这些必须进行系统深入的学习
 ？？字节码重组，动态编译技术是否要深入的学习
 ？？底层通信、多线程和并发要进行系统学习
 ？org.projectlombok的使用
+
+？学习使用JDK自带的VisualVM进行Java程序的性能分析 jdk1.8.0_11\bin\jvisualvm.exe 
+
+？sharding-jdbc做读写分离，有待了解，和mycat做对比
+
+？GTS是一款分布式事务中间件，由阿里巴巴中间件部门研发，可以为微服务架构中的分布式事务提供一站式解决方案。
+  它是收费的，但是有开源的社区版本fescar
+
+？面试题：给你50台机子，用MySQL存储，怎么解决
+  如果说qps,可以加缓存，可以加收索引擎，如果是tps，那么就放消息队列，限流
+
+？面试题：Spring 项目启动非常慢的解决思路  还有 线上环境 cpu负载不高 load很高 怎么定位和解决问题 
+
+？面试题：线程池就问有几种 你用过哪些 哪些用的比较多 说说怎么实现的
+
+？面试题：谈谈你对spring的理解
+
+？面试题：擅长什么，遇到什么困难，怎么解决的，用的什么分布式，写过什么并发，大数据量怎么处理的，平时看书吗？看的什么书
+
+？面试题：一个数据库字段只有1,2两个值，那查询时用 =1和!=2有什么区别。 好像和索引问题有关，如果这个字段是主键，无论 =1 和 ！=1 都会走索引，非主键 字段，!= 是不会走索引的 。答案不确定需要深究
+
+？面试题：现在面试好难啊，，不知道为什么，，？他们根本就不问你学的东西，，都是，如果网络闪断怎么样？你用zk，他说服务还是好的，，心跳不跳了，，分布式锁怎么搞？  你说限流吧，，他说不能限流，，量就是很大，你说扩展服务器吧，，他说假如一台量就是很大不能给限了，限了影响客户体验。。。哎，，，吐血了，，，你说你读了源码，人家根本不吊你，，，现在面了好几个都这样。。。。
+
+？咕泡学员问题：我现在有个问题，就是要判断某个字符串是不是被加载了，我用个stringbuilder.indexOf的方式去判断。要83秒，然后我用list.contain判断，也要80秒。。有什么办法可以优化呢，才15W条数据，15M的数据量
+  可以用hashSet试下
+
+？廖师兄那个微信点餐系统是个什么项目  了解下
+  es搜房的项目
+
+？soapUI测试工具了解下
+
+？咕泡学员分享面试题：
+ 1.面向对象的特点
+ 2.equals和==的区别
+ 3.hashMap与hashtable以及currenthashmap的区别
+ 4.线程池的几种实现方式
+ 5.threadloacl原理分析
+ 6.volatile实现原理
+ 7.CAS乐观锁
+ 8.谈谈ABA及解决方案
+ 9.Spring ioc的实现原理及优点
+ 10.说说Netty线程模型
+ 11.说说RPC的实现原理
+ 12.说说CAP定理，BASE理论
+ 13.说说最终一致性的解决方案
+ 14.集群与负载均衡的算法与实现
+ 15.数据库性能优化有哪些
+ 16.描述设计一个秒杀系统
+
+？咕泡学员哈罗出现面试题：
+ 1.线程池参数
+ 2. hashmap
+ 3. zk服务怎么动态获取
+ 4.redis的数据结构
+ 5.spring得理解
+ 6.spring的扩展点
+ 重点还是spring额，问的不难，关键要回答的面试官
 
 *神州优车
  一般13薪，有kpi，框架集成，如果只是普通业务开发，是否考虑。
@@ -1290,7 +1427,10 @@ https://www.cnblogs.com/leesf456/p/6895145.html
 *面试宝典https://www.docin.com/p-2122232700.html、
  https://blog.csdn.net/weixin_42248137/article/details/80395227、
  https://www.cnblogs.com/xueSpring/p/8026875.html
- 阿里面试题：https://gper.gupaoedu.com/answers/712
+ 阿里面试题：https://gper.gupaoedu.com/answers/712  https://gper.gupaoedu.com/articles/766
+ 美团校招面试经验 https://mp.weixin.qq.com/s?__biz=MzI3ODcxMzQzMw==&mid=2247488625&idx=2&sn=7482d2a59ea40e6d89f2ced75ea2368c&chksm=eb539147dc2418518e3f9676c021649a4137f863607f71d40344af5b09e08e60fa37add704e7&mpshare=1&scene=23&srcid=0301ccTa3nM0lqKPP3LX5RRB#rd
+ github上面有个5万star的项目 专门收集一些面试题  https://github.com/CyC2018/CS-Notes
+ 【社招】阿里巴巴内推Java和前端开发（长期有效） https://zhuanlan.zhihu.com/p/64743162
 
 *面试之前将一些知识文档全部打印进行复习。当做一次考试。    
 *今天面试碰到面试官问秒杀 我说用redis list结构push方法解决秒杀 他说10000个人进来会导致连接超时或者连接满拒绝吗？ 
@@ -1300,5 +1440,12 @@ https://www.cnblogs.com/leesf456/p/6895145.html
  质量检测系统，主要是设计模式应用
  MytotalWorld电商平台，结合淘淘系统
  大白抢单中间件，伪销售抢单
+
+*北京java 三四年左右 26k左右
+ 北京上海java 四五年左右  28k左右
+
+
+
+***走工资流水记录  一个月走7000 找坤斌帮忙    
  
      
