@@ -1,0 +1,26 @@
+﻿
+
+
+*Stream
+ 操作目标对象(数据源)：集合或数组
+ 过程：创建流，经过一系列中间操作，最终生成一个新的流，并且不会对数据源产生影响
+ 创建流方式：
+	集合用 list.stream()、list.parallelStream(),
+	数组用 Arrays.stream(arr)，Arrays.stream(arr).parallel()
+ 	静态方法方式 Stream.of("a","b");
+	无限流 Stream.iterate(0，x->x+2);//可以通过中间一些操作限制个数，如limit(10)  
+ 	Stream.generate(()->{Math.random()}).forEach(System.out::println)
+ 中间操作：
+     筛选与切片：filter、limit、skip、distinct
+     映射（将一种流映射成另一种流）：map、flatMap
+     排序：sorted
+     查找与匹配：allMatch检查是否匹配所有元素
+		 anyMatch检查是否至少匹配一个元素
+		 noneMatch检查是否所有元素都不匹配
+		 findFirst返回第一个元素
+ 		 findAny返回当前流中的任意元素，此方法在并行流parallelStream下会返回符合条件完成中间操作的一个元素
+		 count返回流中元素的总个数
+ 		 max返回流中元素最大值
+		 min返回流中元素最小值
+     规约：如list.reduce(0,(x,y)->x+y);//首次把x=0，y=list[0]进行运算得到结果再做为下一次的x，下一次的y是list[1]，这样一次类推
+     收集：
