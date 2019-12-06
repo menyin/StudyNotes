@@ -1,4 +1,10 @@
-﻿*Java继承用关键字extend  C#用：
+﻿*java中各种进制在代码中的书写格式
+ int a =0b11;//以0b开头为二进制
+ int a =011;//以0开头为八进制
+ int a =11;//默认为十进制
+ int a =0x11;//以0x开头为十六进制
+
+*Java继承用关键字extend  C#用：
 
 *Java子类中调用父类成员用的是super  C#用base
 

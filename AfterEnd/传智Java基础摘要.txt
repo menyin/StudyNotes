@@ -21,9 +21,10 @@
  
 
 *final关键字，被修饰的变量或方法或类固定不能被修改或重写或继承，注意在定义时就要赋值了。
- 详见csdn收藏《【小家java】匿名内部类为什么只能使用外部final的变量》https://blog.csdn.net/f641385712/article/details/80355490
- 详见blog收藏《JAVA中内部类(匿名内部类)访问的局部变量为什么要用final修饰？》
+ *详见csdn收藏《【小家java】匿名内部类为什么只能使用外部final的变量》https://blog.csdn.net/f641385712/article/details/80355490
+ *详见blog收藏《JAVA中内部类(匿名内部类)访问的局部变量为什么要用final修饰？》
  一般常量这样定义 public static final str="abc";
+ *被fianl修饰的成员变量赋值，有两种方式：1、直接赋值 2、全部在构造方法中赋初值
 
 *自定义类要实现拷贝功能要
  1.重写Object类的clone方法（修改访问修饰符为public）

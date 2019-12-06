@@ -1,7 +1,8 @@
-﻿
+﻿****学习shiro源码时，特别注意两个单词的区别：Authentication是认证（即登录、身份认证）相关，Authorization是权限相关
+
 *shiro权限框架 ppt教案详见百度文库收藏《Shiro安全登录框架学习》　github项目地址 https://github.com/apache/shiro/tree/shiro-root-1.3.2/
  3大核心API，三者是相互关联的：
-     Subject 主体，即当前“用户”，不一定是真实的用户
+     Subject 主体，即当前“用户”，不一定是真实的用户，可能包含多个真实的用户组织（principals逻辑）
      SecurityManager 处理的管理器，类似SpringMVC核心过滤器
      Realm 相当于数据源，用于获取用户，角色，权限等安全数据信息。
  spring-context-shiro.xml里相关节点说明：
@@ -30,6 +31,31 @@
  realm 用于获取安全数据，如到数据库中获取用户名密码，权限等。通过自定义继承AuthorizingRealm的类SystemAuthorizingRealm，里面重写相关方法来完成安全数据的交互。SystemAuthorizingRealm会被配置到spring的bean中
  UsernamePasswordToken用于用户输入的登录用户名密码信息，SimpleAuthenticationInfo用于封装从数据库查询出来的用户信息，其3个构造参数分别表回传给subject的参数（通过subject.getPrincipal()获取）、密码、realm名称（多个realm时指定，如多个用户表情况下）
  注意：shiro登录过一次后，会记住当前登录状态，如果再次通过同样的用户名做登录表单提交，即使密码错误，它也依然会显示登录成功。这是因为shiro缓存机制决定的。可通过shiro"/logout"退出路由配置解决
+
+*以formAuthenticationFilter为例，解读身份认证登录过滤器的执行逻辑。
+ *首先寻找了Filter接口的方法doFilter并且到formAuthenticationFilter类结构里去找该方法
+ *发现其父类OncePerRequestFilter#doFilterInternal -> AdviceFilter#doFilterInternal 如何确定是在AdviceFilter而不是其它类呢？主要就是看formAuthenticationFilter类结构里该方法所指向的父类
+ *AdviceFilter#doFilterInternal里执行了preHandle方法，而AdviceFilter#preHandle又是一个可protacted方法是可继承的，说明还是到formAuthenticationFilter类结构里去找该方法所指向的父类，即PathMatchingFilter
+ *继续看PathMatchingFilter#preHandle -> isFilterChainContinued -> onPreHandle -> AccessControlFilter#onPreHandle -> onAccessDenied -> FormAuthenticationFilter#onAccessDenied -> AuthenticatingFilter#executeLogin
+ *到了AuthenticatingFilter#executeLogin就是一些登录的逻辑了，还是用了抽象模板模式
+ 注意：
+	1.整个过程主要如何查找对应模板方法的具体实现，到最后子类结构里去找方法对应的父类。
+        2.一般找逻辑入口都是找接口方法，整个逻辑执行过程中如果走不通，可以找些播客辅助理解下执行逻辑。
+        3.通过formAuthenticationFilter源码研究发现内部只对post请求进行拦截，get会被忽略
+
+*以研究sessionManager为例，来了解shiro的session管理及相关主要类的逻辑关系。
+ *参考文档 csdn《shiro——session会话管理》《Shiro之Session分析》、blog《Shiro的校验Session是否过期处理的过程》、
+ *首先猜测在身份认证过登录滤器执行过程中，必定会产生session，由此为入口进行查找
+ *发现在AuthenticatingFilter#executeLogin执行登录逻辑中，Subject#login ->  DelegatingSubject#login
+ *DelegatingSubject#login里this.securityManager.login()内部执行生成了一个session，subject.getSession()则获取和启动了session
+ *此时getSession()是一个有则获取，无则创建的过程,而start session则是一个设置session的过期时间、执行onStart回调、执行监听回调等附加操作的过程。
+ *整个过程其实是在Subject对象中可以执行登录逻辑并通过sessionManger进行相应session管理，此时sessionManager中还会启动一个任务管理sessionValidationScheduler进行定时清除过期session
+  sessionValidationScheduler执行逻辑可以到具体的sessionManager实例中去查找createSessionValidationScheduler方法，发现实际sessionValidationScheduler和sessionManager是同时实例化并执行定时任务的
+ *《Shiro之Session分析》里描述的在shiro过滤器中将subject与threadContext绑定、将principal设置到session的属性里
+
+*subject和session的关系，
+ subject即当前“用户”，不一定是真实的用户，可能包含多个真实的用户组织（principals逻辑）。它于当前线程绑定即ThreadContext。可能是登录或未登录。
+ session是与客户端相关的一次会话，一个subject可能包含很多的session。并且这个session不一定是登录状态下的session，而是只一次会话。
 
 *代码 Object principal = subject.getPrincipal();//获取cn.sm1234.realms.MyRealm.doGetAuthenticationInfo()里返回值SimpleAuthenticationInfo实例的第一个构造参数：principal
 

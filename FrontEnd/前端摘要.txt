@@ -16,7 +16,8 @@
 
 
 *前端框架
- H+（适合所有项目） http://yanshi.sucaihuo.com/modals/40/4078/demo/
+ LayUI（目前最适合的前端框架，兼容IE8）
+ H+（适合所有项目,但是IE8有兼容问题） http://yanshi.sucaihuo.com/modals/40/4078/demo/
  DWZ富客户端框架（适合做后台管理类项目） http://jui.org/#pagination2    文档
 
 *Chrome查看前端对象内存
