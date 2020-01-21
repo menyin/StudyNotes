@@ -23,3 +23,8 @@
 *Chrome查看前端对象内存
  https://jingyan.baidu.com/article/6b182309eb747fba58e159d1.html
  https://blog.csdn.net/kingzone_2008/article/details/9083327
+
+
+*前端文档制作框架https://www.vuepress.cn/
+
+*突破百度、豆瓣等网站文档下载限制，使用“油猴脚本”

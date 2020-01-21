@@ -1,1 +1,14 @@
-﻿
+﻿**腾讯课堂 https://ke.qq.com/webcourse/index.html#cid=274758&term_id=100324959&taid=1770527253606726&type=1024&vid=5285890788148729050
+
+*在console里，用解构赋值let [x,y]=[1,2];console.log(x);  此时需要再改变x的值怎么处理？直接在[x,y]=[3,4];
+
+*解构赋值时，如果设置默认值，默认值只有在源数据为undefined才生效，如果后台返回的json源数据本身就是undefined，则可能会有问题。 
+
+*字符串模板直接在浏览器console里使用，会有些问题，执行会报错。
+
+*Rest运算符大概就是将数组拆分成单个值，或者将多个单个值合成一个数组
+
+*import和export
+ 凡是export导出来的，import都是要用{}引入。只有用export default导出的不用
+
+*有一个axios库和jquery#ajax功能一样，但是更具优势，是vue2.x推荐的ajax库

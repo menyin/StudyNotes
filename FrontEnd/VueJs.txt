@@ -1,0 +1,47 @@
+*基本使用：
+ 安装node8.9+
+ 如之前安装过旧版脚手架3.x，则需先卸载 npm uninstall vue-cli -g
+ 安装脚手架 npm install -g @vue/cli 
+ 安装快速原型开发编译.vue文件 npm install -g @vue/cli-service-global
+ 查看vue-cli版本：vue --version
+ 注意：如仍然要用旧版vue的vue init功能，则可安装一个桥接工具 npm install -g @vue/cli-init 
+
+*.vue文件是组件，需要通过vue serve xxx.vue
+  注意如果组件名称为App.vue 则可以简写vue serve
+
+*scr/assets和public目录，都可以防止静态资源
+ assets是放置的资源会经过webpack处理（如sass等可以编译或压缩），一般用相对路径引用。一般静态资源建议放置在此目录
+ public里的内容是发布时直接拷贝，一般用绝对路径引用。引入一些三方库
+ 
+*创建项目方式
+ *命令vue create myproject 在当前目录下创建
+    *vue create myproject时会有一个“Please pick a preset”，可以选择css构建方式，语法检查支持等等。 默认选择Babel 
+ *命令vue ui 调出图形化界面进行创建
+    *创建项目时默认使用npm做包管理器，另外还可选yarn（很多人推荐这个，因为用起来简单，下载时不会丢包）
+
+
+*启动方式：
+ *到有App.vue的文件目录里执行vue serve
+ *到vue所在的node项目的根目录，执行npm run serve  实际上是执行package里的serve脚本（package.json里的scripts节点实际上是一些执行的脚本，用npm run xxx即可）
+
+*打包：
+ 默认使用webpack，内部集成，在vue ui图形界面下可以看webpack配置，在命令行创建项目方式下，则需要再package.json的script里配置脚本inspect:vue-cli-service inspect
+
+*main.js解析
+    import Vue from 'vue'
+    import App from './App.vue'
+    
+    Vue.config.productionTip = false//生产模式下，去掉命令行相关的提示，以提升运行性能效率
+    
+    new Vue({
+      render: h => h(App), //render实际是一个函数，通过传递App并调用，生产出真实的Dom
+    }).$mount('#app') //上述的真实Dom会通过此方法会被渲染到/public/index.html里的div#app里
+
+
+
+
+
+*******************************IM 交接材料******************************************
+*源码及相关材料在码云  CSFED 组织里
+ 
+*文档http://csfed.gitee.io/press

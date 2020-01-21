@@ -1,0 +1,24 @@
+*特点：内嵌web容器
+
+*环境jdk1.8+
+
+*在pom.xml可以看到有一个依赖组件spring-boot-starter-web整合了springmvc+spring，是用于启动web程序的
+
+*springboot和springCloud关系
+ springCloud是当前比较流行的微服务解决方案框架、并不是一个rpc框架，它依赖于springboot
+
+*@RestController == @Controller+@ResponseBody   springboot很多注解都是spring体系自带的，只是用的比较少。
+
+*基本的启动方式：
+ 1.@EnableAutoConfiguration+@ComponentScan("com.example.demo2")注解启动类，@RequestMapping("/")+@RestController注解Controller
+ 2.@SpringBootApplication注解启动类，@RequestMapping("/")+@RestController注解Controller
+   @SpringBootApplication默认扫包范围就是当前启动类的包和子包
+
+*yaml文件去重减少文件大小,properties文件不能去重，文件比较大
+
+*springboot本身不带jsp，如果要整合，则项目打包类型必须是war类型
+
+*intellij创建maven项目时，加载慢。解决方式：在创建maven项目时加上archtypeCatalog参数
+ 详见https://www.cnblogs.com/del88/p/6286887.html
+
+.index_jobs .job_info .job_tips {margin:4px 0;}

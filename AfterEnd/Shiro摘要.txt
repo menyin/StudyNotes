@@ -98,6 +98,13 @@
  <shiro:hasPermission name="employee:list"></shiro:hasPermission> 判断是否有权限
  <shiro:hasRole name="xxxx"></shiro:hasRole> 判断是否有角色
 
+*buddha框架的shiro实践过程中，发现@RequiresPermissions注解不能生效
+ ！！通过研究发现，实际上@RequiresPermissions是通过spring的aop原理实现，而aop又在spring大容器里，所以将负责权限切面处理的DefaultAdvisorAutoProxyCreator放到spring-mvc.xml的最上面，问题解决。
+     可能是我将spring从4.x到5.x导致了一系列问题。
+ 注：1.LifecycleBeanPostProcessor的作用详见csdn《LifecycleBeanPostProcessor的作用》。
+     2.查看LifecycleBeanPostProcessor发现很多shiro相关的bean都设置了init和destroy方法，在springbean初始化过程中会进行调用。
+     3.shiro方法权限注解实际是通过切面类处理，即AuthorizationAttributeSourceAdvisor
+
 ？在jeesite里web.xml里并没有配置org.apache.shiro.web.env.EnvironmentLoaderListener监听器是为何？  该监听器会加载shiro.ini
 
 ？RemenberMe如何使用，实践失败
