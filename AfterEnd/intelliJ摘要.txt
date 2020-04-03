@@ -76,6 +76,7 @@ dependencies export  Struts2-2.5.14.1
  *intellij在代码的标签上右键->Split Horizontally 可以像VS那样上下分屏
  *列操作：选中一个或多个字符，再按Ctrl+Shift+Alt+J 就会选中当前文档的所有相同字符，可以进行列操作。（特有用）
          在任意编辑处按Shift+Alt+Insert可以进入或退出列编辑状态 
+ *Emmet插件的使用：如ul>li.item$*5
  *当代码有错误，按F2可以快速定位到错误位置的附近
  *live template用于快速输入代码，可以定义自己的模板，模板快速录入后光标会定在第一个占位符处，每次回车光标都往下一个占位符移动。
  *alt+enter 提供代码编写智能提示，导包，实现接口方法等。在for变成foreach重构、字符串+号连接变成String.format重构都可以做智能提示
