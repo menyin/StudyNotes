@@ -661,7 +661,23 @@
 *************************jeesite4.x************************************
  *VIP会员是用微信登录 gudulvren000 
   qq群号：754231412 
-  教程地址 http://www.jeegit.com/view.html?id=1230129328746405888
+  教程地址 http://www.jeegit.com/view.html?id=1230129328746405888                
+  文档：G:\2020年 JeeSite教程配套资料\文档PPT-2020-02-21.zip\文档PPT\《JeeSite4 基础教程》培训规划V1.4.doc
+
+*论坛地址（论坛有很多有用的教程，如docker打包镜像）http://39.105.73.149/  
+
+ *升级日志http://jeesite.com/docs/upgrade/
+ *论坛：39.105.73.149
+ *idea安装教程，到B站搜索jeesite idea即有
+  安装过程中maven的settings.xml要配置下，jeesite的nexnus私有仓库。
+  在教程里配置的jeesite私服地址是http://jeegit.com:8081/  但是给的配套资料的私服地址是http://nexus.jeegit.com/ 两个都可以试下
+  因为有些jar下载需要权限，可以在maven的settings.xml里配置
+   <server>
+      <id>jeesite-repos</id>
+      <username>vip2</username>
+      <password>jssVip9</password>
+   </server>
+
 
  *有分布式事务的解决方案、系统监控（缓存、性能、日志、jvm性能等）
 
@@ -674,4 +690,59 @@
  *J2Cache作者是开源中国的创始人，了解下。
 
 
+
+*powerd by jeesite  用这几个关键词搜索可以查看到哪些网站使用了jeesite
+
+*现代新型开发模式Devops+AIOps。包含了自动化测试，部署.....
+
+*初始化数据库方式：
+ 1.运行web/src/test/java/com/jeesite/test/InitData.java|InsertBatchTest.java
+ 2.运行web/bin/init-data.bat
+
+
+*DevOps需要什么？
+ 现将工具类型及对应的不完全列举整理如下（我们需要学的是：idea+git+maven+gitlab+nexus+docker+docker registry+Nginx+Jenkins+kubernaetes+lstio）：
+ 代码管理（SCM）：GitHub、GitLab、BitBucket、SubVersion
+ 构建工具：Ant、Gradle、maven
+ 自动部署：Capistrano、CodeDeploy
+ 持续集成（CI）：Bamboo、Hudson、Jenkins
+ 配置管理：Ansible、Chef、Puppet、SaltStack、ScriptRock GuardRail
+ 容器：Docker、LXC、第三方厂商如AWS
+ 编排：Kubernetes、Core、Apache Mesos、DC/OS
+ 服务注册与发现：Zookeeper、etcd、Consul
+ 脚本语言：python、ruby、shell
+ 日志管理：ELK、Logentries
+ 系统监控：Datadog、Graphite、Icinga、Nagios
+ 性能监控：AppDynamics、New Relic、Splunk
+ 压力测试：JMeter、Blaze Meter、loader.io
+
+*AIOps即智能化运维=AI+DevOps
+
+*jeesite springCloud项目中的admin项目是用于监控服务在线状态的。是不是和链路追踪有点重复？
+
+*jeesite-cloud的安装
+ docker安装mysql 详见blogs《使用Docker安装mysql，挂载外部配置和数据》
+ 安装的mysql版本是5.7.28 到5.7.30之间。最新版本docker安装会有问题。
+
+*部署完之后用http://127.0.0.1:8980/js/a/login 访问
+
+*jeesite的Https配置是用springboot的https配置
+
+*jeesite代码生成器
+ intellij没有ERMaster插件，只能通过eclipse安装插件。ERMaster支持表多继承，而PowerDesigner等工具不支持（只记得字段单独拎出来作为单独组件）
+ 数据表的模型可以看 modules/core/db/core.erm
  
+*jeesite授权
+ 源码都是一样的，但是授权不同，社区版、个人版、专业版（E1/E2）
+ 
+
+*************************** jeesite-sprincloud ****************************************
+*jeesite-springCloud的版本不要到git上下载的源码，而是开发版本的，在E:\GitProjects\meitejiaoyu\jeesite-spring-cloud\PPT+源码\PPT+源码\第二章\源码\thinkgem-jeesite4-cloud-master\jeesite4-cloud
+
+*springcloud相关名词：
+ Finchley 就是统一的springcloud套件版本名，只需要统一引入这个版本名，其它的组件的版本就可以省略。 
+
+*经典教程：
+ 千峰教育：
+  教程：https://www.funtl.com/zh/spring-cloud-alibaba/  、https://www.funtl.com/zh/spring-cloud-netflix/
+  项目：https://www.funtl.com/zh/spring-cloud-alibaba-myshop/ 、 https://www.funtl.com/zh/spring-cloud-itoken/

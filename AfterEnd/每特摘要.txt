@@ -1,0 +1,214 @@
+*余老师qq 644064065  1051546329
+
+***学习教程和项目
+*电商项目架构http://static.mayikt.com/dagang.html
+*千峰springCloudAlibaba教程和项目https://www.funtl.com/zh/spring-cloud-alibaba/   https://www.funtl.com/zh/spring-cloud-alibaba-myshop/
+*B站收藏（老师：寄出的蓝色信件） https://www.bilibili.com/video/BV1p7411d73y?p=120 
+
+
+？分析前景
+ springCloudNetflix和springCloudAlibaba的抉择
+ 坚决选择springCloudAlibaba，不再走弯路。趴哥在springCloud课程中也说，现在微服务更新太快，淘汰速度也快，所以我选最新的springCloudAlibaba
+
+*SOA和微服务对比：
+ *SOA
+  使用SOAP协议，是一种基于XML的数据传输协议
+  ESB企业服务总线，解决跨语言的数据进行适配
+  服务拆分粒度，着重功能复用
+ *微服务
+  通讯协议使用Http协议+Json数据
+  不用ESB做数据适配，因为http+json本身是跨平台的
+  服务拆分粒度会更细，着重水平功能拆分。每个服务一般有自己独立的数据库
+  迭代比较快
+
+*如何升级springCloud项目：当项目比较多比较杂，可能需要更改配置，比较繁杂。当项目小少，可能只需要更改springCloud和springboot版本即可（要对应）
+
+*springCloudAlibaba的一些组件的groupId是com.alibaba.cloud而不是org.springframework.cloud，所以要注意下。 要在maven仓库具体查询
+
+*分布式架构（包括soa、微服务）存在的问题：
+ 分布式事务
+ 分布式任务调度,常见解决方案：xxl-job
+ 分布式注册发现
+ 分布式日志和监控
+ 分布式配置中心，在配置中心方面Nacos是最新的轻量的、携程的阿波罗是专业的较重（性能会比较高）、sprincloudconfig无可视化界面
+
+*分布式配置中心
+ *分布式配置中心的配置文件和本地配置文件里的属性名不能一样，否则应用并不知道要以谁为准，会报错。
+ *要使得分布式配置实时生效实时刷新要在注入配置项的类加@RefreshScope注解
+ *分布式配置中心课程提到：bootstrap.yml和application.yml的区别
+  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父Spring ApplicationContext加载。
+ *springcloud默认读取的是配置中心的properties类型文件，但是也可以配置成读取yml文件
+ *本地应用配置文件可以配置pre、dev、test、pub等环境来应对配置中心的不同环境配置文件
+
+*nacos的集群和zookeeper、redis的不一样，nacos所有节点直接连接数据库来保证所有数据的同步，而zookeeper等需要做选举和数据同步
+ ？nacos的集群可视化的web站如何解决单点登录session问题
+*轻量级和重量级：
+ 轻量级：部署、架构设计原理比较简单、学习成本比较低
+ 重量级：部署、架构设计原理比较复杂、学习成本比较高
+
+*分布式配置中心的意义在于
+ 实时修改实时生效,服务不需要重启
+ 集群节点只需一次修改
+
+*springCloudAlibaba用的配置中心是nacos，而springCloudNetflix用的是springCloudConfig。springCloudConfig可以支持 git、数据库、svn、本地文件等作为存储
+ 
+*springCloud与RPC的那些事，springCloud是一个微服务解决方案，包含rpc
+ 
+ 
+*springCloud、springCloud一代、springCloud二代代、springCloudNetflix、springCloudAlibaba概念
+ springCloud一套微服务解决方案的框架标准
+ springCloud一代是指整合了Netflix公司形成的框架，即springCloudNetflix
+ springCloud二代是指spring自己研发和整合了相关组件，而springCloudAlibaba算是二代的产品
+
+*如果选择了springCloudAlibaba，则建议相关的组件都需要使用阿里云相关产品。
+ 比如MQ就应该选择RocketMq、SchedulerX、OSS
+ 其中分布式任务调度框架阿里的SchedulerX没有xxl-job牛逼
+
+*springboot和springCloud和springCloudAlibaba/springCloudNetflix 都是有版本对应关系，不能随便乱改。
+ 通常项目中引入spring-boot-starter-parent、spring-cloud-dependencies、spring-cloud-alibaba-dependencies，以进行版本对应
+ 而这3个只是pom类型包，只用于其套件内的组件依赖的版本管理，如spring-cloud-alibaba-dependencies里有nacos组件的版本管理
+
+？RPC在每特课程感觉有了新的定义，HttpClient也算RPC工具？
+
+*Nacos 官网学习https://nacos.io/zh-cn/
+ 在springboot模块项目中加入Nacos的maven依赖jar就可以自动注册服务（个人猜测，它肯定是在自身启动时去获取ioc容器中的服务bean，然后进行ip注册）
+
+*Feign客户端默认使用post方式请求，在使用get的时候会有问题，只需要加@RequestParam注解即可
+ Feign客户端要求服务名称不能是下划线，如springcloudtest-order不能写成springcloudtest_order
+
+*bootstrap.yml与application.yml的区别
+ bootstrap.yml是整个当前应用程序，是应用最先加载的配置文件
+ application.yml是整个spring环境的配置文件，比bootstrap.yml晚加载
+ 
+
+*网关： 
+ *Gateway网关和Nginx有什么区别？
+  Gateway是java写的，可以自由扩展，可做登录或权限过滤，跨域处理、日志拦截等。个人认为就是能够自己容易实现相关的过滤。还能通过注册中心去查找服务地址进行转发。
+  Nginx相对较为固定~ c编写，不好扩展，即使有过滤也是固定的几种方式，。
+ *Gateway的词汇：路由、谓词、filter
+ *路由按照配置的顺序进行依次匹配，匹配就返回
+ *Gateway有很多内置谓词类型，可以多个合着用，常用的谓词类型有：
+  - Host
+  - Path
+  - Weight
+ *Gateway里有已loadrunner相关的过滤器类，这个过滤器实现了Ordered接口，是规定了这个过滤器的优先顺序。但是这个值是10100，好像也不低
+ ？Gateway里有redis的相关依赖 ！主要是用redis+lua实现限流
+ *Gateway源码的主要入口类和SpringMVC类似DispatcherHandler，里面初始化了MappingHandle等相关策略。参考官网的工作原理图看源码
+ *Zuul与GateWay的区别
+  Zuul是一代微服务网关，是Netflix公司研发的。依赖Servlet、springboot-web，阻塞式API，不支持长连接，性能相对Gateway差点。
+  Gateway是二代微服务网关，不依赖Servlet，其中的请求响应报文对象已经不是Servlet的请求响应。基于netty实现，依赖springboot-webflux，性能比较高
+        所以Gateway项目中没有必要添加spring-boot-starter-web依赖
+ ？？实践：Gateway能用sentinel容错降级吗
+
+*服务保护sentinel：（详见https://github.com/alibaba/Sentinel/  有非常全面的中文文档）
+ *sentinel控制台启动有配置两个端口8718、8719。前者是控制台WebUI端口，后者是限流降级应用服务连接到sentinel控制台的端口
+ *限流方式分为qps和线程。qps就是服务端限制每秒请求次数，而线程方式就是服务端限制每秒用多少个线程去处理请求（对于处理时间长的请求，如果不限制则会长期占用线程，导致其它服务无线程可用，即“服务雪崩”）。
+    “关联”：A资源接口达到限流阈值，则B接口会走blockHandler，即B被限制了。
+    “快速失败”：即超过流控限制则报错或走blockHandler
+     “WarmUp”：预热，即当超过流控限制时，则将这些请求在指定时间内，根据算法达到峰值
+      “排队等待”超过流控限制时，则让这些请求按照一定速度排队，并且设置超时时间，等不了就返回超时异常。注意：只能支持qps类型
+ *降级中：
+   “RT”：表服务端1秒内接收到5次请求的平均响应时间，如果超过这个时间则走降级逻辑。（可通过服务Thread.sleep()来模拟超时场景）
+           特别注意:RT是以服务端单个Api被请求的响应时间统计为基准的。
+   “时间窗口”：指的是如果客户端请求被走了降级逻辑，在这个窗口时间内就会一直走降级逻辑。
+   “异常比例”：但服务端在1秒内的处理N个请求中，如果异常比例的个数超过sentinel控制台设置的降级限制，则走降级逻辑。这个异常是业务异常，不包括限流本身的BlockException
+             特别注意:异常比例是以服务端单个Api被请求的异常比例统计为基准的。
+    “异常数”表服务端1分钟内异常的数量超过降级策略限制，则走降级逻辑。
+ *sentinel+nacos：实际上就是注册在nacos上面的服务再额外配置一些sentinel所需的项，然后在服务里sentinel功能代码会去读取这些配置进行限流熔断。并且sentinel的控制台也去服务里读取这些配置显示。
+    *持久化的原理过程：在服务里通过sentinel的注入功能，到nacos推送的配置。而sentinel的控制台到应用服务去读取这些配置，显示到控制台界面上。
+ *sentinel+gateway 一般都是在网关做服务的保护措施。
+ *热词限流：原理过程：Controller里接收到请求参数（如:p1）后，用sentinel提供的限流策略工具对p1进行限制。当然限流策略工具也要在Controller实例初始化时候进行初始化实例。
+            热词VIP通道：即在热词限制时，对特定的热词对应的参数的值，某些特定值可以另外设置规则，相当于“防水”
+            ！！不能配置错误回调，只能用全局springMVC全局捕获异常来实现。
+            ！还可以设置另外的特殊放水的热词。即【参数例外项】
+ *熔断和降级：服务被调用时出未知业务异常或者触发服务降级后走的是fallback指定的方法。这里的业务异常不包括限流抛出的BlockException
+  限流走的是blockHandler指定方法，它是在超过了限流策略后执行。原理是通过抛出BlockException来处理。 和dubbo的RPCException差不多。
+ ？？用sentinel做限流时，资源名称即请求路径，而这时如何根据Method进行不同区分？ 加注解是肯定可以，但不加注解呢
+ ？？测试降级时，通过浏览器一直刷新模拟并发，没法跑通。！！！注意RT概念，并且浏览器在没有响应会对持续刷新有限制。看meitevip的demo
+ ？？限流时，如果是集群，则这些阈值是以多节点来算还是单节点来算
+ *将sentinel的配置通过nacos读取，则如何设置要实践下。
+  在配置application.yml时候可以查看对应的源码和看sentinel规则增加提交表单时的字段，对应源码字段进行对比处理
+ *系统规则：其实也是限流的一种，只是这个是对整个应用的限流。并且可以根据linux服务器的状态进行限流。
+
+？？openfeign+sentinel网上都是做服务熔断（用ballback），如何做限流呢？
+
+？？？？用nacos做服务注册，似乎不能设置group，但是做配置中心是可以的。
+ 查看NacosDiscoveryProperties配置类源码  发现没有group属性。
+ 美特课程用 <groupId>org.springframework.cloud</groupId>底下的<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+ 发现要使用 <groupId>com.alibaba.cloud</groupId> 底下的<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+ *由上述问题解决过程，发现spring-boot、springCloud组件的版本要基本保持一致才能启动项目，否则容易报错
+ *因为这个问题的处理  我将meitevip/springcloud的demo的springboot、springcloud组件版本全部换成2.2.0.RELEASE
+
+*在springboot项目中，如果某个bean找不到，可以在启动类里用@Bean进行注入到IOC容器
+
+*直接在浏览器下调用下面链接可以获取到服务实例列表
+ http://192.168.1.245:8848/nacos/v1/ns/instance/list?serviceName=springcloud-nacos-member
+
+？？如何通过浏览器url直接访问微服务
+  ！实际上通过上一点可知服务实例的json，再通过json里获取http://ip:port/serviceName即可访问到真正的服务
+
+？？dubbo和springCloud之间的思考
+ springCloud将dubbo原本的消费端调用放置到网关中，也就是说dubbo原本通过自己的客户端代理来做限流、负载均衡等操作，
+ 在springCloud里就直接放到了统一的网关服务中去，并通过统一的配置进行实现。
+
+?分布式配置中心如何解决配置线程安全问题
+
+
+*skywallking官方的GitHub仓库里有docker-compose.yml里elasticsearch镜像下载地址配置的是私服，而不是官方的远程地址。
+ image配置的地址如果是带域名则一定是私服，不带域名的才是官方的。
+ https://github.com/apache/skywalking/blob/master/docker/docker-compose.yml
+
+*skywallking在启动后，前端报http://localhost:8080/graphql之类的请求错误，是因为连接elasticsearch有问题。
+ 我将原本的skywallking-es7版本换成skywallking-6.x版本，因为部署的es是es6
+
+*skywalking控制台服务默认监听8080端口，若有防火墙需要开放该端口
+ 若希望允许远程传输，则还需要开放11800（gRPC）和12800（rest）端口，远程agent将通过该端口传输收
+
+*skywalking如何部署到应用中去：
+ *skywalking的agent目录可以用maven的assembly插件打包成tar.gz包
+ *在构建应用docker镜像时，add的file后会到本地或远程仓库拉取相关文件，如果是tar.gz则拉取下来后会自动解压。详见csdn《Docker镜像构建及Dockerfile指令详解》
+  如RUN yum install wget \
+    && wget -O skywallking.tar.gz "http://nexus.skywallking.0.3.tar.gz" \
+    && tar -xvf skywallking.tar.gz
+
+？？实操：如何看skywallking的控制台，基础的数据的查看分析
+？？实操：skywallking打包到应用的docker镜像中去
+
+
+*springboot Admin 用于监控服务的健康状态，需要启动服务端，并且在所有分布式的服务项目中嵌入客户端（配置下即可）。
+ ？？springbootAdmin和skywalking有什么区别
+ 
+
+*K8S
+ 解决单点故障，实现奔溃恢复
+ Tomcat自动重启
+ 自动扩展和伸缩（流量压力大就启动多台tomcat，流量压力下降了就关闭一些tomcat）
+ K8S一定是建立在容器引擎之上的，不一定是docker
+ 金丝雀发布，即滚动更新（逐步更新，有问题则回滚）。版本要能回滚。
+ 
+
+*近期规划
+ *自己整合研究springCloud项目，自定义插件放在第一个
+  web网关服务,使用配置中心，starter执行原理过程
+ *全面部署研究jeesite4源码和使用(！！大概了解了下)
+ *利用千峰教学资料进行搭建整个springcloud项目，
+  观看小马哥的springcloud视频，主要在于学习springcloud源码原理。
+  利用将jeesite的便捷功能集成到项目中去
+ *搭建自己的项目系统
+ *看能不能集成一个个应用系统，比如数据采集系统。
+ *最后做性能测试、做集群部署
+
+  
+
+ *了解行业业务，如供应链 https://zhuanlan.zhihu.com/p/96480990
+----------------------------------------------------------
+1、企业信息化服务：这一部分对于互联网使用的个人来说接触较少，主要包括供应链管理、人力资源管理、CRM客户关系管理、投招标系统、审计管理、办公管理等。
+2、电子商务：主要的作用就是匹配买家与卖家之间的供需关系，主要包括三个类别
+综合性：又按照B2B、B2C、C2C等类别细分，常见的网站包括B2B（阿里巴巴、慧聪网）、B2C（天猫、京东、当当、亚马逊）、C2C（淘宝）、O2O（美团、百度糯米、饿了么等）
+垂直行业：主要是各个行业的采购，比如中国化工网（卖化工产品）、聚美优品（卖美妆）、携程网（卖出行服务）
+企业自建：和上两个不同的一点在于，企业自建是以企业自己生产的产品为主，而上面两类则是更多地提供一个平台性质服务，常见的企业自建包括苏宁、国美、海尔的在线商城。
+3、人才招聘：这是由招聘会、纸质招聘信息发的一次升级，当前的招聘平台主要有两类.
+综合性：例如智联招聘、中华英才网
+垂直招聘：例如专注应届生的应届生招聘网、梧桐果招聘，专注互联网招聘的拉钩网等。
+----------------------------------------------------------
+

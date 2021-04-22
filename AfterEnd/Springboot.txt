@@ -2,6 +2,16 @@
 
 *环境jdk1.8+
 
+
+*想要了解springboot原理，可以关注了解spring5的源码解析
+
+*想了解springboot下的一些第三方框架的实现，可以由spring.factories入手，查看启动类
+
+*springboot干了什么事情:
+ *利用pom依赖，快速整合第三方框架，如mybatis、hibernate等，一般都是pom引入一个“starter”
+ *使用注解完全替代xml配置，但大部分是spring自带的注解，如@Bean、@MapperScan等
+ *集成了嵌入式的web容器，如tomcat。
+
 *在pom.xml可以看到有一个依赖组件spring-boot-starter-web整合了springmvc+spring，是用于启动web程序的
 
 *springboot和springCloud关系
@@ -14,11 +24,74 @@
  2.@SpringBootApplication注解启动类，@RequestMapping("/")+@RestController注解Controller
    @SpringBootApplication默认扫包范围就是当前启动类的包和子包
 
+*spring的@Configuration注解，让被注解的类变成启动类
+*@EnableAutoConfiguration注解的作用是它会去spring-boot-autoconfigure-2.1.8.RELEASE.jar下的spring.factories文件里找org.springframework.boot.autoconfigure.EnableAutoConfiguration对应的109个类，把在classpath下109个中有的类注册到ioc容器里
+*@SpringBootApplication包装了@SpringBootConfiguration、@EnableAutoConfiguration、@ComponentScan
+ @SpringBootConfiguration又包装了spring的@Configuration注解
+
+
 *yaml文件去重减少文件大小,properties文件不能去重，文件比较大
 
 *springboot本身不带jsp，如果要整合，则项目打包类型必须是war类型
 
+*starter原理（如何自定义一个starter插件）：
+ 在一个插件maven项目pom中引入springboot相关的依赖（其中有一个spring-boot-configuration-processor构件是用于yml配置文件提示用的）
+ 定义一个配置的映射类，用@ConfigurationProperties注解,如DemoProperties
+ 编写我们插件的功能代码类，如DemoService
+ 定义一个按照规范编写启动的插件启动类，如DemoConfig，用@Configuration、@EnableConfigurationProperties(DemoProperties.class)注解。
+ 在resources/META-INF/spring.factories来指定插件启动类DemoConfig，实际上是进行自动装配。
+ 在实际业务项目中引入demo-spring-boot-starter，并通过注解注入功能插件相关bean，如DemoService
+
+？starter执行原理过程
+
+
+*spring.factories是spring提供的spi机制，springboot加以利用，作为springboot的starter的基本机制
+ springboot在spring-boot-autoconfigure-2.1.8.RELEASE.jar的spring.factories下定义了109个常用的类，只要在classpath能找到，它就会将其注册到IOC中去
+ 如ServletWebServerFactoryAutoConfiguration就是启动web应用
+
+*starter潜规则：
+ spring-boot-starter-web格式的是官方插件
+ mybatis-spring-boot-starter格式的是非官方插件
+
+*WebApplicationType配置为none则不回内嵌web容器，以满足有外部web容器部署的需求。
+
+
+*SpringBoot启动流程主要分为两个步骤
+ 一、创建SpringApplication对象。
+ 二、调用SpringApplication对象的run()方法实现启动，并且返回当前容器的上下文。
+ 流程详解：
+ 一、创建SpringApplication对象，SpringBoot容器的初始化操作。
+ 二、获取当前应用的启动类型。（原理：判断当前classpath是否有加载servlet类。WebApplicationType分为NONE、SERVLET、REACTIVE三种类型）
+ 三、setInitializers读取springboot包下的META-INF/spring.factories获取到对应的ApplicationContextInitializer装配到集合中
+ 四、setListeners读取springboot包下面的META-INF/spring.factories获取到对应的ApplicationListener装配到集合中
+ 五、mainApplicationClass获取当前运行的主函数
+ 六、调用SpringApplication的run()方法实现启动
+ 七、stopWatch.start();开始记录项目的启动时间
+ 八、getRunListeners(args)；读取META-INF/spring.factories，将SpringApplicationRunListeners类型存入带集合中
+ 九、listeners.starting();循环调用starting()方法
+ 十、ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+ listeners.environmentPrepared(environment);循环读取配置文件到springboot容器中，因为配置文件可以自定义，就会存在多个。
+ 十一、Banner printedBanner = printBanner(environment);打印Springboot启动标志
+ 十二、context = createApplicationContext();创建springboot上下文
+ 十三、prepareContext(context, environment, listeners, applicationArguments, printedBanner);为springboot上下文设置environment属性。
+ 十四、refreshContext(context);刷新上下文
+ 十五、开始创建Tomcat容器
+ 十六、开始加载SpringMVC
+ 十七、afterRefresh(context,applicationArguments);定义一个空的模板给其他子类实现重写
+ 十八、listeners.started(context);使用广播和回调机制通知监听器springboot容器启动成功
+ 十九、listeners.running(context);使用广播和回调机制通知监听器springboot容器已成功running
+ 二十、最后返回当前的上下文
+ 
+
 *intellij创建maven项目时，加载慢。解决方式：在创建maven项目时加上archtypeCatalog参数
  详见https://www.cnblogs.com/del88/p/6286887.html
 
-.index_jobs .job_info .job_tips {margin:4px 0;}
+*利用SpringApplicationRunListener接口SPI扩展可以实现加载外部配置文件（如：myconfig.properties）
+ 在该接口environmentPrepared(ConfigurableEnvironment cf)方法中，外部加载好的配置可以附加到cf实例中去。
+？？后期结合jeesite来学习springboot常用的扩展接口
+
+?springboot如何写复杂的sql语句
+
+*在使用项目一些工具依赖时，可以优先到spring-boot-dependencies去查找依赖。
+
+*Spring Boot 配置文件的加载顺序，依次为 bootstrap.properties -> bootstrap.yml -> application.properties -> application.yml ，其中 bootstrap.properties 配置为最高优先级

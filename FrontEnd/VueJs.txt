@@ -38,10 +38,94 @@
     }).$mount('#app') //上述的真实Dom会通过此方法会被渲染到/public/index.html里的div#app里
 
 
+**var vm=new Vue(options);//其中options是一些固定的参数，会被vue框架进行组装代理，
+  而vm实例里是不能找出一些自定义的一些参数，如options.myClick这种自定义的参数是不会被解析。
+
+***特别注意：在vue的<template>节点下，必须爆伤一层<view>****业务代码****</view>，否则有一些组件将不被识别
+
+**组件里面的props里的属性，不能通过当前组件进行修改值。在当前组件内修改值的情况需要用data里的属性
+
+*
+vm.$watch('a', function (newValue, oldValue) {
+  // 这个回调将在 `vm.a` 改变后调用
+})
+
+*Vue 的$mount()为手动挂载，在项目中可用于延时挂载（例如在挂载之前要进行一些其他操作、判断等），之后要手动挂载上。
+ new Vue时，el和$mount并没有本质上的不同。
+
+*package.json是可以手工配置，可以有包版本的通配符，所以下载的包的版本是不确定的。
+ package-lock.json是在npm install时，这时就会生成一份package-lock.json,里面有下载包的具体版本
+ 所以package-lock.json上传到git时，就可以让所有开发人员的包版本保持一致。
+
+*uni-app中的vue组件是可以用到nvue文件页面里的，开发App时HbuilderX会根据nvue后缀页面文件将使用app原生组件进行渲染。
+ 如果是vue后缀页面文件，开发App时HbuilderX会使用webview进行渲染。
+
+*测试API  https://api.597.com/web/mi.api?act=seachJObList
 
 
+？？测试讲.vue文件当成js被引入到其它.vue页面
+
+*Hbuilder安装Android模拟器  https://ask.dcloud.net.cn/article/151
+ Android相关开发工具链接 https://www.androiddevtools.cn/
+ 相关问题解决链接：https://blog.csdn.net/xqhys/article/details/88772504
+                   https://www.cnblogs.com/JICG/p/11889600.html
+
+*chekbox不支持v-model；v-model只在input和textarea生效
+
+*vue中的数据MVVM响应中，监控的是数据模型的变化，不会监控数据模型属性的变化。 如this.data={name:1}会响应，而this.data.name=1却不会响应。
+
+**597简历预览方案，用微软的在线预览doc：https://view.officeapps.live.com/op/view.aspx?src=https://ecs.597.com/1.doc
+
+************uniapp********************
+
+ 
+uniapp支持的css样式长度单位为px rpx  
+ *rpx即整个设计图宽度按750rpx划分，每一个格子都是1rpx。  
+  注意要在pages.json里设置"rpxCalcBaseDeviceWidth": 375,"rpxCalcIncludeWidth": 750
+
+？A页面引用B组件，B组件引用C组件。 此时在A的this.refs里有BC组件的引用。 但是在B的this.refs里去没有C组件的引用
 
 *******************************IM 交接材料******************************************
 *源码及相关材料在码云  CSFED 组织里
  
 *文档http://csfed.gitee.io/press
+
+**jeecg-uniapp项目里路由用this.$route在h5端可以但是到了手机端就不行了，实际上是要用官方的this.$Router，大小写区分
+  如果再App端路由不能用，可以将路由的mode设置为hash，因为app是没有history模式的
+  而获取路由参数不是用$Router而是$Route，如this.$Route.query.userId
+
+？vue如何引入js
+  *按需引入（如该js是非export导出，也可以使用）  let moment=require("@/node_modules/moment/moment.js");
+  *预定义引入（要求export导出，并且需要预编译）import Request from '@/common/luch-request/index.js'
+
+*getCurrentPages()//获取页面栈集合
+ var prevPage = pages[pages.length - 2];prevPage.$vm.targetUser =111;//获取上一个页面栈并设置参数（注意：在h5上prevPage.$vm不存在而在app上是存在的）
+
+*unipush的使用
+ 官方文档 https://uniapp.dcloud.io/api/plugins/push（其中 https://ask.dcloud.net.cn/article/35622这个文档+jeecg文档结合使用）
+ 全面的文档（CSDN收藏）：https://blog.csdn.net/kouryoushine/article/details/102607337   
+ https://uniapp.dcloud.io/use-html5plus
+ 手机厂商配置：https://www.dcloud.io/docs/a/unipush/manufacturer.pdf
+ 注意：开通UniPush后，需在后台配置“厂商推送设置”，配置好厂商参数后请一定要提交云打包，并且使用“自有证书”打签名包；将云打包后的安装包安装到手机上，再获取cid 进行离线厂商推送测试，不可使用基座方式获取的cid进行离线厂商推送测试。
+ 概念：通知消息：可以再手机通知栏接收到，用户点击后触发App代码里的click事件。并处理消息
+       透传消息：只有App打开后才能接受到，然后接收处理消息
+       自定义基座：相当于集成了特定调试环境的包，如调试用的Apk
+ 大致的步骤（主要官方文档里的小文档+jeecg）：
+       1.手机厂商配置：华为厂商配置：注意华为要生成agconnect-services.json给unipush官方配置
+       2.配置unipush官方配置，注意Android应用用keytool进行签名在这里的配置要和打包的配置要一致。 打包要需要用“自有证书”
+       3.云打包：打包的时候一定要用自有证书，并且自定义基座；
+
+
+*Uniapp更新方案，新建一个功能模块用于上传新的apk和wgt包，提供给前端App一个获取最新一条记录的url即可更新。
+ 详见代码里的方案，并参考官方方案https://ask.dcloud.net.cn/article/182
+ 特别注意：1、上架审核期间不要弹出热更新提示；2、热更新内容使用https下载，避免被三方网络劫持；        
+表字段说明：
+"appid":1,//应用的Appid，可以AndroidAppId+'|'+IosAppId
+"status":1,//升级标志，1：需要升级；0：无需升级
+"note": "修复bug1；\n修复bug2;",更新说明
+"version": "13.3.2",//版本规则：13.3是大版本用提示下载更新，2是小版本热更新即可
+"androidUrl":"http://www.example.com/uniapp.apk" //更新包下载地址//即包可访问地址 -----需要上传功能
+"iosUrl": "https://apps.apple.com/cn/app/id135949123" //更新包下载地址//即包可访问地址 -----需要上传功能
+"wgtUrl": "http://www.example.com/uniapp.wgt" //更新包下载地址  -----需要上传功能
+
+versionCode

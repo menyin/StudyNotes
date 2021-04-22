@@ -1288,6 +1288,7 @@ ${user.home}/logs/...
 *centos7的防火墙设置交由firewalld（centos7之前的版本都是用iptables管理）
  详见csdn收藏 https://blog.csdn.net/c233728461/article/details/52679558
 
+*cmd命令行里打开当前windows资源管理器目录命令 start .
 
 *vim编辑器的使用：
  在Linux命令行工具里 输入 vim aa.txt 
@@ -1430,3 +1431,17 @@ ${user.home}/logs/...
 *格式化类 Format体系 
  SimpleDateFormat
  NumberFormat
+
+*******************文档注释 *******************************
+@see 生成文档中的“参见xx 的条目”的超链接，后边可以加上：“类名”、“完整类名”、“完整类名#方法”。可用于：类、方法、变量注释。
+@param 参数的说明。可用于：方法注释。  
+@return 返回值的说明。可用于：方法注释。
+@exception 可能抛出异常的说明。可用于：方法注释。  
+@version 版本信息。可用于：类注释。  
+@author 作者名。可用于：类注释。
+@deprecated 对类或方法的说明 该类或方法不建议使用,引起不推荐使用的警告   
+@note  表示注解，暴露给源码阅读者的文档   
+@remark 表示评论，暴露给客户程序员的文档
+@since 表示从那个版本起开始有了这个函数   
+@see  表示交叉参考
+

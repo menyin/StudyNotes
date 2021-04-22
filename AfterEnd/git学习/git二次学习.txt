@@ -1,4 +1,5 @@
-﻿
+﻿**团队协作：https://www.cnblogs.com/yhaing/p/8473746.html
+
 *使用git时，尽量将项目的文件编码改为utf-8，以避免使用git过程中出现乱码的情况
 
 **git工作区和暂存区在多个本地版本库之间可以理解为公用的，当a分支库和b分支库最初版本是一致的情况下，a版本状态下修改并未commit的内容其实是在工作区或暂存区。
@@ -53,7 +54,7 @@
  git checkout -b dev创建并切换到dev分支
  git fetch origin branch1:branch2 使用远程branch1分支在本地创建branch2(但不会切换到该分支)。详见博客园收藏《git fetch, git pull 以及 FETCH_HEAD》
  git fetch origin branch1 使用远程branch1分支更新本地分支
- git mergin origin/master 将远程的master分支合并到本地当前分支，应该也可以使用git merge FETCH_HEAD
+ git merge origin/master 将远程的master分支合并到本地当前分支，应该也可以使用git merge FETCH_HEAD
  git diff master origin/master 对比本地master分支和远程仓库的master分支的区别
  git commit -m '注释'  提交所有暂存区的文件
  git commit 文件名 -m '注释' 提交暂存区指定文件
@@ -61,6 +62,10 @@
  git push 推送本地版本库到线上，只要没有commit的文件都不会被推送。
  git checkout -t origin/cny 检出远程cny分支并在本地创建一个同名分支与之关联。
  git checkout cny 如果用git branch -a 可以查看到origin/cny分支的话，则此命令是直接检出origin/cny来创建本地分支cny
+ git tag v1.1.0 给当前分支当前版本打上tag后，只能在本地用git tag查看到所有tag。  本地版本库push到线上时默认不push tag。如果要push tag请用：
+ git push origin --tags
+
+*tag的理解：tag是给每次的commitid取一个别名，不管在哪个分支下，用git tag命令都能看到所有的tag列表。而不是只看到当前分支下的commitid的tag。
 
 *在拉取远程非master分支（如cny分支）时候，不要有pull，它会覆盖master分支和cny分支。
  可以用git fetch origin cny:cny 或git checkout -t origin/cny
@@ -73,12 +78,37 @@
   git push origin test 表示将本地分支推送到与之存在追踪关系的远程分支（通常两者同名），如果该远程分支不存在，则会被新建
   git push origin 如果当前分支与远程分支存在追踪关系，则本地分支和远程分支都可以省略
 
+*权限管理通过两方面完成：
+1.通过角色来分配基本的权限
+2.通过branch保护，来限制分支被push或merge
+
+
 *一般实践：
  1.本地可以新建仓库然后会自动创建一个master分支：创建一个文件夹，然后git init
  2.将本地分支和线上仓库的master分支相关联：git remote add origin 远程仓库地址
- 3.从线上仓库的master分支拉取代码： git pull origin master
+ 3.（应该是用checkout到本地吧，带实践）从线上仓库的master分支拉取代码： git pull origin master 
 
+*每次要进行合并或者push前先做fetch或pull（pull=fetch+merge）
 
+*团队和做最佳实践
+ 1、master分支设置分支保护（开发人员不能push，只能管理员），dev分支从master分支checkout出来并且不设置分支保护
+ 2、开发人员各自在本地git fetch origin或者Gitclone项目，此时本地会包含本地master、dev，还有对应远程分支的副本origin/master和origin/dev
+ 3、开发人员可在本地的dev分支进行开发，开发完成后push到对应的线上dev分支。此时如果线上dev分支已被更改，版本更新，则通过git pull origin dev来fetch和merge线上最新dev分支。通过解决冲突再次push
+ 4、由于线上master分支是受保护，不能被开发人员push，开发人员只能将自己的代码push到线上dev分支，并在GitHub上填写pull request单通知到管理员。
+ 5、管理员在GitHub或者邮件接收到开发人员的pullRquest后，在本地用git fetch origin命令下载所有分支，并且将有变更的dev分支合并到master分支并push到线上master。具体操作GitHub上会有命令提示。如果GitLab可以在线上直接合并分支并提交。
+    Step 1: From your project repository, bring in the changes and test.
+     git fetch origin
+     git checkout -b dev origin/dev
+     git merge master
+    Step 2: Merge the changes and update on GitHub.
+     git checkout master
+     git merge --no-ff dev
+     git push origin master
+
+*团队协作最佳实践：
+？？能否直接将线上的dev版本合并到本地对应dev版本，再由本地dev版本提交到线上dev版本？
+？？打Tag是不是只能在master上打，还是每个分支都可以打，然后被合并后，Tag也随之合并过去
+？？git merge和git merge --no-ff的区别
 
 *在push之前一定要fetch+merge  
 *在各个命令操作前可以用git status命令查看下装

@@ -1,0 +1,97 @@
+*每特教育docker教程
+
+*docker和maven类似
+
+*线上docker应用搜索：https://hub.docker.com/     在旁边有具体筛选项，是选择官方或者非官方的
+ 用命令docker应用搜索：docker search java
+ 
+*docker是13年开发出来，16年后开始火后面。
+ 15年前大多是maven+Jenkins，在15年后就是docker+Jenkins+k8s
+
+*docker架构：客户端-> DockerHost->仓库
+ 容器->镜像->仓库。这里有点360软件管家或者AppStore
+ client：用于连接docker内应用的客户端，可以提供一些docker应用的管理命令
+ docker：将一些常用的应用集成，将这些应用的依赖都集成。
+ container：容器，作为应用的载体，相当于面向对象的对象
+ images：镜像，面向对象的类
+ registry:仓库，相当于maven远程仓库
+ 
+
+ 
+
+*虚拟化技术：虚拟linux系统，启动速度分钟级、速度稍慢、支持几十个虚拟机（硬盘占用GB级别）、安全隔离
+ docker：虚拟应用依赖的容器，启动速度秒级、速度快、支持n多容器（硬盘占用MB级别）、安全隔离
+ docker容器：相当于一个轻量级的linux操作系统。
+
+*常用的命令
+ docker ps 查看正在运行的docker应用容器实例
+ docker ps -a查看所有的docker应用容器实例
+ docker images 查看本地仓库有多少docker应用镜像
+ docker pull 下拉镜像，很少用这个命令，一般用docker run
+ docker run -d -p 80:81 nginx 运行应用容器，如果本地仓库没有镜像则远程下载并运行，其中-d参数表示后台运行。80为外部端口，81位内部端口
+ docker start eager_lewin 停止容器，其中eager_lewin是docker ps下查询到的names
+ docker stop eager_lewin 停止容器，其中eager_lewin是docker ps下查询到的names
+ docker rmi d23bdf5b1b1b 删除镜像，d23bdf5b1b1b为docker ps查询到的id
+ docker rm d23bdf5b1b1b 删除容器，d23bdf5b1b1b为docker ps查询到的id
+ docker container exec -it f0b1c8ab3633 /bin/bash进入到doc容器中去，f0b1c8ab3633为指定容器的id。
+ docker-compose up -d  这个命令使用非常类似于docker命令的使用，但是需要注意的是大部分的compose命令都需要到docker-compose.yml文件所在的目录下才能执行。
+
+*docker-compose详见简书《关于docker-Compose基本使用》，下载的时候可以切换下版本
+ 
+
+*linux里的sudo的命令相当于以root权限进行操作，应该是相当于windows的以管理员身份运行
+
+*docker安装详见每特四期文档
+*docker要求centos内核版本3.1+、yum最新版本、用root登录linux
+
+*docker下载应用镜像，使用阿里或网易云的镜像会比较快。https://cr.console.aliyun.com/cn-hangzhou/mirrors
+*配置镜像加速器
+针对Docker客户端版本大于 1.10.0 的用户
+您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://kngn8dh8.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
+*docker只能简化安装过程，不能帮我们简化配置。比如要配置Nginx的负载均衡
+
+*docker应用的容器相当于一个“虚拟机”
+ 用docker ps查看容器的id，如Nginx容器启动后的id为3af5513d208e（假设在192.168.1.237用docker run -d -p 81:80 nginx启动的nginx容器）
+ 再用docker inspect 3af5513d208e 查看这个容器“虚拟机”的信息，可以查找到其局域网ip为172.17.0.2
+ 再用172.17.0.2:80直接到237主机内curl访问，和用浏览器访问192.168.1.237:81访问是一个效果的。 注意172.17.0.2:80在237之外是不能访问的，因为网段不同。
+
+*将应用打包成docker镜像时，应用镜像所依赖的环境（如java8）也是以docker容器存在的，如果这个依赖的容器不存在则会下载并运行它。
+
+*应用通过docker容器安装后，应用本身的配置如何配置？（直接到安装目录修改或利用挂载）（如：通过Docker安装的Nginx如何配置nginx.conf）
+  *Docker通过容器运行Nginx-----安装的目录 在容器中/容器id/etc/nginx，默认情况下安装在 容器的etc目录
+  *Docker 安装的软件如何修改配置文件的？（一般用挂载方式进行）
+    *方式一：通过命令docker run --name mynginx -d -p 80:80  -v /data/nginx/conf/nginx.conf:/etc/nginx/nginx.conf  -v /data/nginx/logs:/var/log/nginx -d docker.io/nginx  容器挂载外部配置文件 –v
+    *方式二：通过命令docker container exec -it f0b1c8ab3633 /bin/bash  进入到容器进行配置文件修改。（exit 退出，即退出到宿主机目录）
+
+*特别注意：不要进入docker应用容器里去修改应用配置文件  ，因为容器里没有vi等工具，安装的话会增加容器的体积。一般采用挂载方式。
+  
+*linux文件挂载技术：创建两个目录可以同步更新。
+
+*安装mysql一定要用稳定版本，不安装最新版。 所以docker安装要指定版本。
+
+？？实操：docker如何完整的打包应用镜像，包含resources等必要的文件
+
+*打开docker的2375端口，以便进行远程打包镜像。详见https://www.cnblogs.com/hongdada/p/11512901.html
+ 
+ 方式一：详见 http://39.105.73.149/forum.php?mod=viewthread&tid=60&highlight=docker
+  执行 sudo vim /etc/default/ docker
+  加入 DOCKER_OPTS = “ -H tcp：//0.0.0.0：2375”
+  重启docker  sudo systemctl restart docker
+ 方式二：详见 https://blog.csdn.net/qq_19734597/article/details/90633108
+  vim /usr/lib/systemd/system/docker.service  
+
+*docker打包镜像到远程服务器（不建议生产环境使用，因为2375不加密验证，外网不安全）
+ 详见csdn《使用docker-maven-plugin插件将项目编译为docker镜像到远程linux服务器》
+
+*docker镜像一般不用上述方式直接上传到linux服务器，而是上传到公司的docker镜像私服
+ Harbor和Registry都是Docker的镜像仓库，但是Harbor作为更多企业的选择，是因为相比较于Regisrty来说，它具有很多的优势。
