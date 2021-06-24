@@ -95,3 +95,6 @@ sudo systemctl restart docker
 
 *docker镜像一般不用上述方式直接上传到linux服务器，而是上传到公司的docker镜像私服
  Harbor和Registry都是Docker的镜像仓库，但是Harbor作为更多企业的选择，是因为相比较于Regisrty来说，它具有很多的优势。
+
+
+*redis安装详见csdn《最详细的docker中安装并配置redis》

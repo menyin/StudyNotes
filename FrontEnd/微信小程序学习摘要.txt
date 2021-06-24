@@ -51,6 +51,7 @@ Page({
 
 *在请求后端数据接口时（是https协议），出现“对应的服务器证书无效。”，可以在微信开发者工具里项目设置-不校验合法域名...  进行设置
 
+*微信小程序如何分包（小程序会按需加载而不是一次性加载） https://blog.csdn.net/wangzai888/article/details/88852116
 
 ？页面 样式  脚本如何对应 即路由， 一个文件夹里包含了前述三者。
 ？页面标签学习
@@ -58,3 +59,4 @@ Page({
 ？<template is="staffName" data="{{...staffA}}"></template>  这里三个点号是什么意思 ！模板语法
 
 weapp.d.ts
+

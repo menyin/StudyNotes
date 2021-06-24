@@ -53,6 +53,10 @@ vm.$watch('a', function (newValue, oldValue) {
 *Vue 的$mount()为手动挂载，在项目中可用于延时挂载（例如在挂载之前要进行一些其他操作、判断等），之后要手动挂载上。
  new Vue时，el和$mount并没有本质上的不同。
 
+*v-if和v-for在同一dom节点使用时，v-for的优先级高于v-if，
+ 此时如果需要先执行v-if逻辑再执行v-for，则需要将v-if放到父dom里，v-for放到子dom
+
+
 *package.json是可以手工配置，可以有包版本的通配符，所以下载的包的版本是不确定的。
  package-lock.json是在npm install时，这时就会生成一份package-lock.json,里面有下载包的具体版本
  所以package-lock.json上传到git时，就可以让所有开发人员的包版本保持一致。
@@ -77,7 +81,7 @@ vm.$watch('a', function (newValue, oldValue) {
 **597简历预览方案，用微软的在线预览doc：https://view.officeapps.live.com/op/view.aspx?src=https://ecs.597.com/1.doc
 
 ************uniapp********************
-
+*uniapp的组件及其目录不要用-连接，而使用驼峰命名法，否则在有些小程序（如支付宝小程序）会有问题。
  
 uniapp支持的css样式长度单位为px rpx  
  *rpx即整个设计图宽度按750rpx划分，每一个格子都是1rpx。  
@@ -97,7 +101,10 @@ uniapp支持的css样式长度单位为px rpx
 ？vue如何引入js
   *按需引入（如该js是非export导出，也可以使用）  let moment=require("@/node_modules/moment/moment.js");
   *预定义引入（要求export导出，并且需要预编译）import Request from '@/common/luch-request/index.js'
-
+  注意在vue页面中引入js模块而非vue模块，则直接用变量接收而不能用花括号接收
+  import {p1,p2} from '@/p.js'; //错误示例，在代码中不能使用p1，p2
+  import p from '@/p.js'; //正确示例，在代码中可以使用p.p1,p.p2
+   
 *getCurrentPages()//获取页面栈集合
  var prevPage = pages[pages.length - 2];prevPage.$vm.targetUser =111;//获取上一个页面栈并设置参数（注意：在h5上prevPage.$vm不存在而在app上是存在的）
 
@@ -108,12 +115,15 @@ uniapp支持的css样式长度单位为px rpx
  手机厂商配置：https://www.dcloud.io/docs/a/unipush/manufacturer.pdf
  注意：开通UniPush后，需在后台配置“厂商推送设置”，配置好厂商参数后请一定要提交云打包，并且使用“自有证书”打签名包；将云打包后的安装包安装到手机上，再获取cid 进行离线厂商推送测试，不可使用基座方式获取的cid进行离线厂商推送测试。
  概念：通知消息：可以再手机通知栏接收到，用户点击后触发App代码里的click事件。并处理消息
-       透传消息：只有App打开后才能接受到，然后接收处理消息
+       透传消息：自定义消息，需要自定义通知栏的样式，unipush推送内容格式符合特定的{title:"标题",content:"内容",payload:{type:1,fId:1}}格式，在Android端也会转为通知消息。
        自定义基座：相当于集成了特定调试环境的包，如调试用的Apk
+       离线消息：App被强杀后还能收到消息。在测试过程中，发现App并没办法接收离线消息。
  大致的步骤（主要官方文档里的小文档+jeecg）：
-       1.手机厂商配置：华为厂商配置：注意华为要生成agconnect-services.json给unipush官方配置
-       2.配置unipush官方配置，注意Android应用用keytool进行签名在这里的配置要和打包的配置要一致。 打包要需要用“自有证书”
-       3.云打包：打包的时候一定要用自有证书，并且自定义基座；
+       1.云打包：打包的时候一定要用自有证书，并且自定义基座；（经测试不一定要自定义基座）
+       2.手机厂商配置：华为厂商配置：注意华为要生成agconnect-services.json给unipush官方配置
+       3.配置unipush官方配置，注意Android应用用keytool进行签名在这里的配置要和打包的配置要一致。 打包要需要用“自有证书”
+       
+ intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=io.dcloud.HBuilder/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title=测试标题;S.content=测试内容;S.payload=test;end
 
 
 *Uniapp更新方案，新建一个功能模块用于上传新的apk和wgt包，提供给前端App一个获取最新一条记录的url即可更新。
@@ -129,3 +139,7 @@ uniapp支持的css样式长度单位为px rpx
 "wgtUrl": "http://www.example.com/uniapp.wgt" //更新包下载地址  -----需要上传功能
 
 versionCode
+
+*uniapp中的切换tab是不能传递参数的，因为像小程序这类原生的tab也是不能传递参数的
+
+*腾讯云小程序音视频通讯Uniapp版  https://ext.dcloud.net.cn/plugin?id=1286

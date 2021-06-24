@@ -2,6 +2,8 @@
 
 *使用git时，尽量将项目的文件编码改为utf-8，以避免使用git过程中出现乱码的情况
 
+*使用git log 或gitdiff等查看版本对比信息时，进入信息对比界面。 用shift+q可以退出
+
 **git工作区和暂存区在多个本地版本库之间可以理解为公用的，当a分支库和b分支库最初版本是一致的情况下，a版本状态下修改并未commit的内容其实是在工作区或暂存区。
  此时切换到b分支不会报错，因为a b分支最初版本状态一致。 而如果a b分支最初版本状态就不一致时则这个场景下会出现报错。因为最初状态一致时，a修改未提交的内容
  在切换到b时，git知道把这部分修改的内容添加到b的哪个位置。而如果a b分支最初版本不一致时，a修改未提交的内容在切换到b时，git并不知道将这部分修改的内容放在
@@ -39,7 +41,7 @@
  git config --global i18n.commit.encoding utf-8    # 提交说明编码
  git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 
-*常用命令
+*常用命令(详见《git参考手册》http://gitref.justjavac.com/)
  start . 打开当前目录Windows资源管理器
  git add --help打开 git add的帮助文档
  cd f:/进入f盘
