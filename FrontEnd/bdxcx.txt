@@ -1,0 +1,133 @@
+********最后记得将配置域名统一更改下
+*微信数据接口http://tip.597.cs/index.php
+
+*微信小程序转百度小程序过程中出现的错误在/log目录下
+
+*开发平台相关设置地址  
+ https://smartprogram.baidu.com/developer/home/setting.html?appId=16468886&tab=dev-setting
+ 用户名：xm597rcw(13375929312) 密码：Xm597795
+ 特别注意：百度远程调试登录、百度小程序idea账号登录都要使用上述用户名密码
+
+*服务器域名、服务器域名等配置参考小程序
+
+*原来基准颜色#f26b01
+ 换成#38f
+ 换成boss #5dd5ca
+ 首页头部背景图换了下 background: url(https://cdn.597.com/wx/images/headerBg.jpg) center 0px no-repeat;
+ #B9B9B9
+
+*色系 
+ #5dd5ca  #5dd5ca1a
+ #7a7a7a
+ #b4b4b4 #cecece
+
+
+url("//cdn.597.com/m1/images/search_history_clear.png")
+
+*miLogin.css里增加swan-button:after{border:none!important;}
+
+*AppId 16468886
+
+*遇到问题：
+ “功能受限，请填写有权限的APPID，若无法”，原因：APPID所属账号不是当前百度小程序开发工具登录账号
+ navigator标签不能作为正常的block标签进行浮动样式等设置，可以添加class并设置样式
+
+
+
+/* cny_todo app.json 暂时去掉，后期再开发。不能直接在代码里注释，要删除，否则编译不了。
+,
+"tabBar":
+{
+"height":0,
+"color": "#888888",
+"selectedColor": "#f8881d",
+"borderStyle": "black",
+"backgroundColor": "#fbfbfb",
+"list": [
+{
+"pagePath": "page/index/index",
+"iconPath": "images/shouye.png",
+"selectedIconPath": "images/ishouye.png",
+"text": "首页1"
+},{
+"pagePath": "page/person/resume/index/index",
+"iconPath": "images/jianli.png",
+"selectedIconPath": "images/ijianli.png",
+"text": "简历"
+},{
+"pagePath": "page/person/apply/index/index",
+"iconPath": "images/yingpin.png",
+"selectedIconPath": "images/iyingpin.png",
+"text": "应聘"
+}, {
+"pagePath": "page/person/index/index",
+"iconPath": "images/me.png",
+"selectedIconPath": "images/ime.png",
+"text": "我的"
+}]
+}*/
+
+
+*所有用户相关页面都加登录判断
+if(!getApp().data.token){
+    swan.navigateTo({url: '/page/miLogin/miLogin?isUser=yes&isIndex=true'});
+    return;
+    }
+
+
+if (res.data.status == -1) {
+        swan.showToast({ title: '请先登录再投递', mask: true, icon: 'success', duration: 1000 });
+        setTimeout(function () {
+          swan.navigateTo({
+            url: '/page/miLogin/miLogin?isUser=yes&isIndex=true'
+          });
+        }, 1500);
+        return;
+      }
+
+
+*个人后台首页 
+ 注释去掉信息修改功能，如用户名修改（.template_main1 .li:after注释掉 页面的css）
+ 
+？？公司页，职位列表显示数据不全
+？？职位电话没有则不显示按钮
+？？职位联系人电话和弹出的电话不一样
+？？收藏按钮样式调整
+？？部分职位 按钮栏显示不正确 apply_pos_box  contactbar
+？？吐司时间延长
+person\apply\whoInviteMeHisList\whoInviteMeHisList.css
+/person/apply/inviteInfo/index
+
+
+6dbb107549744
+
+
+
+https://mobile.baidu.com/app?action=download&downtype=highdown&docid=26924480&pid=2062891&from=singlemessage
+
+16468886 总
+3507  16655194  南平
+3504  16655182  三明
+3509  16655162  宁德
+3508  16655134  龙岩
+3503  16655118	莆田
+3501  16583975  福州
+3506  16566386  漳州
+3505  16485543  泉州
+3502  16468886  厦门
+ 
+？不同小程序跳转
+？单页面的标题设置。看能否动态更改
+
+wx.navigateToMiniProgram
+
+？？密码限制6--16位
+
+MYQTM76C3D6M3H7AFY
+MYQTM76C3D6M3H7AFY
+MYQTM76C3D6M3H7AFY
+"K9CVAC7T2ESMV6VT9U"
+"K9CVAC7T2ESMV6VT9U"
+
+"JVZU8SOFLQHS7N4DJC"
+"JVZU8SOFLQHS7N4DJC"
