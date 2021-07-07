@@ -143,3 +143,42 @@ versionCode
 *uniapp中的切换tab是不能传递参数的，因为像小程序这类原生的tab也是不能传递参数的
 
 *腾讯云小程序音视频通讯Uniapp版  https://ext.dcloud.net.cn/plugin?id=1286
+
+*Chocolatey是Windows上的包管理工具，就是安装软件包的。
+ 开发人员可以用来安装和配置自己的开发环境，例如我需要的JDK、Node、git、Chrome、VS Code、Android Studio、IntelliJ IDEA、WebStorm、7-zip、Hyper....很多人都会问哪里下载
+ Chrome，除了现在http://google.cn/chrome可以下载之外，choco是安装Chrome的最好方式。
+
+
+*chenmushan-template是一个集成了uview脚手架，可以用
+ uview UI框架
+ uni-swipe-action 滑动操作组件   https://ext.dcloud.net.cn/plugin?id=181   需要做大量的平台兼容处理
+ css3动画效果  https://animista.net/
+ 自由截图组件  https://ext.dcloud.net.cn/plugin?id=1031
+
+*http请求框架调研（对比uni-ajax和luch-request）
+ *两者唯一比较大的区别是：uni-ajax支持快应用，luch-request不支持。uni-ajax有文件上传、luch-request没有。另外luch-rquest使用人数远大于uni-ajax
+ *使用luch-request做文件上传（图片上传）：
+   *微信小程序用uni.uploadFile上传时出现 “Provisional headers are shown"，应该是597的api接口要用https，否则会再跳转一层造成的。
+   *http请求的时候需要注意参数name: 'Filedata'、如果线上的api地址则要用https否则http会多一次跳转产生问题（可以通过拦截器来将http强转为https）
+  微信小程序开发者工具在http请求过程中不需要登陆，也不需要使用到公司的appid，直接游客模式即可
+  luch-request不支持快应用，经过调研发现快应用的使用频率很少，应用也很少。
+  TypeError: Cannot read property 'forceUpdate' of undefined
+
+
+
+*使用webview时
+ *不能动态的往内部传参，只能静态的对webview的src赋值并传参
+ *webview的样式不能通过静态样式定义，而只能通过动态在js代码里添加
+   var currentWebview = this.$scope.$getAppWebview() //此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效，非v3编译模式使用this.$mp.page.$getAppWebview()
+      setTimeout(function() {
+        wv = currentWebview.children()[0]
+        console.log(that.window.windowHeight-107-that.StatusBar-52);
+        wv.setStyle({width:'100%',top:110+that.StatusBar,height:that.window.windowHeight-110-that.StatusBar-52+4})//4是微调
+      }, 1000); //如果是页面初始化调用时，需要延时一下
+
+
+*使用uniapp发布H5后，应用到传统web动静分离环境中
+  *uniap发布H5时使用域名 http://cdn.597.top，
+  *manifest.json里配置基础路径 ./  
+  *修改uniapp发布H5后的static/index.xxxxx.js里的A.p，可能是p.p，反正就是到“./”
+  *复制生成的index.html到php模板比如叫index.html.php, 修改相关js，css的引用路径
