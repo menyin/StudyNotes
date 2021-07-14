@@ -182,3 +182,5 @@ versionCode
   *manifest.json里配置基础路径 ./  
   *修改uniapp发布H5后的static/index.xxxxx.js里的A.p，可能是p.p，反正就是到“./”
   *复制生成的index.html到php模板比如叫index.html.php, 修改相关js，css的引用路径
+
+*uniapp开发h5时，如果<template>节点里的内容缺少标签，则会导致dom渲染出问题，这时候onLoad函数不会执行，此时还不会报错。
