@@ -1,5 +1,9 @@
 ﻿*学习教程 https://www.imooc.com/learn/924
 *https://shimo.im/docs/3VVqYD8v93RCGPpq/read IntelliJ IDEA 激活教程（永久有效）
+*月牙泉 破解：
+idea插件无限重置方法
+settings -> plugins -> 设置-> Manage Repositories 中添加 https://plugins.zhile.io   
+就可以搜索到重置插件  IDE eval reset   
 
 *破解教程：https://blog.csdn.net/qq_32595075/article/details/79675380
 

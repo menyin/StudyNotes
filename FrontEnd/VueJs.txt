@@ -53,6 +53,8 @@ vm.$watch('a', function (newValue, oldValue) {
 *Vue 的$mount()为手动挂载，在项目中可用于延时挂载（例如在挂载之前要进行一些其他操作、判断等），之后要手动挂载上。
  new Vue时，el和$mount并没有本质上的不同。
 
+*vue的mixins是混入，和extends差不多。 混入到vue组件的方法会优于组件自身方法执行，属性数据则会合并，同名则被自身方法或属性覆盖。
+
 *v-if和v-for在同一dom节点使用时，v-for的优先级高于v-if，
  此时如果需要先执行v-if逻辑再执行v-for，则需要将v-if放到父dom里，v-for放到子dom
 
@@ -185,12 +187,7 @@ versionCode
 
 *uniapp开发h5时，如果<template>节点里的内容缺少标签，则会导致dom渲染出问题，这时候onLoad函数不会执行，此时还不会报错。
 
-*vue在请求api时，本地开发环境下，可通过devServer.proxy设置api代理。
- 原理是通过webpack进行打包时讲请求时的 baseUrl替换掉。
- 在uniapp-h5配置代理时一直配置无效，是因为baseUrl我已经设置为m.597.cs了，所以devServer.proxy不能识别。
- 因为devServer.proxy是识别localhost将其替换成目标的m.597.cs。此时baseUrl是m.597.cs当然识别不到。
 
-*使用https://tongji.dcloud.net.cn/overview/overview 可以查看统计数据
 
 ************************webpack begin*******************************
 *运行打包：在项目根目录下运行webpack命令
@@ -227,7 +224,4 @@ versionCode
 *external排除打包，比如将引入cdn的jQuery排除打包范围内，而直接在页面用<script>标签引入。
 
 *第三方库可以用dll功能来打包，如jQuery
-
-*597的m版注册登陆在发布的时候其实可以publicPath 来指定发布的模块js部署环境在cdn环境，但是由于top环境下测完还要直接合并到com环境上，
- 所以这个publicPath希望是动态的根据当前域名去做改变，但webpack规定的publicPath是静态的，所以只能在业务代码里动态设置baseUrl
 ************************webpack end*******************************
