@@ -82,6 +82,8 @@ vm.$watch('a', function (newValue, oldValue) {
 
 **597简历预览方案，用微软的在线预览doc：https://view.officeapps.live.com/op/view.aspx?src=https://ecs.597.com/1.doc
 
+*Vue.ls 实际上是带过期时间和存取监控的LocalStorage
+
 ************uniapp********************
 *uniapp的组件及其目录不要用-连接，而使用驼峰命名法，否则在有些小程序（如支付宝小程序）会有问题。
  
@@ -157,6 +159,10 @@ versionCode
  css3动画效果  https://animista.net/
  自由截图组件  https://ext.dcloud.net.cn/plugin?id=1031
 
+*uview使用
+ *表单验证时候，如果验证失败弹出的样式errorType=toast  则trigger: ['change','blur']这些出发时机并不能吐司，而会在this.$refs.uForm.validate(valid => {}）调用时触发。
+ ？请求组件需要换成lunch-request、toast需要换成jeecg的uniapp吐司
+ 
 *http请求框架调研（对比uni-ajax和luch-request）
  *两者唯一比较大的区别是：uni-ajax支持快应用，luch-request不支持。uni-ajax有文件上传、luch-request没有。另外luch-rquest使用人数远大于uni-ajax
  *使用luch-request做文件上传（图片上传）：
