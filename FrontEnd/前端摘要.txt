@@ -32,3 +32,6 @@
 
 #油猴  密码：
 下载网址:http://pic.avip.fun,帐一:yemao.vip-shetu1,密一:kSYnrFjZmFJCc279
+
+*前端pdf预览插件，不能用于m端预览并且不能用于IE。jeecg对其进行了处理，可以支持IE9+
+ https://mozilla.github.io/pdf.js/legacy/web/viewer.html

@@ -193,7 +193,13 @@ versionCode
 
 *uniapp开发h5时，如果<template>节点里的内容缺少标签，则会导致dom渲染出问题，这时候onLoad函数不会执行，此时还不会报错。
 
+*uniapp做本地跨域：
+  *网上在vue.config.js或mainfest.json里配置的devServer代理中其实是host属性是要代理替换的域名，
+   即host配置了http://localhost,则config.js里的CONFIG[process.env.NODE_ENV]要为http://localhost才能被替换。 
+   如果CONFIG[process.env.NODE_ENV]配置的是http://m.597.top则匹配不到
+  *一般会在vue.config.js配置，而不再mainfest.json里配置，因为uniapp是对vue的一层包装。  但是如果前者无效，则可试着在后者配置，原因可能是未安装webpack等相关东西
 
+*uniapp弹窗后禁止页面滚动，可以直接使用scroll-view组件，可以控制页面的滚动
 
 ************************webpack begin*******************************
 *运行打包：在项目根目录下运行webpack命令
@@ -231,3 +237,7 @@ versionCode
 
 *第三方库可以用dll功能来打包，如jQuery
 ************************webpack end*******************************
+
+*小程序分享功能uni.share({options});
+ options.type 设置分享形式，如图文、纯文字、纯图片、音乐、视频、小程序等
+ options.scene 设置分享到聊天界面/朋友圈/收藏
