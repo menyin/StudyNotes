@@ -16,10 +16,11 @@
 
 
 *前端框架
- LayUI（目前最适合的前端框架，兼容IE8）
+ LayUI（目前最适合的前端框架，兼容IE8）   还有增强版http://layuimini.99php.cn/iframe/v2/index.html#/page/table.html
  H+（适合所有项目,但是IE8有兼容问题） http://yanshi.sucaihuo.com/modals/40/4078/demo/
  DWZ富客户端框架（适合做后台管理类项目） http://jui.org/#pagination2    文档
 
+ Electron用js+html配合vue脚手架开发桌面应用
 *Chrome查看前端对象内存
  https://jingyan.baidu.com/article/6b182309eb747fba58e159d1.html
  https://blog.csdn.net/kingzone_2008/article/details/9083327
@@ -35,3 +36,5 @@
 
 *前端pdf预览插件，不能用于m端预览并且不能用于IE。jeecg对其进行了处理，可以支持IE9+
  https://mozilla.github.io/pdf.js/legacy/web/viewer.html
+
+*前端框架
