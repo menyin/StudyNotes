@@ -1,0 +1,51 @@
+*加载外部音源是区分位数的，不同位数的音源放置在不同的文件夹下。 位数是看操作系统
+ OPTIONS-Manager plugins
+
+*音效素材，有时候我们可以到网上下载wav或mp3的音效素材，这些素材可以添加到水果里
+
+*快捷键
+ ctrl+拖动框选，ctrl+B复制后放置与当前被复制的音轨的音频后面
+ ctrl+拖动框选，如果还要添加其它框选音符，可以ctrl+shift+拖动框选
+
+*界面左上角有两个旋钮，上一个是总音量，下一个是总音高
+ 界面有PAT和SONG，PAT只播放单个Pattern，而SONG播放全部的Patten。所以如果进入到单个track里用pat才能播放单轨的
+
+*总轨上会有很多不同的音轨，一个总轨界面可以有多个pattern，一个pattern也是对应一个ChannelTack,一个ChannelTrack里有多个track
+ *每一个track里的音符数可能是4个1/4音符也可能有n个1/4音符
+ *尽量保证每个pattern都是一个新的乐器，不在一个pattern里添加两个乐器
+ *在总轨上有Pattern1、Pattern2等，它并不一定是对应总轨窗口上的Track1、Track2。Pattern相当于一种乐器演奏出的一段旋律，可以复用到任意的一个Track上，
+  所以如果你想在一个track上去放置一种乐器的一段音符，必须是在上面Pattern滚轮选择指定的pattern，再把pattern的乐器旋律刷到track上。
+ *一个pattern其实是一个复用的音频，如果在一个track上有patternA1和patternA2两个复用的pattern，此时怎么只修改patternA1？
+  只需要在patternA1音频块的左上角小钢琴点击下，出来的菜单选择make unique，此时它会自动生成一个新的pattern可以被复用
+ *ChannelTrack面板的每个通道的左边第一个绿色按钮是静音按钮，第二个是声相，第三个是音量按钮，第四个数字是表示映射到调音台的第几个轨道。
+ *wide 调音台
+ *PianoRoll 钢琴卷
+ *ChannelTrack通道面板
+  在ChannelTrack面板里的多个旋律track怎么在piano钢琴卷里同时显示：勾选 钢琴卷里键盘上方小三角形Helpers - Ghost channels
+ *在钢琴卷窗口下方有个control窗口是控制每个音符的音量的。三角形可以调出一个声相调整窗，声相即左右耳音去调节。
+  在钢琴卷里的钢琴键位标志C5....没有显示全部键位，可以在钢琴键上有个小三角view - key labels - all notes
+ *在ChannelTrack里的当track，如鼓点，会有一个面盘，右上角会有PAN声相、VOL音量、PITCH音调三个旋钮
+  在ChannelTrack里的track在音量旋钮上右击create automation clip 创建自动化包络，就会在一个总轨的一个track里有一个音量包络控制线。
+  声相等其它也可以弄包络线，其实就是一个量与时间的控制
+ *调音台，可以针对每个track进行混响，加效果，调音量
+ *总轨的工具栏：【磁铁】用于调节每个pattern在track中移动时按几分音符去吸附。
+                【铅笔】用于在track中添加单个pattern
+                【刷子】用于在track中刷出多个相同的pattern
+                【喇叭】用于对track里的单个pattern块进行静音，与track左边绿色按钮的分别在于绿色按钮是整个track静音
+                【刀片】用于将一根pattern音频块切成两块
+ *在一些按钮上右键菜单replace，可以附加软音源。 
+ *技巧：每种旋钮都都可以做包络线，如果旋钮上右键没有create automation clip就在对应的音源调制界面左上方三角号下拉菜单选择Browse parameters，
+        动下该旋钮则总界面右侧就会出现相应的参数项，然后右击参数项 create automation clip
+ *测速：如果一段清唱音频要编曲，则需要测出他的速度。 此时可在总界面上方的速度表右键tap，然后根据速度在测速盘上用鼠标点击。
+
+
+
+****看完P7  https://www.bilibili.com/video/BV1d441187Kq?p=7
+
+
+
+
+
+
+ 
+ 
