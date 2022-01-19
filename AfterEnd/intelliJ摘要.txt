@@ -1,5 +1,7 @@
 ﻿*学习教程 https://www.imooc.com/learn/924
 *https://shimo.im/docs/3VVqYD8v93RCGPpq/read IntelliJ IDEA 激活教程（永久有效）
+
+*张阳破解账号：lianpp97@stu2019.jnu.edu.cn    密码 zy0511.++
 *月牙泉 破解：
 idea插件无限重置方法
 settings -> plugins -> 设置-> Manage Repositories 中添加 https://plugins.zhile.io   

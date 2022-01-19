@@ -1,4 +1,10 @@
-﻿*微信公众号同步菜单只有认证公众号才有授权
+﻿*目前捷微管家平台分为老版和新版
+ *老版 https://gitee.com/jeecg/jeewx
+  演示站上有额外的微社区（论坛）、微相册、微音乐、微，   老版
+ *新版 https://gitee.com/jeecg/jeewx-boot#https://gitee.com/link?target=http%3A%2F%2Fdoc.jeewx.com%2F1414959 
+  演示站上有额外
+ 
+*微信公众号同步菜单只有认证公众号才有授权
 
 *公众号类型及区别：http://kf.qq.com/faq/120911VrYVrA130805byM32u.html
   订阅号：以前订阅号可以进行认证，现在不能。没有认证过的订阅号有些功能不能用，如同步公众号菜单
