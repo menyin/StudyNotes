@@ -1,0 +1,5 @@
+*mysql8在安装后intellij或Navicat都连接不上，报错“ The last packet sent successfully to the server was 0 milliseconds ago.”
+ 后来用telnet连接3306连接不上，于是在服务器开了防火墙和端口，还是不行
+ 后来又在阿里云服务器【安全组】里开了端口，还是不行
+ 后来又报错“message from server: "Host '110.87.116.253' is not allowed to connect to this MySQL server". ” 
+ 于是通过百度用命令update user set host = '%' where user ='root';和flush privileges;设置了允许  即可详见cndn收藏
