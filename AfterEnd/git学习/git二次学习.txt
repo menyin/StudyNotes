@@ -94,7 +94,7 @@
 
 *团队和做最佳实践
  1、master分支设置分支保护（开发人员不能push，只能管理员），dev分支从master分支checkout出来并且不设置分支保护
- 2、开发人员各自在本地git fetch origin或者Gitclone项目，此时本地会包含本地master、dev，还有对应远程分支的副本origin/master和origin/dev
+ 2、开发人员各自在本地git fetch origin（这个命令是拉去远程所有分支）或者Gitclone项目，此时本地会包含本地master、dev，还有对应远程分支的副本origin/master和origin/dev （注意fetch完远程分支如origin/master 要合并本地分支master，才能使用git push origin master进行推送）
  3、开发人员可在本地的dev分支进行开发，开发完成后push到对应的线上dev分支。此时如果线上dev分支已被更改，版本更新，则通过git pull origin dev来fetch和merge线上最新dev分支。通过解决冲突再次push
  4、由于线上master分支是受保护，不能被开发人员push，开发人员只能将自己的代码push到线上dev分支，并在GitHub上填写pull request单通知到管理员。
  5、管理员在GitHub或者邮件接收到开发人员的pullRquest后，在本地用git fetch origin命令下载所有分支，并且将有变更的dev分支合并到master分支并push到线上master。具体操作GitHub上会有命令提示。如果GitLab可以在线上直接合并分支并提交。
@@ -106,7 +106,8 @@
      git checkout master
      git merge --no-ff dev
      git push origin master
-
+  注意：git fetch origin master只是拉取了远程的master分支，即origin/master，此时要用git merge origin/master来合并远程分支到本地master分支
+  
 *团队协作最佳实践：
 ？？能否直接将线上的dev版本合并到本地对应dev版本，再由本地dev版本提交到线上dev版本？
 ？？打Tag是不是只能在master上打，还是每个分支都可以打，然后被合并后，Tag也随之合并过去
