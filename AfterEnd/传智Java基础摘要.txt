@@ -1353,6 +1353,8 @@ ${user.home}/logs/...
 *windows上测试某主机端口是否可连接：
  telnet 192.168.1.242 8080
 
+*windows安装openSSL   用此命令连接服务器 ssh -p 端口号 用户名@登录地址
+
 *centos7安装后默认网卡是关闭的，用ip addr是查不到ip的，可以进行相关设置。编辑配置文件/etc/sysconfig/ifcfg-ens33
 
 *查看一个软件是否安装，如mysql 使用命令rpm -qa|grep mysql
