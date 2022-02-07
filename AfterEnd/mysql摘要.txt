@@ -3,3 +3,9 @@
  后来又在阿里云服务器【安全组】里开了端口，还是不行
  后来又报错“message from server: "Host '110.87.116.253' is not allowed to connect to this MySQL server". ” 
  于是通过百度用命令update user set host = '%' where user ='root';和flush privileges;设置了允许  即可详见cndn收藏
+ 如果上一步命令执行错误，可以先将%换成localhost执行成功后，重新进入myql再执行上一步即可。
+ 有时候执行unpdate命令后还是连接不上3306端口，是因为my.cf里设置了skip-grant-tables造成，删除了重启mysql即可。
+ 注意：因为安装mysql时没有设置忽略大小写，导致quartz的某些表无法被正确查找到，所以安装mysql时候最好先设置忽略大小写
+
+*常用命令service mysqld start|restart|stop
+
