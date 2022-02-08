@@ -9,3 +9,10 @@
 
 *常用命令service mysqld start|restart|stop
 
+
+
+*sharding-jdbc和mycat的区别
+ sharding-jdbc和mycat使用不同的理念，sharding-jdbc目前是基于jdbc驱动，无需额外的proxy，因此也无需关注proxy本身的高可用。
+ Mycat 是基于 Proxy，它复写了 MySQL 协议，将 Mycat Server 伪装成一个 MySQL 数据库，而 Sharding-JDBC 是基于 JDBC 接口的扩展，是以 jar 包的形式提供轻量级服务的。
+
+
