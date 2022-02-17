@@ -84,6 +84,8 @@ vm.$watch('a', function (newValue, oldValue) {
 
 *Vue.ls 实际上是带过期时间和存取监控的LocalStorage
 
+*keep-alive 是 Vue 的内置组件，用于减少不必要的渲染，提要页面性能
+
 ************uniapp********************
 *uniapp的组件及其目录不要用-连接，而使用驼峰命名法，否则在有些小程序（如支付宝小程序）会有问题。
  
