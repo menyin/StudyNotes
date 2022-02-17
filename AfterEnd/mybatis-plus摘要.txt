@@ -1,0 +1,37 @@
+*yml或properties可以配置sql日志输出
+
+*主键生成策略：自增、UUID、雪花算法、
+ UUID缺点：没有排序、字符串存储查询效率低、存储空间大-大数据有问题-传输量大、不可读
+ 雪花算法：Twitter开源的分布式id生成算法，生成的id几乎全球唯一 @TableId(type = IdType.ASSIGN_ID),其中IdType.ASSIGN_ID就是雪花算法生成的
+ ？几种算法区别有待了解
+
+*自动填充：比如updateTime和createTime 
+ 使用方法：1、在实体上属性注解；2、写一个handle类实现mybatisplus的接口
+ 注意：虽然数据库可以设置默认填充这两种时间值，但是工作中一般不这么做。
+
+*乐观锁：概念略
+ 使用方法：1、实体属性上注解@Version  2、注册乐观锁插件。  
+ 原理：通过version字段，乐观锁插件会自己更新
+
+*分页插件
+ 使用方法：1、配置分页拦截器插件；
+	 2、使用Page<User> page=new Page<>(1,5);  userMapper.selectPage(page,wrapper); 
+ 	 3、System.out.prinln(page.getTotal());
+
+*条件构造器：
+  简单条件构造器：用Map。 map.put("name","jack");  userMapper.deleteByMap(map);
+  复杂条件构造器：用Wraper。  wrapper.查询条件符号(参数名，参数值).查询条件符号(参数名，参数值)....   
+  注意：查询条件符号基本和sql的条件符号对应的，如eq对应sql中的=
+           采用链式操作，默认是and的关系，如果要or的关系要用.or()来中断改变链式关系
+
+*逻辑删除插件
+ 使用方法：1、实体属性配置@TableLogic；2、配置注册逻辑删除插件； 3、yml或properties配置逻辑删除值；4、正常使用mybatisplus的删除方法
+ 注意：在使用删除插件后，在后续用mybatisplus进行查询会自动拼接上deleted=0的条件，即过滤掉逻辑删除的数据；
+
+*性能分析插件
+ 使用方法：1、配置插件 （如：可设置sql最大执行时间，超出报错）
+ 注意：只有测试和开发环境下执行，该项可配置
+
+*代码生成器
+ 使用方法：详见官方文档
+ 除了常用代码生成器的配置外，还支持Swagger2、主键策略、命名规则、Lombok、逻辑删除、自动填充、乐观锁等mybatisplus功能配置
