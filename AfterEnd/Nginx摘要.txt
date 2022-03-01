@@ -53,3 +53,9 @@
        weight越大权重越大，访问命中机会也就更高。
 192.168.157.132:8081
 192.168.157.132:8082
+
+*常用命令：
+  判断Nginx配置是否正确命令如下：nginx -t -c /usr/nginx/conf/nginx.conf     用nginx -t是检测所有配置文件
+  重启、停止、开启：systemctl [restart|stop|start] nginx
+  查看nginx状态：systemctl status nginx
+  刷新配置文件：nginx -s reload    但用此命令发现无效直接执行nginx -s stop 再执行nginx重启即可
