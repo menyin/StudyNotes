@@ -264,5 +264,9 @@ versionCode
 
 *最佳实践
  
+*imgcook导出的h5代码，使用rem时，基准字体选择25px会使得整个设计图页面自适应完美
+ 如果用25px 倒推rem设置，则需要设置document基础字体为document.documentElement.style.fontSize=50*document.documentElement.clientWidth/750+'px'
 
+*imgcook导出微信小程序代码时，<image>是source属性，需要用正则表达式(source="\{"uri":")(.*)("\}")替换成src，或者可以修改导出代码的DSL（在团队设置里面设置）
+ 
 ****************************ImgCook end*******************************************
