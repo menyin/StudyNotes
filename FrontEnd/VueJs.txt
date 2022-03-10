@@ -174,7 +174,8 @@ versionCode
   luch-request不支持快应用，经过调研发现快应用的使用频率很少，应用也很少。
   TypeError: Cannot read property 'forceUpdate' of undefined
 
-
+*<router-view>是vue使用的，uniapp内使用时，只能支持h5环境。 如果是APP或小程序的话是不行的。 所以如果要兼容生成各端是无法做公共模板抽出的
+ 也就是在uniapp开发下只有h5可以使用嵌套路由。 如果在App.vue里强制使用<router-view>还会出现uni.showToast()等API方法不能用
 
 *使用webview时
  *不能动态的往内部传参，只能静态的对webview的src赋值并传参
@@ -200,6 +201,11 @@ versionCode
    即host配置了http://localhost,则config.js里的CONFIG[process.env.NODE_ENV]要为http://localhost才能被替换。 
    如果CONFIG[process.env.NODE_ENV]配置的是http://m.597.top则匹配不到
   *一般会在vue.config.js配置，而不再mainfest.json里配置，因为uniapp是对vue的一层包装。  但是如果前者无效，则可试着在后者配置，原因可能是未安装webpack等相关东西
+  vue.config.js做跨域代理说明： 
+  比如代码中用this.$http.post('/sys/login')调用api，此时设置vue.config.js内设置跨域代理，就相当于干了几件事情：
+   1、把请求，从原本的basicpath+'/sys/login'变成 'http://localhost:8080'+'/sys/login', 这样做就让api请求的域和本地应用服务的域相同了
+   2、把 'http://localhost:8080'+'/sys/login'这个重装的请求，在本地服务进行代理，代理到vue.config.js配置的target节点，即目标服务器。
+   3、如果请求路径的'/sys'字符串，到了目标服务器要变成'/jeecg-boot/sys'，可以用pathRewrite: {'^/sys': '/jeecg-boot/sys'} 进行重写路径
 
 *uniapp弹窗后禁止页面滚动，可以直接使用scroll-view组件，可以控制页面的滚动
 
