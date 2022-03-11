@@ -62,9 +62,9 @@ weapp.d.ts
 
 *小程序登录逻辑（详见uniapp的login接口文档，有相关汇总）：
  各端小程序登录逻辑相差不大，基本流程是：
- 调用xx.login()获取相关的code，然后带着code请求自己后端，自己后端拿着appid+code等敏感信息去请求小程序的接口api获取session_key+openid等（也可以获取unionid）返回给前端。
+ 调用xx.login()获取相关的code，然后带着code请求自己后端，自己后端拿着appid+code等敏感信息去请求小程序的接口api获取session_key+openid等（也可以获取unionid）后端存储，返回给前端的应该是与之对应的token。
  前端携带以上信息作为会话的key进行后端服务请求或者小程序相关api请求，后端或小程序接口会进行相应的检查验证。
  注意：*百度小程序调用xx.login()时，如果未登录，则会跳转到web登录页，登录完再回到之前的百度小程序页面，所以登录回来后需要在之前的小程序页面加上onLogin周期钩子函数
         （其它小程序是弹框提示允许获取登录信息，因为其它小程序依赖于其平台并且已经登录了，而百度小程序不同，它是在百度浏览器app下的应用，不一定有登录状态）
-          *各端小程序请求后端，后端请求小程序接口获取sessionKey+openid等时，sessionKey会可以返回给前端存储，则可以调用tt.checkSession方法验证当前 session 是否有效，从而避免频繁登录。
+          *各端小程序请求后端，后端请求小程序接口获取sessionKey+openid等时，sessionKey不要返回给前端存储，调用wx.checkSession方法即可验证当前 sessionKey是否有效，从而避免频繁登录。
 *uniapp一键登录有自己的处理，详见登录部分官方文档，主要优势就是能比其它第三方一键登录厂商便宜和便捷。
