@@ -64,6 +64,13 @@ weapp.d.ts
  各端小程序登录逻辑相差不大，基本流程是：
  调用xx.login()获取相关的code，然后带着code请求自己后端，自己后端拿着appid+code等敏感信息去请求小程序的接口api获取session_key+openid等（也可以获取unionid）后端存储，返回给前端的应该是与之对应的token。
  前端携带以上信息作为会话的key进行后端服务请求或者小程序相关api请求，后端或小程序接口会进行相应的检查验证。
+ 注意：**小程序和公众号不同，小程序不能在后端拿openid等信息去请求微信服务获取用户信息，而只能通过wx.getUserInfo()获取
+          **所以一般wx.login+wx.getUserProfile获取到code+userInfo，然后请求后端，后端用code请求微信服务得到openid等信息，再和前端传来的userInfo绑定，注意userInfo里不包含手机号
+            另外上步中，获取到的userInfo中也有包含openid+unionid等加密过后的encryptedData数据，所以后端也可以通过解密来获取openid和unionid
+            而wx.login+wx.getUserProfile两步可以通过<functional-page-navigator>组件来一步实现
+           wx.getUserInfo将被wx.getUserProfile取代，获取的用户信息有：cloudID（不一定返回）、iv、encryptedData、signature、rawData、userInfo(内含avatarUrl、city、country、gender、language、nickName、province)
+           wx.getUserInfo调用后将不再弹框提示用户而是直接获取用户信息
+           调整背景原因https://developers.weixin.qq.com/community/develop/doc/000cacfa20ce88df04cb468bc52801
  注意：*百度小程序调用xx.login()时，如果未登录，则会跳转到web登录页，登录完再回到之前的百度小程序页面，所以登录回来后需要在之前的小程序页面加上onLogin周期钩子函数
         （其它小程序是弹框提示允许获取登录信息，因为其它小程序依赖于其平台并且已经登录了，而百度小程序不同，它是在百度浏览器app下的应用，不一定有登录状态）
           *各端小程序请求后端，后端请求小程序接口获取sessionKey+openid等时，sessionKey不要返回给前端存储，调用wx.checkSession方法即可验证当前 sessionKey是否有效，从而避免频繁登录。
@@ -90,6 +97,10 @@ weapp.d.ts
    https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
   -微信小程序测试号：基本拥有正式的认证小程序的功能，就是不能群发消息和支付。通过这个url登录 https://developers.weixin.qq.com/miniprogram/dev/devtools/sandbox.html
    https://mp.weixin.qq.com/wxamp/wadevelopcode/sandbox?lang=zh_CN&token=1191855006
+  AppID(小程序ID)   wxfe516614c1a48683
+  AppSecret(小程序密钥)  6b6a3a0d076c97d00f2b682d4b3f0818
+
+*开启https：csdn《阿里云ECS服务器配置SSL证书 开启网站Https访问》  暂时不开通，用花生壳或natapp做调试处理
 
 ***********************小程序与公众号注册相关 end***************
 
