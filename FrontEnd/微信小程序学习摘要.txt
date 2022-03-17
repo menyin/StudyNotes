@@ -71,6 +71,8 @@ weapp.d.ts
            wx.getUserInfo将被wx.getUserProfile取代，获取的用户信息有：cloudID（不一定返回）、iv、encryptedData、signature、rawData、userInfo(内含avatarUrl、city、country、gender、language、nickName、province)
            wx.getUserInfo调用后将不再弹框提示用户而是直接获取用户信息
            调整背景原因https://developers.weixin.qq.com/community/develop/doc/000cacfa20ce88df04cb468bc52801
+ ？？既然wx.getUserProfile可以直接获取openid+unionid的加密信息并在后端解密，那为什么还要用wx.login获取code提交给后端，并用code请求微信auth.code2Session接口来获取openid等信息呢？ 
+ ！！个人认为是因为auth.code2Session的调用返回了session_key这个东西表示微信帮我们做了用户与我们小程序的状态session管理，根据访问使用热度更新session过期时间，因此前端可以用wx.checkSession来检查状态
  注意：*百度小程序调用xx.login()时，如果未登录，则会跳转到web登录页，登录完再回到之前的百度小程序页面，所以登录回来后需要在之前的小程序页面加上onLogin周期钩子函数
         （其它小程序是弹框提示允许获取登录信息，因为其它小程序依赖于其平台并且已经登录了，而百度小程序不同，它是在百度浏览器app下的应用，不一定有登录状态）
           *各端小程序请求后端，后端请求小程序接口获取sessionKey+openid等时，sessionKey不要返回给前端存储，调用wx.checkSession方法即可验证当前 sessionKey是否有效，从而避免频繁登录。
@@ -101,6 +103,14 @@ weapp.d.ts
   AppSecret(小程序密钥)  6b6a3a0d076c97d00f2b682d4b3f0818
 
 *开启https：csdn《阿里云ECS服务器配置SSL证书 开启网站Https访问》  暂时不开通，用花生壳或natapp做调试处理
+ 步骤：
+        1、在Natapp网站上购买隧道并绑定[自主域名] api.xmtieda.com
+        2、在阿里云上将api.xmtieda.com域名解析到类型CNAME  Natapp隧道生成的域名
+        3、在阿里云上购买免费SSL证书，买完创建证书并申请（绑定我们要的域名）
+        4、在阿里云上下载jks证书（包含秘钥）放到项目resources目录（如启动失败放到项目根目录），配置yml并启动
+        5、下载Natapp客户端，按使用说明启动，即可通过https访问
+       注意：因为购买Natapp的有ssl证书功能的域名需要先购买一年以上的隧道，所以不得已使用自己阿里云的域名
+
 
 ***********************小程序与公众号注册相关 end***************
 
