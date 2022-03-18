@@ -77,7 +77,9 @@
 
 
 
-
+*权限注解：
+  数据权限通过自定义aop拦截，@PermissionData注解是用于有添加数据规则权限的，而不是普通的菜单权限
+  菜单权限通过shiro的各种注解拦截，@RequiresPermissions
 
 
 
