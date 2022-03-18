@@ -1,5 +1,8 @@
 微信开发文档 http://mp.weixin.qq.com/debug/wxadoc/dev/index.html
 
+*进行微信相关开发，有JeeWx-API还有WxJava，前者并不包含微信小程序相关的api工具集成，并且没有根据公众号，小程序，支付等进行分包。 所以微信小程序可以考虑用WxJava
+ WxJava详见 https://github.com/Wechat-Group/WxJava   它包含很多开源的公众号或小程序应用，可以直接拿来二开
+
 *Ip白名单：
 
 *微信公众号有845257580@qq.com和3331866906@qq.com两个可以登录
