@@ -82,6 +82,19 @@
   菜单权限通过shiro的各种注解拦截，@RequiresPermissions
 
 
+*用户登录状态管理和授权管理
+  使用shiro进行管理。 
+  1、在shiro的过滤器链上添加了一个JwtFilter过滤器，当有请求里含有token时，则进行shiro的subject.login(token)操作（其实内部回去掉用自定义realm#doGetAuthenticationInfo方法进行认证登入）
+  2、在用户访问controller的时候，会经过shiro，shiro会去自定realm#doGetAuthorizationInfo拿权限，即角色和标识等（如：user:add），然后进行鉴权，如果权限不足则返回事先配置好的权限不足url="/sys/common/403"
+  3、在权限不足或未登录时会跳转到ShiroConfig配置的"/sys/common/403"，这个url请求其实直接返回了权限不足的json，由前端自己去跳转到自己的登录页面进行登录。 
+  4、前端请求登录时，后端登录保存到redis当中，而第1步自定义realm#doGetAuthenticationInfo方法会去SysBaseApiImpl#getUserByName拿用户实体，
+       此时特别注意checkUserTokenIsEffect方法里用了2个缓存：
+            SysBaseApiImpl#getUserByName方法这里有个缓存注解@Cacheable(cacheNames=CacheConstant.SYS_USERS_CACHE, key="#username")  用spring缓存了用户实体
+            jwtTokenRefresh(...)方法里用了redis缓存
+   5、token是采用了JwtToken，JwtToken自带了过期时间，然后又放在redis中设置过期时间。 在ShiroRealm#jwtTokenRefresh方法是验证并且刷新token过期时间
+        逻辑是：设置token的redis过期时间是JwtToken过期时间的2倍。 当redis未过期（可以获取到token），此时如果JwtToken过期时间已过，则从新签发jwtToken（过期时间也会刷新）和刷新redis过期时间
+
+            ==================== 今天先看到#jwtTokenRefresh      明天再看具体其它逻辑   
 
 
 ************************后端 end******************************
