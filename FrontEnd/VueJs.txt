@@ -43,6 +43,8 @@
 
 ***特别注意：在vue的<template>节点下，必须爆伤一层<view>****业务代码****</view>，否则有一些组件将不被识别
 
+***vue的data等数据属性名不能以$或_开头，否则将不会被vue框架代理。 这些符号开头的名字是内置名字
+
 **组件里面的props里的属性，不能通过当前组件进行修改值。在当前组件内修改值的情况需要用data里的属性
 
 *
@@ -94,6 +96,15 @@ uniapp支持的css样式长度单位为px rpx
   注意要在pages.json里设置"rpxCalcBaseDeviceWidth": 375,"rpxCalcIncludeWidth": 750
 
 ？A页面引用B组件，B组件引用C组件。 此时在A的this.refs里有BC组件的引用。 但是在B的this.refs里去没有C组件的引用
+
+*uniapp和vue的差异：
+ uniapp不支持自定义指令
+ unipp的simple-router不支持动态路由，即不能根据接口数据重组路由列表
+ unipp的simple-router的嵌套路由目前只支持h5。  要套入公共组件（如commons）可采用vue-inset-loader（实践行不通）  详见 https://ask.dcloud.net.cn/article/39345
+
+*uniapp可以用Vue.prototype.myname定义全局变量，但是只能在vue组件方法里使用，无法直接在vue模板里使用。 
+ 如果要直接在模板里使用，可以用Vue.mixin(data() { return{...}}）进行混入全局变量和方法
+
 
 *******************************IM 交接材料******************************************
 *源码及相关材料在码云  CSFED 组织里
@@ -198,7 +209,8 @@ versionCode
 
 *uniapp做本地跨域：
   *网上在vue.config.js或mainfest.json里配置的devServer代理中其实是host属性是要代理替换的域名，
-   即host配置了http://localhost,则config.js里的CONFIG[process.env.NODE_ENV]要为http://localhost才能被替换。 
+   即host配置了http://localhost,则config.js里的CONFIG[process.env.NODE_ENV]要为http://localhost才能被替换。！！！！ 
+   ！！！如果配置无效，可尝试CONFIG[process.env.NODE_ENV]配置成空字符串""，或许可以成功
    如果CONFIG[process.env.NODE_ENV]配置的是http://m.597.top则匹配不到
   *一般会在vue.config.js配置，而不再mainfest.json里配置，因为uniapp是对vue的一层包装。  但是如果前者无效，则可试着在后者配置，原因可能是未安装webpack等相关东西
   vue.config.js做跨域代理说明： 
@@ -207,7 +219,10 @@ versionCode
    2、把 'http://localhost:8080'+'/sys/login'这个重装的请求，在本地服务进行代理，代理到vue.config.js配置的target节点，即目标服务器。
    3、如果请求路径的'/sys'字符串，到了目标服务器要变成'/jeecg-boot/sys'，可以用pathRewrite: {'^/sys': '/jeecg-boot/sys'} 进行重写路径
 
+
 *uniapp弹窗后禁止页面滚动，可以直接使用scroll-view组件，可以控制页面的滚动
+
+*cs-app中IM相关sdkjs太大（已分包），uniapp调试小程序时预览会提示包超出2M，但是发行后却不会出问题。  这个可能是Hbuilder的问题。 
 
 ************************webpack begin*******************************
 *运行打包：在项目根目录下运行webpack命令
@@ -270,3 +285,16 @@ versionCode
 *imgcook导出微信小程序代码时，<image>是source属性，需要用正则表达式(source="\{"uri":")(.*)("\}")替换成src，或者可以修改导出代码的DSL（在团队设置里面设置）
  
 ****************************ImgCook end*******************************************
+
+
+****************************uView begin*******************************************
+*u-tags组件里的单位是默认是uni.$u.config.unit = 'rpx'设置的单位
+ 此时在计算底下滑块时用的px（详见组件源码），这时候可以将相关属性设置为px单位，如lineWidth="20px"
+ 这样的话会造成下滑块滑动距离错误计算错误
+ ****所以uview相关组件的属性里配置数值时尽量带上单位
+
+*uview有一些全局样式，但是官方使用文档并没有说明要额外引入，只引入了@import "uview-ui/index.scss";
+ 如想要使用布局相关样式就要引入@import "uview-ui/libs/css/flex.scss";  否则没法使用相关布局类样式
+
+
+****************************uView end*******************************************
