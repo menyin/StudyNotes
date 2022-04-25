@@ -32,6 +32,9 @@
  echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl 
  ！！应该是在虚拟机内部有限制，在物理机下运行就不会报那个错误。
 
+*online代码生成器生成的模板是在jeecg-boot-module-system\src\main\resources\jeecg\code-template-online，可以自定义
+ 但是如果是online表单，在线配置的表单页面，它的模板是固定的原始表单不能修改的。 而不是online代码生成器生成的模板，不能自定义
+
 ？代码生成时候的包名为什么一直会多一个“demo”，比如增加一个test模块,包名项为cc，生成的org.jeecg.modules.demo.cc.controller.TestController
    代码生成功能相关模板又是在哪里配置
   ！在src/main/resources/jeecg/jeecg_config.properties配置
@@ -83,6 +86,8 @@
 
 
 *用户登录状态管理和授权管理
+ 在51CTO博客里有一篇《JWTToken超时刷新策略》就是解析jeecg的用户状态管理机制
+ 在简书里有一篇《jeecg中的shiro使用》也是解析jeecg的用户状态管理机制
   使用shiro进行管理。 
   1、在shiro的过滤器链上添加了一个JwtFilter过滤器，当有请求里含有token时，则进行shiro的subject.login(token)操作（其实内部回去掉用自定义realm#doGetAuthenticationInfo方法进行认证登入）
   2、在用户访问controller的时候，会经过shiro，shiro会去自定realm#doGetAuthorizationInfo拿权限，即角色和标识等（如：user:add），然后进行鉴权，如果权限不足则返回事先配置好的权限不足url="/sys/common/403"
@@ -94,7 +99,45 @@
    5、token是采用了JwtToken，JwtToken自带了过期时间，然后又放在redis中设置过期时间。 在ShiroRealm#jwtTokenRefresh方法是验证并且刷新token过期时间
         逻辑是：设置token的redis过期时间是JwtToken过期时间的2倍。 当redis未过期（可以获取到token），此时如果JwtToken过期时间已过，则从新签发jwtToken（过期时间也会刷新）和刷新redis过期时间
 
-            ==================== 今天先看到#jwtTokenRefresh      明天再看具体其它逻辑   
+*online表单 begin*
+*online表单相关请求Controller在org\jeecgframework\boot\hibernate-re\3.0.02\hibernate-re-3.0.02.jar 下面的 org.jeecg.modules.online.cgform.c.a;
+*online表单 end*
+
+*online报表，如果sql过于复杂，点击【sql解析】或报错，没有关系，直接保存，或者用简单sql先解析好字段列再加入复杂sql，再保存。
+ 如果使用“?column=age&order=desc”进行排序，则age字段必须在报表的显示字段里，否则会报错
+
+*online报表的列表里设置菜单的“数据规则”后，并不生效！！！。
+ online表单的列表菜单url里加"?column=age&order=desc”并不生效，但是在数据接口里加是可以生效的，如 '/online/cgform/api/getData/10ff95d27c714aa1a1e69ceba00a0601?_t=1650590918&column=age&order=desc'
+
+**//用online报表来请求列表，但是不能添加“数据规则”和各种动态条件参数,适合做复杂查询
+   //用online表单来请求列表，可以添加“数据规则”和各种动态条件参数，所以用online表单
+
+
+*jeecg默认读取上传图片url后在浏览器访问只能是下载，如果需要预览而不是下载，则注释添加以下代码
+  //response.setContentType("application/force-download");// 设置强制下载不打开
+  //response.addHeader("Content-Disposition", "attachment;fileName=" + new String(file.getName().getBytes("UTF-8"),"iso-8859-1"));
+  response.setContentType("image/png;image/jpg;image/git");// 设置不强制下载，可打开预览 cny+
 
 
 ************************后端 end******************************
+
+https://api.xmtieda.com/jeecg-boot/online/cgform/api/getColumns/6d8e3289002448f2a745d736582379ba?_t=1649752470
+*********获取online表单的列表展示列信息（包括对应列所需的字典）************
+{"success":true,"message":"","code":0,"result":{"code":"6d8e3289002448f2a745d736582379ba","description":"栏目表","tableType":1,"isDesForm":"N","enhanceJs":null,"desFormCode":"","columns":[{"title":"站点","dataIndex":"site_code","align":"center","customRender":"site_code","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"内容类型","dataIndex":"module_type","align":"center","customRender":"module_type","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"排序号（升序）","dataIndex":"tree_sort","align":"center","customRender":null,"scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"栏目名称","dataIndex":"category_name","align":"center","customRender":null,"scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"是否在导航中显示","dataIndex":"in_menu","align":"center","customRender":"in_menu","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"内容展现模式","dataIndex":"show_modes","align":"center","customRender":"show_modes","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null}],"currentTableName":"cms_category","paginationFlag":"Y","hasChildrenField":"has_child","fieldHrefSlots":[],"relationType":null,"formTemplate":"2","foreignKeys":[],"dictOptions":{"module_type":[{"value":"0","text":"未定义","title":"未定义"},{"value":"1","text":"文章","title":"文章"},{"value":"2","text":"链接","title":"链接"},{"value":"3","text":"图片","title":"图片"},{"value":"4","text":"视频","title":"视频"},{"value":"5","text":"音频","title":"音频"},{"value":"6","text":"图书","title":"图书"},{"value":"7","text":"下载","title":"下载"}],"in_menu":[{"value":"Y","text":"是","title":"是"},{"value":"N","text":"否","title":"否"}],"site_code":[{"value":"1513328847070572545","text":"铁哒-翔安站","title":"铁哒-翔安站"}],"show_modes":[{"value":"0","text":"自动","title":"自动"},{"value":"1","text":"栏目列表","title":"栏目列表"},{"value":"2","text":"第一条内容","title":"第一条内容"}]},"hideColumns":[],"cgButtonList":[],"checkboxFlag":"Y","textField":"category_name","pidField":"pid","scrollFlag":1},"timestamp":1649752470439}
+
+
+
+https://api.xmtieda.com/jeecg-boot/online/cgform/api/getFormItem/6d8e3289002448f2a745d736582379ba?_t=1649752470
+*********获取online表单的元数据信息，即在线开发填写的表相关配置************
+{"success":true,"message":"","code":0,"result":{"schema":{"$schema":"http://json-schema.org/draft-07/schema#","describe":"栏目表","type":"object","title":"我是一个jsonschema title","required":["sys_org_code","category_code","module_type","category_name"],"properties":{"is_need_audit":{"dbPointLength":0,"view":"switch","fieldExtendJson":"","type":"string","title":"是否需要审核","order":22,"defVal":"Y","extendOption":null},"image":{"dbPointLength":0,"view":"image","fieldExtendJson":"","type":"string","title":"栏目图片","maxLength":255,"order":14},"category_name":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"栏目名称","maxLength":100,"order":13},"sys_org_code":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"所属区域","maxLength":1000,"order":6},"keywords":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"关键字","maxLength":500,"order":18},"category_code":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"栏目编码","maxLength":300,"order":9,"defVal":"${shop_order_num}"},"module_type":{"dbPointLength":0,"view":"list","dictCode":"cms_article_type","dictTable":"","fieldExtendJson":"","type":"string","title":"内容类型","dictText":"","enum":[{"value":"0","text":"未定义","title":"未定义"},{"value":"1","text":"文章","title":"文章"},{"value":"2","text":"链接","title":"链接"},{"value":"3","text":"图片","title":"图片"},{"value":"4","text":"视频","title":"视频"},{"value":"5","text":"音频","title":"音频"},{"value":"6","text":"图书","title":"图书"},{"value":"7","text":"下载","title":"下载"}],"order":11,"defVal":"1"},"in_menu":{"dbPointLength":0,"view":"switch","fieldExtendJson":"","type":"string","title":"是否在导航中显示","order":19,"defVal":"Y","extendOption":null},"in_list":{"dbPointLength":0,"view":"switch","fieldExtendJson":"","type":"string","title":"是否在分类页中显示列表","order":21,"defVal":"Y","extendOption":null},"description":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"描述","maxLength":500,"order":17},"pid":{"dbPointLength":0,"hasChildField":"has_child","view":"sel_tree","pidComponent":1,"pidValue":"0","fieldExtendJson":"","dict":"cms_category,category_name,id","type":"string","title":"上级栏目","pidField":"pid","order":7},"site_code":{"dbPointLength":0,"view":"list","dictCode":"id","dictTable":"cms_site","fieldExtendJson":"","type":"string","title":"站点","dictText":"site_name","enum":[{"value":"1513328847070572545","text":"铁哒-翔安站","title":"铁哒-翔安站"}],"order":8},"show_modes":{"dbPointLength":0,"view":"radio","dictCode":"cms_article_show_modes","dictTable":"","fieldExtendJson":"","type":"string","title":"内容展现模式","dictText":"","enum":[{"value":"0","text":"自动","title":"自动"},{"value":"1","text":"栏目列表","title":"栏目列表"},{"value":"2","text":"第一条内容","title":"第一条内容"}],"order":23,"defVal":"0"},"target":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"链接目标窗口","maxLength":20,"order":16},"tree_sort":{"dbPointLength":0,"view":"number","fieldExtendJson":"","type":"number","title":"排序号（升序）","order":12},"is_can_comment":{"dbPointLength":0,"view":"switch","fieldExtendJson":"","type":"string","title":"是否允许评论","order":20,"defVal":"Y","extendOption":null},"href":{"dbPointLength":0,"view":"text","fieldExtendJson":"","type":"string","title":"链接","maxLength":255,"order":15},"remarks":{"dbPointLength":0,"view":"textarea","fieldExtendJson":"","type":"string","title":"备注信息","maxLength":500,"order":27}},"table":"cms_category"},"head":{"id":"6d8e3289002448f2a745d736582379ba","tableName":"cms_category","tableType":1,"tableVersion":59,"tableTxt":"栏目表","isCheckbox":"Y","isDbSynch":"Y","isPage":"Y","isTree":"Y","idSequence":null,"idType":"UUID","queryMode":"single","relationType":null,"subTableStr":null,"tabOrderNum":null,"treeParentIdField":"pid","treeIdField":"has_child","treeFieldname":"category_name","formCategory":"demo","formTemplate":"2","themeTemplate":"normal","formTemplateMobile":null,"extConfigJson":"{\"reportPrintShow\":0,\"reportPrintUrl\":\"\",\"joinQuery\":0,\"modelFullscreen\":1,\"modalMinWidth\":\"\"}","updateBy":"admin","updateTime":"2022-04-11 17:13:59","createBy":"admin","createTime":"2022-04-11 10:24:00","copyType":0,"copyVersion":null,"physicId":null,"hascopy":null,"scroll":1,"taskId":null,"isDesForm":"N","desFormCode":"","lowAppId":null},"formTemplate":"2"},"timestamp":1649752470476}
+
+
+
+https://api.xmtieda.com/jeecg-boot/online/cgform/api/getTreeData/6d8e3289002448f2a745d736582379ba?_t=1649752470&column=id&order=desc&hasQuery=false&pageNo=1&pageSize=10
+https://api.xmtieda.com/jeecg-boot/online/cgform/api/getData/10ff95d27c714aa1a1e69ceba00a0601?_t=1649753883&column=id&order=desc&pageNo=1&pageSize=10&superQueryMatchType=and
+*********获取online表单的列表的数据列表，即数据库列表数据************
+{"success":true,"message":"","code":0,"result":{"total":1,"records":[{"category_name":"体育运动","jeecg_row_key":"1513428985671725058","module_type":"1","tree_sort":1,"in_menu":"N","pid":"0","site_code":"1513328847070572545","has_child":"1","id":"1513428985671725058","show_modes":"0"}]},"timestamp":1649752471056}
+
+
+https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448f2a745d736582379ba?_t=1649752470
+{"success":true,"message":"","code":200,"result":[],"timestamp":1649752471114}
