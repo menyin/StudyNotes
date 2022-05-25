@@ -106,10 +106,30 @@ uniapp支持的css样式长度单位为px rpx
  如果要直接在模板里使用，可以用Vue.mixin(data() { return{...}}）进行混入全局变量和方法
 
 
-*******************************IM 交接材料******************************************
+*******************************IM 交接材料 begin******************************************
 *源码及相关材料在码云  CSFED 组织里
+
+*在http://xm.597.top/person/chat.html聊天页面有相关云信配置信息
+ var appConfig = {
+        appKey: "9877e7b70f30866c74e409a5ea60373d",
+        token: "0da1c0c6d121eccfda94c7c6a30786f1",
+        account: "per_39a2236652750",
+        userType: Number("1"),
+        photo: "https://pic.597.com/photo/2022/05/15/2022051507244424267.png",
+        uid: "39a2236652750",
+        host: "597.top",
+        cdnUrl: "//cdn.597.top/im/",
+        cdnRootUrl: "//cdn.597.top/",
+        prefix: {
+          1: "per_",
+          2: "com_"
+        }
+      }
+
  
 *文档http://csfed.gitee.io/press
+
+*******************************IM 交接材料 end******************************************
 
 **jeecg-uniapp项目里路由用this.$route在h5端可以但是到了手机端就不行了，实际上是要用官方的this.$Router，大小写区分
   如果再App端路由不能用，可以将路由的mode设置为hash，因为app是没有history模式的
@@ -221,6 +241,8 @@ versionCode
 
 
 *uniapp弹窗后禁止页面滚动，可以直接使用scroll-view组件，可以控制页面的滚动
+ 所以当用uni-drawer时，一般配合scroll-view使用
+ 特别注意uni-drawer弹框组件，在有u-sticky组件的页面里时，会发生zIndex层混乱。 可将uni-drawer弹框组件套一层u-sticky组件然后放在页面最后（一定是最后！）
 
 *cs-app中IM相关sdkjs太大（已分包），uniapp调试小程序时预览会提示包超出2M，但是发行后却不会出问题。  这个可能是Hbuilder的问题。 
 
@@ -298,3 +320,30 @@ versionCode
 
 
 ****************************uView end*******************************************
+
+****************************阿里图标库使用 begin*******************************************
+*阿里图标格式分为“彩色”、ttf、woff、woff2，特别注意当项目格式勾选了“彩色”则使用图标时不能设置字体颜色
+ 但是不勾选“彩色”则在使用图标时候就要用svg进行渲染彩色，但是微信小程序并不能编译svg标签。 如：<svg class="icon svg-icon" aria-hidden="true"><use xlink:href="#tcon-yishu"></use></svg>
+ 最终解决方案：彩色图标和单色图标分开两个项目库，然后都引入。
+ 
+*项目引入字体图标库的iconfont.ttf、iconfont.woff、iconfont.woff2和uview的iconfont.ttf、iconfont.woff、iconfont.woff2重名，需要将"iconfont"改名,
+ 或者直接用在线文件，因为在线文件有带版本号
+ 使用： <text class="tcon tcon-home u-success" ></text> 其中 u-sucess是颜色样式
+
+**微信小程序目前还不能编译 svg 标签，因此在微信小程序中无法使用常规方式引用阿里 Symbol 类型的图标。
+
+*相对完整的图标库 【 小假哥_多彩_icon083   365 icons】
+ https://www.iconfont.cn/collections/detail?spm=a313x.7781069.1998910419.d9df05512&cid=35099
+
+*使用图标库时，项目中多个图标因为重名，会导致整个项目图标都变黑色。
+ 解决办法: 1、图标名称都唯一，如果有可能重名则改名（如篮球，很多图标都可能叫篮球）,但很麻烦，不用
+                2、将主库（多彩假日哥的库）和额外附加的库分开两个，然后都引入到项目中，这样就不会冲突
+
+****************************阿里图标库使用 end*******************************************
+
+****************************node+Python begin*******************************************
+*高卓的IM项目中需要下载 node-sass@4.14.1  引出node+Python相关依赖下载问题
+ 需要安装node-gyp    详见http://blog.maptoface.com/post/544
+
+
+****************************node+Python end*******************************************

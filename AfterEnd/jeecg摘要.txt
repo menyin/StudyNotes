@@ -112,11 +112,22 @@
 **//用online报表来请求列表，但是不能添加“数据规则”和各种动态条件参数,适合做复杂查询
    //用online表单来请求列表，可以添加“数据规则”和各种动态条件参数，所以用online表单
 
+*online表单中，部门控件默认存储的是id，如果要存code，可通过扩展参数{"store": "orgCode"}进行设置
+
+*online表单中js增强，不能定义自己的方法，因为每个自定义的方法都要与自定义按钮code相对应。 如果自定义方法没有对应的自定义按钮code与之对应，则会造成全部js不执行
 
 *jeecg默认读取上传图片url后在浏览器访问只能是下载，如果需要预览而不是下载，则注释添加以下代码
   //response.setContentType("application/force-download");// 设置强制下载不打开
   //response.addHeader("Content-Disposition", "attachment;fileName=" + new String(file.getName().getBytes("UTF-8"),"iso-8859-1"));
   response.setContentType("image/png;image/jpg;image/git");// 设置不强制下载，可打开预览 cny+
+
+
+*自定义树强制需要ID列,父ID列,显示列,是否有子节点列 { 例如：id,pid,name,has_child}   
+ 部门树没有has_child，而且默认存数据库值是id，？online表单设计时如果想要存生成的org_code似乎没什么解决方案
+
+*部门树使用技巧：
+ 1、通过父id查询子部门参考 “/queryDepartTreeSync”实现
+ 2、通过父id查询子部门（参考“我的部门”“/sys/sysDepart/queryMyDeptTreeList”）sysDepartService.queryMyDeptTreeList(departIds);
 
 
 ************************后端 end******************************
@@ -141,3 +152,5 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getData/10ff95d27c714aa1a1e
 
 https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448f2a745d736582379ba?_t=1649752470
 {"success":true,"message":"","code":200,"result":[],"timestamp":1649752471114}
+
+？？在online表单中使用填值规则，CmsCategoryCodeRule里并没有自动注入formData，怎么注入？
