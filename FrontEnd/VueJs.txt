@@ -6,6 +6,8 @@
  查看vue-cli版本：vue --version
  注意：如仍然要用旧版vue的vue init功能，则可安装一个桥接工具 npm install -g @vue/cli-init 
 
+*vue可以与jQuery混用，注意要vue.js在jQuery.js之前引用
+
 *.vue文件是组件，需要通过vue serve xxx.vue
   注意如果组件名称为App.vue 则可以简写vue serve
 
@@ -52,6 +54,9 @@ vm.$watch('a', function (newValue, oldValue) {
   // 这个回调将在 `vm.a` 改变后调用
 })
 
+*watch在使用时，数据变量的函数不能写成箭头函数（如：a:(newV,oldV)=>{...}）否则会出现this为undefined的bug
+
+
 *Vue 的$mount()为手动挂载，在项目中可用于延时挂载（例如在挂载之前要进行一些其他操作、判断等），之后要手动挂载上。
  new Vue时，el和$mount并没有本质上的不同。
 
@@ -60,6 +65,7 @@ vm.$watch('a', function (newValue, oldValue) {
 *v-if和v-for在同一dom节点使用时，v-for的优先级高于v-if，
  此时如果需要先执行v-if逻辑再执行v-for，则需要将v-if放到父dom里，v-for放到子dom
 
+*Vue的子组件的props的属性是供父组件传递数据，在子组件内不能作为data属性进行变更。 这是官方建议，会报错。
 
 *package.json是可以手工配置，可以有包版本的通配符，所以下载的包的版本是不确定的。
  package-lock.json是在npm install时，这时就会生成一份package-lock.json,里面有下载包的具体版本
@@ -87,6 +93,11 @@ vm.$watch('a', function (newValue, oldValue) {
 *Vue.ls 实际上是带过期时间和存取监控的LocalStorage
 
 *keep-alive 是 Vue 的内置组件，用于减少不必要的渲染，提要页面性能
+
+*Vue强制刷新data 
+  this.$forceUpdate()
+  this.$set(this.obj, ‘age', 27)
+
 
 ************uniapp********************
 *uniapp的组件及其目录不要用-连接，而使用驼峰命名法，否则在有些小程序（如支付宝小程序）会有问题。
@@ -341,9 +352,37 @@ versionCode
 
 ****************************阿里图标库使用 end*******************************************
 
-****************************node+Python begin*******************************************
+****************************IM   begin*******************************************
+*架构文档 https://www.processon.com/view/link/5e184ed8e4b0f5a7ed0a3e8f#map
+*开发文档  http://csfed.gitee.io/press/     或者在https://gitee.com/CSFED/press项目里
+
+？pending.ts的实现，类似Java的future，达到所有任务执行完再返回结果
+
+
+*如何在打包时处理发布静态资源路径（publicPath）和首页放置路径不同的问题？
+ 0、webpage打包完再进行以下操作
+ 1、vue.config.js配置publicPath为一个固定的字符串，然后用部署脚本deploy.ts来全局替换成cdn的路径
+ 2、deploy.ts里，将index.html的内容复制到index.html.php文件里
+
+*平常测试可以在chat页面里用console里用localstorage去存储IM相关的用户状态数据
+
 *高卓的IM项目中需要下载 node-sass@4.14.1  引出node+Python相关依赖下载问题
  需要安装node-gyp    详见http://blog.maptoface.com/post/544
 
+*测试账号密码在G:\th597-talent-net-im\th597-talent-net-im\mock\datas.js
+ 本地启动测试服务不需要输入密码即可登录
 
-****************************node+Python end*******************************************
+*关注点：
+ *eventBus ： 所有一些业务方法通过G:\th597-talent-net-im\th597-talent-net-im\src\utils\eventBus\index.ts里的eventBus注入到Vue里进行使用
+                      G:\th597-talent-net-im\th597-talent-net-im\src\utils\eventBus\目录里最后都是混合成一个文件，只是写的时候分离
+ *在浏览器console里输入bda.***可以获取当前账号相关数据
+ *云信相关的一些东西 ：G:\th597-talent-net-im\th597-talent-net-im\src\utils\sdk.ts
+ *交接视频里1:47:00处开始讲打包部署
+ *高卓调试本地mock服务时，使用账号  com_dc525c3: { appKey: '9877e7b70f30866c74e409a5ea60373d', token: 'ec02187110fb5a460fdedb00e57e3d28' },不行
+                                           使用账号per_be1c9c4717298: {appKey: "9877e7b70f30866c74e409a5ea60373d",token: "050f3b01930acf66d11b0b211ce3bfac"},可以
+ *打包部署，先打包后部署，运行G:\th597-talent-net-im\th597-talent-net-im\build\dev.js  再运行G:\th597-talent-net-im\th597-talent-net-im\build\deploy.ts
+
+
+
+
+****************************IM end*******************************************

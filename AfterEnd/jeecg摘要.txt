@@ -84,6 +84,18 @@
   数据权限通过自定义aop拦截，@PermissionData注解是用于有添加数据规则权限的，而不是普通的菜单权限
   菜单权限通过shiro的各种注解拦截，@RequiresPermissions
 
+*签名拦截器
+ 为了后端一些管理功能安全性，jeecg对部分的url请求进行拦截做签名验证（通过springmvc的拦截器配置，详见SignAuthConfiguration类）
+
+*获取登录用户
+ 后端shiro机制（注意：如果请求设置shiro拦截排除则获取不到，可用下一种方式）： LoginUser sysUser = (LoginUser)SecurityUtils.getSubject().getPrincipal();
+ 后端token机制： String username=org.jeecg.common.system.util.JwtUtil.getUsername(token)；LoginUser sysUser = sysBaseAPI.getUserByName(username);
+ 前端app机制：store.getters.userInfo
+
+*非springMvc Controller下获取request
+  HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+
 
 *用户登录状态管理和授权管理
  在51CTO博客里有一篇《JWTToken超时刷新策略》就是解析jeecg的用户状态管理机制
@@ -98,6 +110,9 @@
             jwtTokenRefresh(...)方法里用了redis缓存
    5、token是采用了JwtToken，JwtToken自带了过期时间，然后又放在redis中设置过期时间。 在ShiroRealm#jwtTokenRefresh方法是验证并且刷新token过期时间
         逻辑是：设置token的redis过期时间是JwtToken过期时间的2倍。 当redis未过期（可以获取到token），此时如果JwtToken过期时间已过，则从新签发jwtToken（过期时间也会刷新）和刷新redis过期时间
+  *在ShiroConfig里有配置了RedisCacheManager，可以对权限 信息进行缓存 
+
+*jeecg的token存储了username和password的加密信息，通过String username=JwtUtil.getUsername(token)可以获取用户名
 
 *online表单 begin*
 *online表单相关请求Controller在org\jeecgframework\boot\hibernate-re\3.0.02\hibernate-re-3.0.02.jar 下面的 org.jeecg.modules.online.cgform.c.a;
@@ -108,6 +123,8 @@
 
 *online报表的列表里设置菜单的“数据规则”后，并不生效！！！。
  online表单的列表菜单url里加"?column=age&order=desc”并不生效，但是在数据接口里加是可以生效的，如 '/online/cgform/api/getData/10ff95d27c714aa1a1e69ceba00a0601?_t=1650590918&column=age&order=desc'
+ 注意：配置的url地址是固定的，不能加其它url参数，锚点也不行
+          数据规则的 规则字段填写的是字段的驼峰名称而不是下划线
 
 **//用online报表来请求列表，但是不能添加“数据规则”和各种动态条件参数,适合做复杂查询
    //用online表单来请求列表，可以添加“数据规则”和各种动态条件参数，所以用online表单
@@ -115,6 +132,17 @@
 *online表单中，部门控件默认存储的是id，如果要存code，可通过扩展参数{"store": "orgCode"}进行设置
 
 *online表单中js增强，不能定义自己的方法，因为每个自定义的方法都要与自定义按钮code相对应。 如果自定义方法没有对应的自定义按钮code与之对应，则会造成全部js不执行
+
+****非常重要：
+           需求：要在online的列表使用js增强来实现数据筛选（这样就可以根据不同栏目进行切分菜单）
+           技术方案：js增强的list里使用以下代码：
+ 		created(){
+		    that.superQuery.params='[{"rule":"eq","type":"text","val":"A01A04A01","field":"category_code"}]';
+ 		    that.loadData();
+ 		}
+           注意：1、利用此原理，可以将cms的文章列表按照栏目切分成不同的菜单。 
+                     2、配合菜单的数据规则，可以按照角色分配不同栏目的文章数据。
+                     3、
 
 *jeecg默认读取上传图片url后在浏览器访问只能是下载，如果需要预览而不是下载，则注释添加以下代码
   //response.setContentType("application/force-download");// 设置强制下载不打开
@@ -125,11 +153,27 @@
 *自定义树强制需要ID列,父ID列,显示列,是否有子节点列 { 例如：id,pid,name,has_child}   
  部门树没有has_child，而且默认存数据库值是id，？online表单设计时如果想要存生成的org_code似乎没什么解决方案
 
+
+
 *部门树使用技巧：
- 1、通过父id查询子部门参考 “/queryDepartTreeSync”实现
- 2、通过父id查询子部门（参考“我的部门”“/sys/sysDepart/queryMyDeptTreeList”）sysDepartService.queryMyDeptTreeList(departIds);
+ 1、通过父id查询子部门参考 “/sys/sysDepart/queryTreeList”实现
+ 2、通过父id查询子部门（参考“我的部门”“/sys/sysDepart/queryIdTree”）
 
 
+*高级查询
+ 场景：根据后台的【高级查询】按钮生成的请求，app可以模拟进行Ajax请求来实现高级查询。
+ 特别注意： 如果请求的是online表单生成的url，则字段名称要用下划线，如"category_code"，即参数为{"rule":"right_like","type":"text","val":this.$Route.query.categoryCode,"field":"category_code"}
+                  如果请求的是代码生成器生成代码安装到项目时的url，则名称要用驼峰命名，"categoryCode"，即参数为{"rule":"right_like","type":"text","val":this.$Route.query.categoryCode,"field":"categoryCode"}
+                  以上必须特别注意否则容易出错，特别是代码生成器生成的功能
+
+*数据库备份方案：
+   intellij备份：1.备份ddl：右击数据库->SQL Script->Generate DDL to CLipboard->粘贴到文档中保存
+                      2.备份数据sql：右击数据库->Export Data to files->选择指定位置保存
+   
+
+？定时任务点立即执行可以执行，但是设定了表达式定时却没有真正执行，是为何？
+  官方给的回复可能性：定时任务是分布式的，如果多个机器链接同一个数据库，会随机在某个机器上跑任务，所以不是到时间没跑，而是不知道在谁的机器上跑了
+  所以后续等完整部署完之后再检查是否真正执行
 ************************后端 end******************************
 
 https://api.xmtieda.com/jeecg-boot/online/cgform/api/getColumns/6d8e3289002448f2a745d736582379ba?_t=1649752470
