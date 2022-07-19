@@ -59,3 +59,10 @@
   重启、停止、开启：systemctl [restart|stop|start] nginx
   查看nginx状态：systemctl status nginx
   刷新配置文件：nginx -s reload    但用此命令发现无效直接执行nginx -s stop 再执行nginx重启即可
+
+
+*nginx 配置https
+ 1、淘淘商城教程安装编译nginx，创建makeFile文件时候，外加--with-http_ssl_module \ 
+ 2、安装网上教程《微信小程序后端接口nginx代理配置https》配置nginx.conf
+ 3、在阿里云下载nginx对应的证书文件，放到nginx.conf配置的路径下
+ 4、刷新配置，或重启
