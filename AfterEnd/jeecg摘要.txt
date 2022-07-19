@@ -198,3 +198,6 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
 {"success":true,"message":"","code":200,"result":[],"timestamp":1649752471114}
 
 ？？在online表单中使用填值规则，CmsCategoryCodeRule里并没有自动注入formData，怎么注入？
+
+
+***有时候启动springboot项目时会出现一些奇怪的问题，可以尝试intellij的maven工具里的刷新按钮，点下就好
