@@ -23,6 +23,9 @@
   复杂条件构造器：用Wraper。  wrapper.查询条件符号(参数名，参数值).查询条件符号(参数名，参数值)....   
   注意：查询条件符号基本和sql的条件符号对应的，如eq对应sql中的=
            采用链式操作，默认是and的关系，如果要or的关系要用.or()来中断改变链式关系
+           LambdaQueryWrapper和QueryWapper的区别：
+                QueryWrapper 的列名匹配使用的是 “数据库中的字段名(一般是下划线规则)” 如：queryWrapper.inSql(“user_name”,"jack");
+                LambdaQueryWrapper 的列名匹配使用的是“Lambda的语法，偏向于对象”  如：lambdaQueryWrapper.inSql(SysUser::getUserName,"jack");
 
 *逻辑删除插件
  使用方法：1、实体属性配置@TableLogic；2、配置注册逻辑删除插件； 3、yml或properties配置逻辑删除值；4、正常使用mybatisplus的删除方法
@@ -35,3 +38,4 @@
 *代码生成器
  使用方法：详见官方文档
  除了常用代码生成器的配置外，还支持Swagger2、主键策略、命名规则、Lombok、逻辑删除、自动填充、乐观锁等mybatisplus功能配置
+
