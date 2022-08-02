@@ -88,6 +88,41 @@ weapp.d.ts
         （其它小程序是弹框提示允许获取登录信息，因为其它小程序依赖于其平台并且已经登录了，而百度小程序不同，它是在百度浏览器app下的应用，不一定有登录状态）
           *各端小程序请求后端，后端请求小程序接口获取sessionKey+openid等时，sessionKey不要返回给前端存储，调用wx.checkSession方法即可验证当前 sessionKey是否有效，从而避免频繁登录。
           *在rawData+sessionKey验证签名signature时，测试经常发生错误，可能原因是Tomcat编码不是utf-8（可在springboot配置文件配置Tomcat编码）或者rawData在传输过程中有出现问题，如有些字符进行了转义
+ 特别注意：
+          1、正确流程应该是先生成code，再调用getUserProfile，因为生成code时微信服务器会生成sessionKey为以后解密getUserProfile接口的用户信息密文
+          2、调用getUserProfile时，必须在有用户弹框确认的操作里进行（如uni.showModal回调里）。 不能在任何js回调里调用getUserProfile
+          3、后端不做sessionKey存储也可以，因为生成code时并不会改变微信服务器那边的sessionKey。  只要sessionKey不过期，请求code2Session接口得到的sessionKey就是一致的。
+          4、wx.login()、wx.checkSession()、wx.getSetting()、wx.getUserInfo()、wx.getUserProfile()这些接口调用频次限制都是：一天的调用总次数不多于该小程序 pv 的两倍
+*sessionKey的过期时间由微信服务器根据用户活跃度更新，而jeecg系统的token其实也会根据用户活跃度不断更新过期时间。 
+  所以sessionKey是可以不用的。 
+
+
+*小程序登录注册流程重新梳理：
+1、前端第一次获取code   到服务端请求code2session获取sessionKey、openid、unionid，服务端存储redis返回一个mySession给前端
+     前端拿到mySession，弹框获取用户密文，将2者发送服务端，服务端解密出用户信息，实现注册。 返回给前端用户信息及token
+2、当token丢失或失效，前端再次请求获取code 到服务端请求code2session获取sessionKey、openid、unionid，此时根据unionid就可以读数据库返回用户信息及token给前端。
+     2.1、此时如果mySession还在并且wx.checkSession()，那么mySession发到后端，后端从redis获取sessionKey和uinionid和openId，拿unionid去获取库里用户信息。
+             如果wx.checkSession()检查失效则还是得走一遍2步逻辑，如果成功则带着mySession去服务端解出sessionKey、openid、unionid。
+             如果mySession或sessionKey过期时间比token过期时间短，则不管怎么样还是得走一遍wx.login()和code2session。
+             除了第一次获取unionid+openid+用户信息之外，其实sessionKey其实并没有用，走wx.login()和code2session主要是获取unionid+openid
+        *其实sessionKey过期时间是根据用户活跃程度不断更新，这个和jeecg的JwtToken更新机制基本一致，所以sessionKey过期重走wx.login+code2session等价于token过期重走wx.login+code2session。所以sessionKey不存储。
+     2.2、如果不redis存储mySession（sessionKey、openid、unionid），那么每次都要token过期失效则都要用wx.login()获取code然后发到服务端，服务端请求code2session获取sessionKey和uinionid和openId。
+     注：2.2方案下，如果token过期时间集中雪崩，则wx.login()会集中被频繁调用，微信会被拒。 而这样的几率应该不算高，因为token初次生成，后续根据用户活跃度会产生不同的过期时间。
+           2.1方案下，是一个标准方案。开发者需要额外存储mySession到redis，过期时间规则由开发者决定。存储服务器增加了负担，另外用户状态过期还要叠加微信服务器sessionKey的过期时间。
+           
+*最终确定流程：
+ 1.当token失效或第一次进入，尝试获取用户信息，wx.login拿到code，然后去后端用code2session拿到unionid+openid+sessionKey，用unionid+openid获取useInfo返回前端
+   userInfo存在，则获取信息成功，返回用户信息和token前端各自处理登录后用户信息存储（说明小程序曾登录过，公众号关注过不算，因为公众号已经获取不到头像和昵称了）
+   useInfo为null，则走第2步“微信登录逻辑”
+ 2.微信登录逻辑：wx.login+wx.getUserProfile拿到code+用户密文，然后去后端用code2session拿到unionid+openid+sessionKey，用sessionKey解密用户数据
+                          此时微信关注表WeixinGzuser插入小程序记录（用户名设置：微信用户昵称拼音+2位秒数），另外有订阅的公众号记录也要更新 
+ 注意：app_type标识应用类型如小程序为xcx（TODO:appid代表应用id，如有多个小程序用该字段区分）
+           由于开发者通过公众号用户信息接口获取的用户信息中，腾讯已经不提供头像和昵称。所以公众号端关注后没办法注册完整信息用户。所以最终以小程序为主要注册入口。
+           也就是说，小程序登录注册后才有用户昵称和头像信息，才能正常注册。  而公众号的订阅动作只向weixin_gzuser表添加不完整的用户信息记录，不向sys_user表添加记录。
+
+
+
+
 *uniapp一键登录有自己的处理，详见登录部分官方文档，主要优势就是能比其它第三方一键登录厂商便宜和便捷。
 
 ***********************小程序与公众号注册相关 begin*************
