@@ -97,7 +97,11 @@ vm.$watch('a', function (newValue, oldValue) {
 *Vue强制刷新data 
   this.$forceUpdate()
   this.$set(this.obj, ‘age', 27)
-
+  有时候在一些场景下数据改变并不会触发vue更新dom，此时可以定义如下方法来强制刷新数据，其中reloading是一个数据变量
+  reload() {
+        this.reloading = true
+        this.$nextTick(() => this.reloading = false)
+  }
 
 ************uniapp********************
 *uniapp的组件及其目录不要用-连接，而使用驼峰命名法，否则在有些小程序（如支付宝小程序）会有问题。
