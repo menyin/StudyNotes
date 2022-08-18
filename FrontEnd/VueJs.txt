@@ -29,6 +29,11 @@
 *打包：
  默认使用webpack，内部集成，在vue ui图形界面下可以看webpack配置，在命令行创建项目方式下，则需要再package.json的script里配置脚本inspect:vue-cli-service inspect
 
+*vue在IE下兼容处理方案
+    <script src="//cdn.597.com/js/browser.min.js"></script>
+    <script src="//cdn.597.com/js/polyfill.min.js"></script>
+    <script src="//cdn.597.com/js/vue.min.js"></script>
+
 *main.js解析
     import Vue from 'vue'
     import App from './App.vue'
