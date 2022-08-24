@@ -36,7 +36,10 @@
  *分布式配置中心的配置文件和本地配置文件里的属性名不能一样，否则应用并不知道要以谁为准，会报错。
  *要使得分布式配置实时生效实时刷新要在注入配置项的类加@RefreshScope注解
  *分布式配置中心课程提到：bootstrap.yml和application.yml的区别
-  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父Spring ApplicationContext加载。
+  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父
+
+
+Spring ApplicationContext加载。
  *springcloud默认读取的是配置中心的properties类型文件，但是也可以配置成读取yml文件
  *本地应用配置文件可以配置pre、dev、test、pub等环境来应对配置中心的不同环境配置文件
 
@@ -67,6 +70,10 @@
 *springboot和springCloud和springCloudAlibaba/springCloudNetflix 都是有版本对应关系，不能随便乱改。
  通常项目中引入spring-boot-starter-parent、spring-cloud-dependencies、spring-cloud-alibaba-dependencies，以进行版本对应
  而这3个只是pom类型包，只用于其套件内的组件依赖的版本管理，如spring-cloud-alibaba-dependencies里有nacos组件的版本管理
+
+*Nacos
+ 1.nacos在windows版本下运行默认是单机版本 需要指定startup.cmd -m cluster
+ 2.nacos在linux版本下运行默认是集群版本 如果想连接单机版本 startup.cmd –m standalone
 
 ？RPC在每特课程感觉有了新的定义，HttpClient也算RPC工具？
 
@@ -129,7 +136,8 @@
  *将sentinel的配置通过nacos读取，则如何设置要实践下。
   在配置application.yml时候可以查看对应的源码和看sentinel规则增加提交表单时的字段，对应源码字段进行对比处理
  *系统规则：其实也是限流的一种，只是这个是对整个应用的限流。并且可以根据linux服务器的状态进行限流。
-
+ *动态请求参数网关:类似于Vue-router的动态路由，可以加载数据来生成路由
+ 
 ？？openfeign+sentinel网上都是做服务熔断（用ballback），如何做限流呢？
 
 ？？？？用nacos做服务注册，似乎不能设置group，但是做配置中心是可以的。
@@ -177,7 +185,9 @@
 
 *springboot Admin 用于监控服务的健康状态，需要启动服务端，并且在所有分布式的服务项目中嵌入客户端（配置下即可）。
  ？？springbootAdmin和skywalking有什么区别
- 
+
+*Nacos与Zookeeper的区别
+ Nacos与Eureka的区别 
 
 *K8S
  解决单点故障，实现奔溃恢复
