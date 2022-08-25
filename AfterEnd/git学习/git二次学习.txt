@@ -76,7 +76,7 @@
  *git fetch 更新所有分支到本地
   git fetch origin test:test 是fetch远程的test分支到本地并创建本地同名分支，此时本地有两个分支：test和origin/test
   git fetch origin test 只fetch远程的test分支到本地，即更新本地的origin/test分支
- *git push <远程主机名> <本地分支名>  <远程分支名>
+ *git push <远程主机名> <本地分支名>:<远程分支名>
   git push origin test 表示将本地分支推送到与之存在追踪关系的远程分支（通常两者同名），如果该远程分支不存在，则会被新建
   git push origin 如果当前分支与远程分支存在追踪关系，则本地分支和远程分支都可以省略
 

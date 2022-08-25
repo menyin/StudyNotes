@@ -1,4 +1,4 @@
-******计划8月19~11月19用3个月完成eecg总体框架学习：前端，后端，数据结构******
+﻿******计划8月19~11月19用3个月完成eecg总体框架学习：前端，后端，数据结构******
 
 ************************前端 begin******************************
 ？注意vue extend和minix的区别，前者有点像继承，数据和方法是所有组件共享的。 后者有点像字节码混入，数据和方法不共享但却是可以动态注入到特定组件中。
@@ -218,3 +218,63 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
 
 
 ***有时候启动springboot项目时会出现一些奇怪的问题，可以尝试intellij的maven工具里的刷新按钮，点下就好
+
+
+
+
+
+
+============================================= jeecg spring cloud begin ======================================================
+
+*使用archetype生成微服务模块
+ 官方文档使用以下命令，但是会报错
+ mvn archetype:generate ^
+   -DgroupId=org.jeecg.modules.erp ^
+   -Dmodule=erp^
+   -Dmodule-up-first=Erp^
+   -DartifactId=jeecg-module-erp ^
+   -Dversion=3.4.0^
+   -DarchetypeGroupId=org.jeecgframework.archetype ^
+   -DarchetypeArtifactId=jeecg-cloud-gen ^
+   -DarchetypeVersion=3.4.0
+ 上述命令的每个命令参数加上""即可：
+ mvn archetype:generate "-DgroupId=com.cny.modules.erp"  "-Dmodule=erp" "-Dmodule-up-first=Erp" "-DartifactId=cny-module-erp"  "-Dversion=3.4.0" "-DarchetypeGroupId=org.jeecgframework.archetype"  "-DarchetypeArtifactId=jeecg-cloud-gen" "-DarchetypeVersion=3.4.0" "-DarchetypeCatalog=internal"
+
+？官方文档里说服务保护用的是sentinel，但是在后台【路由网关】配置过滤器是用Hystrix
+  3.2+后切换为Sentinel，之前用的是Hystrix
+
+*2022年8月份之前老项目部分目录说明：
+ jeecg-cloud-module/jeecg-cloud-system-start 包含了相关服务的调用demo，即消费者。 还有事件总线接受、分布式锁、mq、xxljob的demo。在pom里也引入了院有关的jeecg-boot-module-system模块（系统后台模块）
+ jeecg-boot-module-demo 包含了相关测试服务demo，即生产者
+
+*2022年8月份之后新项目部分目录说明：
+ 2022年8月份之后jeecg做了目录大结构调整：
+  1、独立出了通用类+中间件通用工具的jeecg-boot-starter。对于微服务或者单体项目都可以将这个项目的jar引入使用。
+  2、独立出了微服务结构形式的后台项目jeecg-boot（使用原github仓库名称），包含：
+      jeecg-module-system 微服务结构的system后台，
+      jeecg-boot-base-core 核心通用类和工具
+      jeecg-server-cloud 是SpringCloud五大组件的相关启动服务，如网关项目
+      jeecg-module-demo 微服务相关的测试demo	
+  3、独立出了后台的前端项目 ant-design-vue-jeecg
+
+？单体转微服务的实践的思考
+  *jeecg在2022年8月左右将项目的目录做了大的结构调整，使得目录结构更加清晰。
+
+  ？考虑在tieda-after上直接改造微服务，还是另外复制一份jeecg来改造微服务
+  ！由于tieda-after是在2022年2月初开始的，这期间jeecg已持续更新升级，所以还是下载新的代码来进行实践。
+
+  ？tieda-after用的jeecg的Version是2.3.5.RELEASE，那么在开发一段时间后，我们又如何同步升级呢？ 
+  ！如果不是像2022年8月这种太大的目录结构升级，我们可以采用“git双origin”方案。   详见csdn收藏《一个项目设置两个git地址，并最终实现一次性同时推送到到两个git地址上的方法总结》 
+  ！最终优化方案，详见csdn收藏《Github 上面git fork后的代码，如何保持同步更新》：fork完后正常开发，jeecg有更新时再add remote官方远程地址，然后拉取分支来合并
+
+  ？为什么官方文档中有“单体升级为微服务3.4.1+”章节，但是实际上jeecg的源码的Version只到3.4.0
+
+
+
+
+
+
+
+
+
+============================================= jeecg spring cloud end ========================================================
