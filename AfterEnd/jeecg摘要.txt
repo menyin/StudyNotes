@@ -269,9 +269,22 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
 
   ？为什么官方文档中有“单体升级为微服务3.4.1+”章节，但是实际上jeecg的源码的Version只到3.4.0
 
+*jeecg微服务的数据库配置里包含${MYSQL-PWD:root}，
+ * ${key:default_value} 这种表达方式是通过key来获取value，如果获取不到就使用后面默认值。
+ * 在一些直接通过Jar包启动的场景中，可以在启动时手动配置相关参数，如果没有配置，也会自动获取默认值进行启动，
+    java -jar -DREDIS_HOST=172.16.0.36 -DREDIS_DB=2 xxx.jar
+ * 使用这种方法也可以获取path中的环境变量如：在path中配置了M2_HOME即可在springboot中使用下面的方式获取相应的值。 如：${M2_HOME}
+    如：jeecg-boot\jeecg-server-cloud\jeecg-cloud-nacos\src\main\resources\application.yml
 
+*jeecg的微服务启动相关项目问题
+  *启动nacos，限制先配置数据库，详见上述“jeecg微服务的数据库配置里包含${MYSQL-PWD:root}”
+  *启动jeecg-system-cloud-start   
+    PropertiesComponent
+    <property name="dynamic.classpath" value="true" />  
+ https://www.cnblogs.com/hujunwei/p/15410184.html
 
-
+-DMYSQL-PWD=Cfcny362331,, -DMYSQL-HOST=39.108.237.61 
+java -jar -DREDIS_HOST=172.16.0.36 -DREDIS_DB=2 xxx.jar
 
 
 
