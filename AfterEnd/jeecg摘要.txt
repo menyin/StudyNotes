@@ -253,7 +253,9 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
   2、独立出了微服务结构形式的后台项目jeecg-boot（使用原github仓库名称），包含：
       jeecg-module-system 微服务结构的system后台，
       jeecg-boot-base-core 核心通用类和工具
-      jeecg-server-cloud 是SpringCloud五大组件的相关启动服务，如网关项目
+      jeecg-server-cloud 是SpringCloud五大组件的相关启动服务，如网关项目。
+              jeecg-server-cloud\jeecg-visual是一些非必要的服务，包括监控、流控、任务调度
+                        jeecg-server-cloud\jeecg-visual\jeecg-cloud-test里面是微服务相关组件的测试demo，即1点中jeecg-boot-starter里组件的测试demo
       jeecg-module-demo 微服务相关的测试demo	
   3、独立出了后台的前端项目 ant-design-vue-jeecg
 
@@ -273,6 +275,7 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
  * ${key:default_value} 这种表达方式是通过key来获取value，如果获取不到就使用后面默认值。
  * 在一些直接通过Jar包启动的场景中，可以在启动时手动配置相关参数，如果没有配置，也会自动获取默认值进行启动，
     java -jar -DREDIS_HOST=172.16.0.36 -DREDIS_DB=2 xxx.jar
+   在intelliJ里启动时就是配置启动的jvm option 如：-DMYSQL-PWD=Cfcny362331,, -DMYSQL-HOST=39.108.237.61 
  * 使用这种方法也可以获取path中的环境变量如：在path中配置了M2_HOME即可在springboot中使用下面的方式获取相应的值。 如：${M2_HOME}
     如：jeecg-boot\jeecg-server-cloud\jeecg-cloud-nacos\src\main\resources\application.yml
 
@@ -283,11 +286,30 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
     <property name="dynamic.classpath" value="true" />  
  https://www.cnblogs.com/hujunwei/p/15410184.html
 
--DMYSQL-PWD=Cfcny362331,, -DMYSQL-HOST=39.108.237.61 
-java -jar -DREDIS_HOST=172.16.0.36 -DREDIS_DB=2 xxx.jar
 
+*Nacos作为配置中心时，在管理后台中配置列表项里，有各种语言获取或监听配置的代码。 但nodejs、C++、Shell、Python语言却暂时没有
 
+*gateway的动态路由
+  ？动态路由配置的处理逻辑：
+     初始化：JeecgGatewayApplication启动时通过CommandLineRunner#run调用dynamicRouteLoader.refresh(null);
+     刷新：？redis监听方式，在RequestRateLimiter第三方组件限流 ？？？有待研究
+  ？jeecg后台【系统监控-路由网关】的配置
+ 
+*gateway流控和token拦截
+  ？通过限流来做token拦截，具体逻辑后续研究。-->最终目的是让新生成的erp
+  *可以通过http://localhost:9999/erp/hello?token=xxx 来传递token
 
+*jeecg的微服务只在gateway处用sentinel进行限流降级
+ 在resources\application.yml里将一些控制规则与nacos建立了对应关系。对流控规则、降级规则、系统规则、授权规则、热点参数、网关流控规则、API流控规则
+ 也就是说：具体的控制规则是在Nacos或sentinel管理后台配置。  但sentinel的管理后台更可视化
 
-
+？微服务之间调用
+   无权限验证： 直接调用
+   有权限验证：？怎么将token带过去 假设A服务调用B服务，B服务需要鉴权
+         jeecg处理方式： 用UserTokenContext.setToken(mytoken);和UserTokenContext.remove();夹住微服务调用代码。（原理详见源码）
+                       原理：jeecg-boot-starter\jeecg-boot-starter-cloud\src\main\java\org\jeecg\config\FeignConfig.java作为Feign客户端公共配置
+                                依次判断A当前请求头或UserTokenContext里，有无token，有则添加到Feign客户端的requestTemplate.header上面，发送到B服务端
+                                因为jeecg已经将token都放在了请求头里了，所以有则有，没有则没有。
+    
+？消息总线
 ============================================= jeecg spring cloud end ========================================================

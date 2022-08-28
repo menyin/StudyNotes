@@ -29,6 +29,8 @@
 *@SpringBootApplication包装了@SpringBootConfiguration、@EnableAutoConfiguration、@ComponentScan
  @SpringBootConfiguration又包装了spring的@Configuration注解
 
+*常用接口：
+ CommandLineRunner、ApplicationRunner 接口是在容器启动成功后的最后一步回调（类似开机自启动）。
 
 *yaml文件去重减少文件大小,properties文件不能去重，文件比较大
 
