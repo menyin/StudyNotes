@@ -7,6 +7,8 @@
 
 *v-model和v-decorator的区别，前者是双向的，后者是input改变会传递到model，但是model改变不会传递到input，可以通过this.form.setFieldsValue()刷新到input里
 
+*在$store.state.app.multipage 设置多/单页签模式
+
 *前端的路由不是固定的而是在permission.js里配置 路由前置守卫拦截处理
 
 ？vue的路由学习
@@ -38,6 +40,8 @@
 
 *tinymce富文本编辑器文档 http://tinymce.ax-z.cn/quick-start.php
  *表情工具会有问题：“tinymce 5.0版本 关于Emoticons 表情加载 chrome不支持问题”
+
+*jeecg使用的是一款基于Vue的表单设计器FormMaking
 
 ************************前端 end******************************
 
@@ -115,6 +119,7 @@
 
 
 *用户登录状态管理和授权管理
+ &特别注意jeecg只在登录操作的时候去验证刷新token，并没有在每次请求刷新token。 所以登录一阵子后会掉线。这可能是为了token有别于session
  在51CTO博客里有一篇《JWTToken超时刷新策略》就是解析jeecg的用户状态管理机制
  在简书里有一篇《jeecg中的shiro使用》也是解析jeecg的用户状态管理机制
   使用shiro进行管理。 
@@ -303,6 +308,16 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
  在resources\application.yml里将一些控制规则与nacos建立了对应关系。对流控规则、降级规则、系统规则、授权规则、热点参数、网关流控规则、API流控规则
  也就是说：具体的控制规则是在Nacos或sentinel管理后台配置。  但sentinel的管理后台更可视化
 
+*如果微服务模块配置了独立数据源，那么每个服务对应的数据库也必须有sys_log这张表。
+
+*分布式事务seata
+ Seata 将为用户提供了 AT、TCC、SAGA 和 XA 事务模式。主流的是用AT模式
+ 原理：
+ seata相关数据库表：
+         branch_table：
+         global_table：
+         lock_table：
+
 ？微服务之间调用
    无权限验证： 直接调用
    有权限验证：？怎么将token带过去 假设A服务调用B服务，B服务需要鉴权
@@ -312,4 +327,6 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
                                 因为jeecg已经将token都放在了请求头里了，所以有则有，没有则没有。
     
 ？消息总线
+
+？
 ============================================= jeecg spring cloud end ========================================================

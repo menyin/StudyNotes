@@ -75,6 +75,10 @@ Spring ApplicationContext加载。
  1.nacos在windows版本下运行默认是单机版本 需要指定startup.cmd -m cluster
  2.nacos在linux版本下运行默认是集群版本 如果想连接单机版本 startup.cmd –m standalone
 
+ ？nacos作为配置中心时，后台的配置项DataId的作用
+    当Nacos配置项配置了DataId时，微服务等客户端就可以在本地配置文件里指定这个DataId用于从Nacos获取对应的配置。
+   jeecg通过DataId做映射，实现了dev和pro的不同环境切换。（查看配置项- optional:nacos:jeecg-@profile.name@.yaml）
+
 ？RPC在每特课程感觉有了新的定义，HttpClient也算RPC工具？
 
 *Nacos 官网学习https://nacos.io/zh-cn/
@@ -83,6 +87,26 @@ Spring ApplicationContext加载。
 *Feign客户端默认使用post方式请求，在使用get的时候会有问题，只需要加@RequestParam注解即可
  Feign客户端要求服务名称不能是下划线，如springcloudtest-order不能写成springcloudtest_order
 
+*Feign客户端接口的动态代理生成是基于JDK的动态代理来实现
+
+*RestTemplate、Feign、openFeign的区别。  详见bilibili收藏《2022年全网首发springcloudalibaba教程视频合集，这可能是B站最好的微服务架构教程，让你少走99%的弯路！》
+  RestTemplate使用时要硬编码传入一些远程服务的参数
+  Feign是Netfilx开发的。使用时更加简便。 也是带负载均衡的。 一般说的Feign都是openFeign
+  openFeign是SpringCloud对Feign进行了增强，支持springMVC注解并整合了Ribbon和Nacos，使得Feign使用更方便。
+        openFeign使用基本步骤：
+                        1、引入maven依赖包
+                        2、编写对应的服务接口（内部会生成动态代理）
+                        3、在启动类上加上@EnableFeignClients注解
+                        4、在消费端自动注入服务接口实例并调用（内部会使用Ribbon做负载均衡）
+         openFeign的其它功能：
+                        日志配置：注意全局配置和局部配置（两种配置都可以通过“配置类+注解”或“配置类+配置文件”两种方式配置）
+                        契约配置：openFeign的一些注解用的springmvc的注解都是映射自己原生的注解，如果涉及到老的SpringCloud项目就可能用到
+                        超时时间配置：可以配置连接超时时间、读取超时时间等
+                        自定义拦截器：可以统一的进行token携带处理。
+ ？openFeign如何配置相关负载均衡策略
+    OpenFeign也是默认使用了负载均衡组件Ribbon，Ribbon又默认采用轮询策略
+    详见csdn收藏《OpenFeign修改负载均衡策略》
+   
 *bootstrap.yml与application.yml的区别
  bootstrap.yml是整个当前应用程序，是应用最先加载的配置文件
  application.yml是整个spring环境的配置文件，比bootstrap.yml晚加载
@@ -145,7 +169,7 @@ Spring ApplicationContext加载。
   限流走的是blockHandler指定方法，它是在超过了限流策略后执行。原理是通过抛出BlockException来处理。 和dubbo的RPCException差不多。
  ？？用sentinel做限流时，资源名称即请求路径，而这时如何根据Method进行不同区分？ 加注解是肯定可以，但不加注解呢
  ？？测试降级时，通过浏览器一直刷新模拟并发，没法跑通。！！！注意RT概念，并且浏览器在没有响应会对持续刷新有限制。看meitevip的demo
- ？？限流时，如果是集群，则这些阈值是以多节点来算还是单节点来算
+ ？？限流时，如果是集群，则这些阈值是以多节点来算还是单节点来算。！单节点，如果要集群限流则是在网关项目里用spring-boot-starter-data-redis-reactive
  *将sentinel的配置通过nacos读取，则如何设置要实践下。
   在配置application.yml时候可以查看对应的源码和看sentinel规则增加提交表单时的字段，对应源码字段进行对比处理
  *系统规则：其实也是限流的一种，只是这个是对整个应用的限流。并且可以根据linux服务器的状态进行限流。
@@ -196,8 +220,47 @@ Spring ApplicationContext加载。
 ？？实操：如何看skywallking的控制台，基础的数据的查看分析
 ？？实操：skywallking打包到应用的docker镜像中去
 
+*分布式日志
+ 详见bilibli收藏《分布式日志处理解决方案ELK》
+ 解决方案：ELK（即Elasticsearch、Logstash、Kibana）
+ 背景：在分布式微服务场景下，服务器可能有几十台或上百台，出问题不可能到具体每一台服务器中检查日志文件。不仅麻烦，而且查看不直观。
+ 原理：所有的服务器的日志都统一收集到一个日志系统中去，并且通过可视化的方式展示出来。
+           收集：Logstash。将各种类型的日志数据采集，经过过滤处理，在输出到存储（比如ES）
+           存储：Elasticsearch。 ES相关概念（和关系型数据库类比）:   index（库）、type（表）、document（行记录）、field（字段）、mapping（表结构）            
+           查看：Kibana。就是查看日志数据的可视化客户端，提供一些图文图表。
+
+*负载均衡器
+ loadbalance和ribbon对比，前者自带的均衡策略只有一两种，而ribbon比较完善完整（jeecg也使用ribbon）。  有的教程建议使用loadbalance。
+ 客户端负载均衡器：loadbalance和ribbon。 所以要在消费端去配置负载均衡器
+ 服务端负载均衡器：nginx
+ *ribbon的使用分为配置类和配置文件两种方式：
+   配置类方式：注意：不能将ribbon配置类放在springboot扫码到的地方（@ComponentScan），否则所有服务调用的客户端将全部用同一个负载均衡策略。而很多时候是要弄不同的策略
+   配置文件方式：
+ 
+ 
 
 *springboot Admin 用于监控服务的健康状态，需要启动服务端，并且在所有分布式的服务项目中嵌入客户端（配置下即可）。
+ 详见bilibili《面试必学的Spring Boot Actuator&Admin微服务指标监控教程（180分钟纯干货讲解）》
+ 场景：适用小型应用，大型分布式集群应用不建议使用，建议使用：Apache Skywalking 或 Prometheus Grafana
+ 概念：
+        客户端：被监控的应用
+        服务端：监控的服务
+        端点：就是springboot actuactor为我们提供的一些指标信息的接入点。这些端点用于获取被监控应用的一些信息。
+                 当然我们也可以定制已有的获取信息的具体实现或者完全自定义的端点。编写相应的类实现指定的接口即可。
+ 后台菜单（这些菜单都是通过springboot actuactor的端点获取的，可以通过具体的应用yml里的management.endpoints.web.exposure.include设置获取部分或所有信息）：
+     Insight：
+          细节：展示被监控应用的内存、线程、健康状态等信息。健康状态：绿色健康，灰色连接应用出问题，红色能看到具体异常。
+          性能：
+          环境：
+          类：
+          配置属性：
+          计划任务
+     日志：
+       日志文件：
+       日志配置：可以切换被监控应用的日志等级
+
+*可以在服务端配置邮件、钉钉等通知。
+ 
  ？？springbootAdmin和skywalking有什么区别
 
 *Nacos与Zookeeper的区别
