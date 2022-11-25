@@ -16,3 +16,5 @@
  Mycat 是基于 Proxy，它复写了 MySQL 协议，将 Mycat Server 伪装成一个 MySQL 数据库，而 Sharding-JDBC 是基于 JDBC 接口的扩展，是以 jar 包的形式提供轻量级服务的。
 
 *注意：mysql5.x和8.x的jdbc驱动是不一样的，后者在spring中需要增加时区配置
+
+*select for update的作用是在查询的同时 对数据加锁。根据where条件不同，for update产生的锁分为：行锁、间隙锁、表锁。
