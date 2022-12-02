@@ -131,3 +131,4 @@ dependencies export  Struts2-2.5.14.1
 
 ？怎么在编辑区跳转到文件区对应的文件
 
+*Fast Request是postman的intellij的插件版  
