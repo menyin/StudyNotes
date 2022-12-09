@@ -99,7 +99,7 @@
  imgcook是设计图切图代码工具，可以作为插件附加在PS、Sketch上，根据设计图自动生成代码
 
 
-
+*jeecg除了在ShiroConfig类里配置免鉴权url，还可以在yml里配置jeecg.shiro.excludeUrl进行配置
 
 *权限注解：
   数据权限通过自定义aop拦截，@PermissionData注解是用于有添加数据规则权限的，而不是普通的菜单权限
@@ -263,7 +263,13 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
                         jeecg-server-cloud\jeecg-visual\jeecg-cloud-test里面是微服务相关组件的测试demo，即1点中jeecg-boot-starter里组件的测试demo
       jeecg-module-demo 微服务相关的测试demo	
   3、独立出了后台的前端项目 ant-design-vue-jeecg
-
+  注意（“有个bug”实际上是因为把单体的jeecg-system-start项目作为微服务项目了，应该是要用jeecg-system-cloud-start项目才对）：
+       1、：微服务的system项目yml缺少“spring.cloud.nacos.discovery.server-addr”配置，导致路由不能再spring容器初始化时加载到redis缓存。后续gateway项目通过“database”方式加载路由配置时加载不到路由列表。解决方式就是加上上述配置。
+       2、但是加了“spring.cloud.nacos.discovery.server-addr”配置后，登录随机图片是不能访问的。访问是403。但是将随机图片url复制到浏览器请求又没错。！网络请求是403，但看console发现是跨域。jeecg官方文档说是在网关中添加path谓词，比如/sys/randomImage/**。（可以本地vue项目做跨域开发代理启动起来，然后进入路由维护页面添加path）
+       3、即使通过postman请求来规避跨域（第2点的问题），也会出现404报错。 最后折腾两天，发现yml没配置server.servlet.context-path: /jeecg-boot  。导致了springmvc和shiro的过滤链没有匹配上。 【特别注意！！！】
+       
+            
+            
 ？单体转微服务的实践的思考
   *jeecg在2022年8月左右将项目的目录做了大的结构调整，使得目录结构更加清晰。
 
