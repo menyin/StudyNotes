@@ -131,6 +131,21 @@ Spring ApplicationContext加载。
         所以Gateway项目中没有必要添加spring-boot-starter-web依赖
  ？？实践：Gateway能用sentinel容错降级吗
 
+*gateway最佳实践：
+ 1、gateway配置好路由部署（如路径带有/order转发给order微服务），比如是192.168.1.27:9999
+ 2、nginx配置统一域名反向代理，如www.xmtieda.com映射到gateway服务192.168.1.27:9999。 注：nginx是80端口，gateway是9999端口
+ 3、访问http://www.xmtieda.com/order/list 时则根据gateway路由谓词匹配路径带有/order，则转发到对应的order微服务中
+ 当然你也可以在第3步处用谓词匹配路由，以达到和nginx一样的反向代理子域名的效果，如反向代理order.xmtieda.com和admin.xmtieda.com。详见gateway文档https://zhuanlan.zhihu.com/p/500504990
+
+*gateway最佳实践之反向代理子域名
+ 需求：实现和nginx一样的子域名反向代理效果。 并且nginx作为最外层网关先将请求转发给gateway
+ 过程：gateway配置了host，如capi.xmtieda.com，进行反向代理，结果返回404。 但是如果配置谓词path是可以匹配成功。
+ 原因：nginx转发请求时，将host信息（即capi.xmtieda.com）丢失了，需要配置下proxy_set_header Host $host;
+           把host信息也转发给gateway服务器，否则gateway的host信息应该是nginx服务器的信息
+
+？负载均衡怎么用，如lb://jeecg-erp
+？nginx多个子域名怎么映射到gateway机器上
+
 *服务保护sentinel：（详见https://github.com/alibaba/Sentinel/  有非常全面的中文文档）
  *sentinel控制台启动有配置两个端口8718、8719。前者是控制台WebUI端口，后者是限流降级应用服务连接到sentinel控制台的端口
  *限流方式分为qps和线程。qps就是服务端限制每秒请求次数，而线程方式就是服务端限制每秒用多少个线程去处理请求（对于处理时间长的请求，如果不限制则会长期占用线程，导致其它服务无线程可用，即“服务雪崩”）。
