@@ -245,6 +245,9 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
  上述命令的每个命令参数加上""即可：
  mvn archetype:generate "-DgroupId=com.cny.modules.erp"  "-Dmodule=erp" "-Dmodule-up-first=Erp" "-DartifactId=cny-module-erp"  "-Dversion=3.4.0" "-DarchetypeGroupId=org.jeecgframework.archetype"  "-DarchetypeArtifactId=jeecg-cloud-gen" "-DarchetypeVersion=3.4.0" "-DarchetypeCatalog=internal"
 
+*用jeecg archetype生成的微服务模块，包含的功能
+ 1、biz模块依赖jeecg-boot-base-core，因此有shiro相关的过滤，有需要可再nacos进行过滤排除配置。
+
 ？官方文档里说服务保护用的是sentinel，但是在后台【路由网关】配置过滤器是用Hystrix
   3.2+后切换为Sentinel，之前用的是Hystrix
 

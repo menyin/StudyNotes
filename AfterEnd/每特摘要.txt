@@ -106,7 +106,15 @@ Spring ApplicationContext加载。
  ？openFeign如何配置相关负载均衡策略
     OpenFeign也是默认使用了负载均衡组件Ribbon，Ribbon又默认采用轮询策略
     详见csdn收藏《OpenFeign修改负载均衡策略》
-   
+ 注意：1、@FeignClient注解和@RequestMapping同时修饰接口类时，会导致springboot启动不起来（报错）   。
+                两者同时存在接口类主要是为了在类标志请求的基础路径前缀，如“/person”。此时可以只用@FeignClient(path="/person")达到效果。
+           2、@FeignClient注解的接口是为了暴露接口，提供给消费者去引入注入微服务，走的是http协议，所以接口方法参数不能是太复杂对象（如：http的request对象），否则启动实例化这个微服务Feign客户端就会出错
+           3、同一个微服务项目里，两个FeignClient接口的value一样，在springboot启动项目就报重复错误，可以contextId，如@FeignClient(contextId="a1")。另外同一个微服务项目里的两个FeignClient接口的value也必须和服务名一致，否则消费者用到这个接口调用可能找不到对应的服务。
+           4、可以在消费者项目里定制一个FeignConfig用于配置feign客户端相关信息，如可以做拦截在头部注入token，如配置负载均衡策略。jeecg已经在jeecg-boot-starter-cloud里有做了公共的FeignConfig类，所以可能还得排除。
+原理总结：
+1、@Configuration类会先合并，后解析，也就是说，配置的内容会合并处理。
+2、因为多个 @Configuration类最终会合并到一起（形成一个 ApplicationContext），因此这些配置中的 bean 都是可以互相引用的。
+
 *bootstrap.yml与application.yml的区别
  bootstrap.yml是整个当前应用程序，是应用最先加载的配置文件
  application.yml是整个spring环境的配置文件，比bootstrap.yml晚加载
@@ -273,6 +281,37 @@ Spring ApplicationContext加载。
      日志：
        日志文件：
        日志配置：可以切换被监控应用的日志等级
+
+*注意：jeecg微服务部署后，发现当远程配置中心更新springAdmin端点配置后，并不能同步生效。 需要重启微服务才能生效。
+
+*测试目标被监控微服务是否在线 http://39.108.237.61:8081/actuator/health
+ 39.108.237.61:8081是被监控服务的ip和端口
+ 注意：如果服务显示红色，并且端点接口url无法访问，可能是springmvc项目yml设置了server.servlet.context-path
+          可以在yml配置spring.cloud.nacos.discovery.metadata.management.context-path: ${server.servlet.context-path}/actuator
+          因为默认的端点接口url是不带context-path的，如果有设置，则需要上述配置，否则springbootAdmin是无法识别到的。
+
+*被监控微服务的yml配置（springbootAdmin的客户端）
+spring:
+  application:
+    name: admin-client # 给client应用取个名字，
+  boot:
+    admin:
+      client:
+        url:  http://localhost:23333 #这里配置admin server 的地址，监控服务的地址
+        # 配置 admin-server的账号和密码，监控服务的密码
+        username: admin
+        password: root123456
+        instance:
+          metadata:
+            # 这里配置admin-client的账号和密码，被健康微服务的账号密码
+            user.name: ${spring.security.user.name}
+            user.password: ${spring.security.user.password}
+  # admin-client 的用户名和密码，被健康微服务的账号密码
+  security:
+    user:
+      name: clientAdmin
+      password: 123456
+
 
 *可以在服务端配置邮件、钉钉等通知。
  
