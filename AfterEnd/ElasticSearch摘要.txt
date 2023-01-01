@@ -53,7 +53,7 @@
 	"must":[{"match":{"category":"小米"}},{"match":{"price":3999.00}}] 多条件与运算查询（should相当于数据库的||）
 	}
 
- "match" 是全文检索（如搜索“小华”，则可能拆成“小”和“华”分别进行搜索），而"match_phrase"是完全匹配，不会拆词。
+ "match"是全文检索（如搜索“小华”，则可能拆成“小”和“华”分别进行搜索），而"match_phrase"是完全匹配，不会拆词。
 
 
  
@@ -97,3 +97,18 @@ schema                mapping
    注意：
        1、在Elasticsearch这样的分布式系统中执行类似SQL的join连接是代价是非常大的。然而，Elasticsearch却给我们提供了基于水平扩展的两种连接形式 。有人测试在6个分片的前提下，且子表数据量在千万量级的情况下，关联查询的耗时还是在秒内的，许多场景还是可以接受的。
        2、在es中为了保证良好的查询性能，最佳的实践是将数据模型设置为非规范化文档，通过字段冗余构造宽表，即存储在一个索引中。
+
+*spring-boot-starter-data-elasticsearch使用：
+ 参考收藏《elasticsearchRestTemplate客户端使用》
+ 在增删查索引库时有两种方式：
+  1、通过IndexCoordinates类操作，如创建索引：
+       boolean isCreate = restTemplate.indexOps(IndexCoordinates.of("base_info")).create();//直接使用字符串来指定索引名
+  2、通过索引实体类的class操作
+       boolean isCreate = restTemplate.indexOps(BaseInfo.class).create()//用BaseInfo类中注解信息来创建，如果报分片数量设置错误，则需要在BaseInfo注解中指定分片数量
+  *几个操作的类
+   elasticsearchTemplate.queryForPage   #是查询一个分页列表，用的就是一个对象实例
+   QueryBuilders  查询条件构造器
+   NativeSearchQuery 原生的查询条件类，QueryBuilders最终也是要通过NativeSearchQuery进行包装才能给ElasticsearchRestTemplate使用
+   QueryBuilders                    #设置查询条件,是ES中的类
+   SortBuilders                     #设置排序条件
+   HighlightBuilder                 #设置高亮显示
