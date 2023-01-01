@@ -36,10 +36,7 @@
  *分布式配置中心的配置文件和本地配置文件里的属性名不能一样，否则应用并不知道要以谁为准，会报错。
  *要使得分布式配置实时生效实时刷新要在注入配置项的类加@RefreshScope注解
  *分布式配置中心课程提到：bootstrap.yml和application.yml的区别
-  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父
-
-
-Spring ApplicationContext加载。
+  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父Spring ApplicationContext加载。
  *springcloud默认读取的是配置中心的properties类型文件，但是也可以配置成读取yml文件
  *本地应用配置文件可以配置pre、dev、test、pub等环境来应对配置中心的不同环境配置文件
 
@@ -70,6 +67,19 @@ Spring ApplicationContext加载。
 *springboot和springCloud和springCloudAlibaba/springCloudNetflix 都是有版本对应关系，不能随便乱改。
  通常项目中引入spring-boot-starter-parent、spring-cloud-dependencies、spring-cloud-alibaba-dependencies，以进行版本对应
  而这3个只是pom类型包，只用于其套件内的组件依赖的版本管理，如spring-cloud-alibaba-dependencies里有nacos组件的版本管理
+
+*springboot项目资源占用情况：
+ 详见csdn《SpringBoot这么耗内存，你知道吗》、知乎《超牛的 SpringBoot性能优化长文！》
+ 一个Spring Boot的简单应用，最少1G内存，一个业务点比较少的微服务编译后的JAR会大约50M；
+ 而Spring Cloud引入的组件会相对多一些，消耗的资源也会相对更多一些。
+ 启动时间大约10秒左右: Started Application in 10.153 seconds (JVM running for 10.915)
+ *网上有人一个简单的springboot项目占用1.7G内存。 
+  jvm参数配置"-server -Xms4g -Xmx5g -Xmn1g -XX:SurvivorRatio=2 -XX:PermSize=192m -XX:MaxPermSize=512m -Xss256k"
+  也算正常，这里-XX:PermSize和-XX:MaxPermSize是永久参数，jdk1.8后用的是元空间，用参数-XX:MetaspaceSize和-XX:MaxMetaspaceSize
+  但-XX:MetaspaceSize并非元空间实际的大小，而只是触发元空间GC的一个参考值，真正决定是否GC回收的是一个游离在-XX:MetaspaceSize和-XX:MaxMetaspaceSize之间的变量。-XX:MetaspaceSize大小有个经验值，如果堆内存设置4G则它可以设置为512M（仅供参考）
+ 
+  
+
 
 *Nacos
  1.nacos在windows版本下运行默认是单机版本 需要指定startup.cmd -m cluster
@@ -105,12 +115,13 @@ Spring ApplicationContext加载。
                         自定义拦截器：可以统一的进行token携带处理。
  ？openFeign如何配置相关负载均衡策略
     OpenFeign也是默认使用了负载均衡组件Ribbon，Ribbon又默认采用轮询策略
-    详见csdn收藏《OpenFeign修改负载均衡策略》
+    详见csdn收藏《OpenFeign修改负载均衡策略》？实践无效，IRule找不到对应的class
  注意：1、@FeignClient注解和@RequestMapping同时修饰接口类时，会导致springboot启动不起来（报错）   。
                 两者同时存在接口类主要是为了在类标志请求的基础路径前缀，如“/person”。此时可以只用@FeignClient(path="/person")达到效果。
            2、@FeignClient注解的接口是为了暴露接口，提供给消费者去引入注入微服务，走的是http协议，所以接口方法参数不能是太复杂对象（如：http的request对象），否则启动实例化这个微服务Feign客户端就会出错
            3、同一个微服务项目里，两个FeignClient接口的value一样，在springboot启动项目就报重复错误，可以contextId，如@FeignClient(contextId="a1")。另外同一个微服务项目里的两个FeignClient接口的value也必须和服务名一致，否则消费者用到这个接口调用可能找不到对应的服务。
-           4、可以在消费者项目里定制一个FeignConfig用于配置feign客户端相关信息，如可以做拦截在头部注入token，如配置负载均衡策略。jeecg已经在jeecg-boot-starter-cloud里有做了公共的FeignConfig类，所以可能还得排除。
+           4、可以在消费者项目里定制一个FeignConfig用于配置feign客户端相关信息，如可以做拦截在头部注入token，如配置负载均衡策略。jeecg已经在jeecg-boot-starter-cloud里有做了公共的FeignConfig类，所以可能还得排除，否则生成。
+           5、@FeignClient注解的接口的方法用@GetMapping(value = "/list")会在启动报参数过多相关错误，可以用@RequestMapping(value = "/list",method = RequestMethod.GET)，特别注意method的不能支持多种，如method = RequestMethod.PUT,RequestMethod.POST}。并且参数要用@RequestParam或@RequestBody注解。
 原理总结：
 1、@Configuration类会先合并，后解析，也就是说，配置的内容会合并处理。
 2、因为多个 @Configuration类最终会合并到一起（形成一个 ApplicationContext），因此这些配置中的 bean 都是可以互相引用的。
@@ -316,6 +327,8 @@ spring:
 *可以在服务端配置邮件、钉钉等通知。
  
  ？？springbootAdmin和skywalking有什么区别
+
+？在部署jeecg微服务时部署了springbootAdmin项目，但是经过了nginx反向代理。springbootAdmin项目是vue前后端分离项目，在请求的路径上会有一些问题。配置了spring.boot.admin.ui.public-url也无法正常使用。  可以加server.forward-headers-strategy=native尝试（一般是可以）。 或者在nginx多监听一个9111端口，9111是该项目启动的服务端口。最后如果不行只能用http://39.108.237.61:9111/进行相关的访问，即直接用ip而不进行nginx反向代理，
 
 *Nacos与Zookeeper的区别
  Nacos与Eureka的区别 
