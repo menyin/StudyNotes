@@ -36,10 +36,7 @@
  *分布式配置中心的配置文件和本地配置文件里的属性名不能一样，否则应用并不知道要以谁为准，会报错。
  *要使得分布式配置实时生效实时刷新要在注入配置项的类加@RefreshScope注解
  *分布式配置中心课程提到：bootstrap.yml和application.yml的区别
-  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父
-
-
-Spring ApplicationContext加载。
+  bootstrap.yml 用于应用程序上下文的引导阶段。application.yml 由父Spring ApplicationContext加载。
  *springcloud默认读取的是配置中心的properties类型文件，但是也可以配置成读取yml文件
  *本地应用配置文件可以配置pre、dev、test、pub等环境来应对配置中心的不同环境配置文件
 
@@ -71,9 +68,26 @@ Spring ApplicationContext加载。
  通常项目中引入spring-boot-starter-parent、spring-cloud-dependencies、spring-cloud-alibaba-dependencies，以进行版本对应
  而这3个只是pom类型包，只用于其套件内的组件依赖的版本管理，如spring-cloud-alibaba-dependencies里有nacos组件的版本管理
 
+*springboot项目资源占用情况：
+ 详见csdn《SpringBoot这么耗内存，你知道吗》、知乎《超牛的 SpringBoot性能优化长文！》
+ 一个Spring Boot的简单应用，最少1G内存，一个业务点比较少的微服务编译后的JAR会大约50M；
+ 而Spring Cloud引入的组件会相对多一些，消耗的资源也会相对更多一些。
+ 启动时间大约10秒左右: Started Application in 10.153 seconds (JVM running for 10.915)
+ *网上有人一个简单的springboot项目占用1.7G内存。 
+  jvm参数配置"-server -Xms4g -Xmx5g -Xmn1g -XX:SurvivorRatio=2 -XX:PermSize=192m -XX:MaxPermSize=512m -Xss256k"
+  也算正常，这里-XX:PermSize和-XX:MaxPermSize是永久参数，jdk1.8后用的是元空间，用参数-XX:MetaspaceSize和-XX:MaxMetaspaceSize
+  但-XX:MetaspaceSize并非元空间实际的大小，而只是触发元空间GC的一个参考值，真正决定是否GC回收的是一个游离在-XX:MetaspaceSize和-XX:MaxMetaspaceSize之间的变量。-XX:MetaspaceSize大小有个经验值，如果堆内存设置4G则它可以设置为512M（仅供参考）
+ 
+  
+
+
 *Nacos
  1.nacos在windows版本下运行默认是单机版本 需要指定startup.cmd -m cluster
  2.nacos在linux版本下运行默认是集群版本 如果想连接单机版本 startup.cmd –m standalone
+
+ ？nacos作为配置中心时，后台的配置项DataId的作用
+    当Nacos配置项配置了DataId时，微服务等客户端就可以在本地配置文件里指定这个DataId用于从Nacos获取对应的配置。
+   jeecg通过DataId做映射，实现了dev和pro的不同环境切换。（查看配置项- optional:nacos:jeecg-@profile.name@.yaml）
 
 ？RPC在每特课程感觉有了新的定义，HttpClient也算RPC工具？
 
@@ -82,6 +96,35 @@ Spring ApplicationContext加载。
 
 *Feign客户端默认使用post方式请求，在使用get的时候会有问题，只需要加@RequestParam注解即可
  Feign客户端要求服务名称不能是下划线，如springcloudtest-order不能写成springcloudtest_order
+
+*Feign客户端接口的动态代理生成是基于JDK的动态代理来实现
+
+*RestTemplate、Feign、openFeign的区别。  详见bilibili收藏《2022年全网首发springcloudalibaba教程视频合集，这可能是B站最好的微服务架构教程，让你少走99%的弯路！》
+  RestTemplate使用时要硬编码传入一些远程服务的参数
+  Feign是Netfilx开发的。使用时更加简便。 也是带负载均衡的。 一般说的Feign都是openFeign
+  openFeign是SpringCloud对Feign进行了增强，支持springMVC注解并整合了Ribbon和Nacos，使得Feign使用更方便。
+        openFeign使用基本步骤：
+                        1、引入maven依赖包
+                        2、编写对应的服务接口（内部会生成动态代理）
+                        3、在启动类上加上@EnableFeignClients注解
+                        4、在消费端自动注入服务接口实例并调用（内部会使用Ribbon做负载均衡）
+         openFeign的其它功能：
+                        日志配置：注意全局配置和局部配置（两种配置都可以通过“配置类+注解”或“配置类+配置文件”两种方式配置）
+                        契约配置：openFeign的一些注解用的springmvc的注解都是映射自己原生的注解，如果涉及到老的SpringCloud项目就可能用到
+                        超时时间配置：可以配置连接超时时间、读取超时时间等
+                        自定义拦截器：可以统一的进行token携带处理。
+ ？openFeign如何配置相关负载均衡策略
+    OpenFeign也是默认使用了负载均衡组件Ribbon，Ribbon又默认采用轮询策略
+    详见csdn收藏《OpenFeign修改负载均衡策略》？实践无效，IRule找不到对应的class
+ 注意：1、@FeignClient注解和@RequestMapping同时修饰接口类时，会导致springboot启动不起来（报错）   。
+                两者同时存在接口类主要是为了在类标志请求的基础路径前缀，如“/person”。此时可以只用@FeignClient(path="/person")达到效果。
+           2、@FeignClient注解的接口是为了暴露接口，提供给消费者去引入注入微服务，走的是http协议，所以接口方法参数不能是太复杂对象（如：http的request对象），否则启动实例化这个微服务Feign客户端就会出错
+           3、同一个微服务项目里，两个FeignClient接口的value一样，在springboot启动项目就报重复错误，可以contextId，如@FeignClient(contextId="a1")。另外同一个微服务项目里的两个FeignClient接口的value也必须和服务名一致，否则消费者用到这个接口调用可能找不到对应的服务。
+           4、可以在消费者项目里定制一个FeignConfig用于配置feign客户端相关信息，如可以做拦截在头部注入token，如配置负载均衡策略。jeecg已经在jeecg-boot-starter-cloud里有做了公共的FeignConfig类，所以可能还得排除，否则生成。
+           5、@FeignClient注解的接口的方法用@GetMapping(value = "/list")会在启动报参数过多相关错误，可以用@RequestMapping(value = "/list",method = RequestMethod.GET)，特别注意method的不能支持多种，如method = RequestMethod.PUT,RequestMethod.POST}。并且参数要用@RequestParam或@RequestBody注解。
+原理总结：
+1、@Configuration类会先合并，后解析，也就是说，配置的内容会合并处理。
+2、因为多个 @Configuration类最终会合并到一起（形成一个 ApplicationContext），因此这些配置中的 bean 都是可以互相引用的。
 
 *bootstrap.yml与application.yml的区别
  bootstrap.yml是整个当前应用程序，是应用最先加载的配置文件
@@ -106,6 +149,21 @@ Spring ApplicationContext加载。
   Gateway是二代微服务网关，不依赖Servlet，其中的请求响应报文对象已经不是Servlet的请求响应。基于netty实现，依赖springboot-webflux，性能比较高
         所以Gateway项目中没有必要添加spring-boot-starter-web依赖
  ？？实践：Gateway能用sentinel容错降级吗
+
+*gateway最佳实践：
+ 1、gateway配置好路由部署（如路径带有/order转发给order微服务），比如是192.168.1.27:9999
+ 2、nginx配置统一域名反向代理，如www.xmtieda.com映射到gateway服务192.168.1.27:9999。 注：nginx是80端口，gateway是9999端口
+ 3、访问http://www.xmtieda.com/order/list 时则根据gateway路由谓词匹配路径带有/order，则转发到对应的order微服务中
+ 当然你也可以在第3步处用谓词匹配路由，以达到和nginx一样的反向代理子域名的效果，如反向代理order.xmtieda.com和admin.xmtieda.com。详见gateway文档https://zhuanlan.zhihu.com/p/500504990
+
+*gateway最佳实践之反向代理子域名
+ 需求：实现和nginx一样的子域名反向代理效果。 并且nginx作为最外层网关先将请求转发给gateway
+ 过程：gateway配置了host，如capi.xmtieda.com，进行反向代理，结果返回404。 但是如果配置谓词path是可以匹配成功。
+ 原因：nginx转发请求时，将host信息（即capi.xmtieda.com）丢失了，需要配置下proxy_set_header Host $host;
+           把host信息也转发给gateway服务器，否则gateway的host信息应该是nginx服务器的信息
+
+？负载均衡怎么用，如lb://jeecg-erp
+？nginx多个子域名怎么映射到gateway机器上
 
 *服务保护sentinel：（详见https://github.com/alibaba/Sentinel/  有非常全面的中文文档）
  *sentinel控制台启动有配置两个端口8718、8719。前者是控制台WebUI端口，后者是限流降级应用服务连接到sentinel控制台的端口
@@ -145,7 +203,7 @@ Spring ApplicationContext加载。
   限流走的是blockHandler指定方法，它是在超过了限流策略后执行。原理是通过抛出BlockException来处理。 和dubbo的RPCException差不多。
  ？？用sentinel做限流时，资源名称即请求路径，而这时如何根据Method进行不同区分？ 加注解是肯定可以，但不加注解呢
  ？？测试降级时，通过浏览器一直刷新模拟并发，没法跑通。！！！注意RT概念，并且浏览器在没有响应会对持续刷新有限制。看meitevip的demo
- ？？限流时，如果是集群，则这些阈值是以多节点来算还是单节点来算
+ ？？限流时，如果是集群，则这些阈值是以多节点来算还是单节点来算。！单节点，如果要集群限流则是在网关项目里用spring-boot-starter-data-redis-reactive
  *将sentinel的配置通过nacos读取，则如何设置要实践下。
   在配置application.yml时候可以查看对应的源码和看sentinel规则增加提交表单时的字段，对应源码字段进行对比处理
  *系统规则：其实也是限流的一种，只是这个是对整个应用的限流。并且可以根据linux服务器的状态进行限流。
@@ -196,9 +254,81 @@ Spring ApplicationContext加载。
 ？？实操：如何看skywallking的控制台，基础的数据的查看分析
 ？？实操：skywallking打包到应用的docker镜像中去
 
+*分布式日志
+ 详见bilibli收藏《分布式日志处理解决方案ELK》
+ 解决方案：ELK（即Elasticsearch、Logstash、Kibana）
+ 背景：在分布式微服务场景下，服务器可能有几十台或上百台，出问题不可能到具体每一台服务器中检查日志文件。不仅麻烦，而且查看不直观。
+ 原理：所有的服务器的日志都统一收集到一个日志系统中去，并且通过可视化的方式展示出来。
+           收集：Logstash。将各种类型的日志数据采集，经过过滤处理，在输出到存储（比如ES）
+           存储：Elasticsearch。 ES相关概念（和关系型数据库类比）:   index（库）、type（表）、document（行记录）、field（字段）、mapping（表结构）            
+           查看：Kibana。就是查看日志数据的可视化客户端，提供一些图文图表。
+
+*负载均衡器
+ loadbalance和ribbon对比，前者自带的均衡策略只有一两种，而ribbon比较完善完整（jeecg也使用ribbon）。  有的教程建议使用loadbalance。
+ 客户端负载均衡器：loadbalance和ribbon。 所以要在消费端去配置负载均衡器
+ 服务端负载均衡器：nginx
+ *ribbon的使用分为配置类和配置文件两种方式：
+   配置类方式：注意：不能将ribbon配置类放在springboot扫码到的地方（@ComponentScan），否则所有服务调用的客户端将全部用同一个负载均衡策略。而很多时候是要弄不同的策略
+   配置文件方式：
+ 
+ 
 
 *springboot Admin 用于监控服务的健康状态，需要启动服务端，并且在所有分布式的服务项目中嵌入客户端（配置下即可）。
+ 详见bilibili《面试必学的Spring Boot Actuator&Admin微服务指标监控教程（180分钟纯干货讲解）》
+ 场景：适用小型应用，大型分布式集群应用不建议使用，建议使用：Apache Skywalking 或 Prometheus Grafana
+ 概念：
+        客户端：被监控的应用
+        服务端：监控的服务
+        端点：就是springboot actuactor为我们提供的一些指标信息的接入点。这些端点用于获取被监控应用的一些信息。
+                 当然我们也可以定制已有的获取信息的具体实现或者完全自定义的端点。编写相应的类实现指定的接口即可。
+ 后台菜单（这些菜单都是通过springboot actuactor的端点获取的，可以通过具体的应用yml里的management.endpoints.web.exposure.include设置获取部分或所有信息）：
+     Insight：
+          细节：展示被监控应用的内存、线程、健康状态等信息。健康状态：绿色健康，灰色连接应用出问题，红色能看到具体异常。
+          性能：
+          环境：
+          类：
+          配置属性：
+          计划任务
+     日志：
+       日志文件：
+       日志配置：可以切换被监控应用的日志等级
+
+*注意：jeecg微服务部署后，发现当远程配置中心更新springAdmin端点配置后，并不能同步生效。 需要重启微服务才能生效。
+
+*测试目标被监控微服务是否在线 http://39.108.237.61:8081/actuator/health
+ 39.108.237.61:8081是被监控服务的ip和端口
+ 注意：如果服务显示红色，并且端点接口url无法访问，可能是springmvc项目yml设置了server.servlet.context-path
+          可以在yml配置spring.cloud.nacos.discovery.metadata.management.context-path: ${server.servlet.context-path}/actuator
+          因为默认的端点接口url是不带context-path的，如果有设置，则需要上述配置，否则springbootAdmin是无法识别到的。
+
+*被监控微服务的yml配置（springbootAdmin的客户端）
+spring:
+  application:
+    name: admin-client # 给client应用取个名字，
+  boot:
+    admin:
+      client:
+        url:  http://localhost:23333 #这里配置admin server 的地址，监控服务的地址
+        # 配置 admin-server的账号和密码，监控服务的密码
+        username: admin
+        password: root123456
+        instance:
+          metadata:
+            # 这里配置admin-client的账号和密码，被健康微服务的账号密码
+            user.name: ${spring.security.user.name}
+            user.password: ${spring.security.user.password}
+  # admin-client 的用户名和密码，被健康微服务的账号密码
+  security:
+    user:
+      name: clientAdmin
+      password: 123456
+
+
+*可以在服务端配置邮件、钉钉等通知。
+ 
  ？？springbootAdmin和skywalking有什么区别
+
+？在部署jeecg微服务时部署了springbootAdmin项目，但是经过了nginx反向代理。springbootAdmin项目是vue前后端分离项目，在请求的路径上会有一些问题。配置了spring.boot.admin.ui.public-url也无法正常使用。  可以加server.forward-headers-strategy=native尝试（一般是可以）。 或者在nginx多监听一个9111端口，9111是该项目启动的服务端口。最后如果不行只能用http://39.108.237.61:9111/进行相关的访问，即直接用ip而不进行nginx反向代理，
 
 *Nacos与Zookeeper的区别
  Nacos与Eureka的区别 

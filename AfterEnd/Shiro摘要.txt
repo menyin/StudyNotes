@@ -49,7 +49,7 @@
  *发现在AuthenticatingFilter#executeLogin执行登录逻辑中，Subject#login ->  DelegatingSubject#login
  *DelegatingSubject#login里this.securityManager.login()内部执行生成了一个session，subject.getSession()则获取和启动了session
  *此时getSession()是一个有则获取，无则创建的过程,而start session则是一个设置session的过期时间、执行onStart回调、执行监听回调等附加操作的过程。
- *整个过程其实是在Subject对象中可以执行登录逻辑并通过sessionManger进行相应session管理，此时sessionManager中还会启动一个任务管理sessionValidationScheduler进行定时清除过期session
+ *整个过程其实是在Subject对象中可以执行登录逻辑并通过sessionManger进行相应session管理，此时sessionManager中还会启动一个任务管理。sessionValidationScheduler进行定时清除过期session
   sessionValidationScheduler执行逻辑可以到具体的sessionManager实例中去查找createSessionValidationScheduler方法，发现实际sessionValidationScheduler和sessionManager是同时实例化并执行定时任务的
  *《Shiro之Session分析》里描述的在shiro过滤器中将subject与threadContext绑定、将principal设置到session的属性里
 
@@ -109,3 +109,6 @@
 
 ？RemenberMe如何使用，实践失败
 ？权限注解如何配置使用，实践失败
+
+*shiro过滤链添加路径节点时，记得使用LinkedHashMap而不能直接HashMap，否则过滤是路径不是按顺序进行，而是乱序的。
+ 则可能出现一些路径过滤节点失效，详见csdn《shiro中anon配置不生效》

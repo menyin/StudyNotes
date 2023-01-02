@@ -1,0 +1,114 @@
+*基本学习：
+ 学习bilibili尚硅谷教学视频，学习笔记详见csdn《Elasticsearch学习笔记》https://blog.csdn.net/u011863024/article/details/115721328
+ 文档看美特《elasticsearch深入查询.doc》
+ 中文文档https://docs.kilvn.com/elasticsearch/
+
+*面试题详见csdn收藏《30道你不得不会的Elasticsearch面试题【附答案解析】》
+
+*ES 从存到查的过程：
+ 0、（此步骤非必须，即静态映射）开发者可通过api去创建文档类型指定文档结构，比如指定name字段的索引分词器和搜索字段分词器
+ 1、开发者通过api将数据存储，存储时ES会对字符串进行分词创建倒排索引（用到索引分词器）。
+ 2、开发者通过api进行查询，此阶段会根据搜索分词器进行分词，然后查找。
+
+*ES和Solr的区别是什么？
+ es和solr都是基于lucence框架的分词技术的倒排索引进行实现的高性能的搜索引擎框架。
+ 当单纯的对已有的数据进行检索的话，Solr的性能优于es。
+ 当实时建立索引的时候，Solr会进行io阻塞，查询性能较差，而es不会。
+ 随着数据量的增加，Solr的搜索效率变低，而es没有太多变化。
+ Solr需要运行在web服务器上，如tomcat，我们需要配置tomcat和Solr的连接，因为Solr本质上就是一个动态的web项目。
+ Solr利用Zookeeper进行分布式管理，而es自身带有分布式系统管理功能。
+ Solr支持更多的数据结构，如xml，json，而es仅仅支持json格式。
+ Solr官方提供的功能更多，而es如果想要更多功能得去安装第三方插件。
+
+*ES7.8需要JDK1.8+    安装前记得查询下对应jdk版本要求
+ 我本地jdk1.8 下载了window版的ES8不能正常启动
+
+*ES是Restfull风格的接口，响应是json
+ 常用的api
+ http://127.0.0.1:9200/?pretty 查询ES是否启动成功
+ http://127.0.0.1:58504/shopping 通过get、delete等方法进行相关索引（类比数据库）操作
+ http://127.0.0.1:58504/shopping/_doc 通过post提交json格式的数据，表示提交一条记录即一个document，会返回_id。
+                                                           通过get可以查询到这个_doc下的所有记录
+ http://127.0.0.1:58504/shopping/_doc/1001 通过post提交json格式的数据，表示提交一条记录即一个document。会返回_id是1001，即自定义id
+ 查询条件一般在请求体里提交，类似jeecg查询参数，具有一定结构。如：
+ {
+    'query': {
+        'match': {
+            'name': 'Tom'
+        }
+    }
+ }x
+*条件查询语言Query DSL，和jeecg的条件构造器生成的查询json差不多一个概念
+ "_source":["title"]     规定返回文档只有title属性
+
+  "from": 10,       规定第10页
+
+  "size": 10          规定页容量10条
+
+  "sort":{
+            "price":{"order":"desc"}  规定按price属性降序
+           }
+
+  "bool":{
+	"must":[{"match":{"category":"小米"}},{"match":{"price":3999.00}}] 多条件与运算查询（should相当于数据库的||）
+	}
+
+ "match"是全文检索（如搜索“小华”，则可能拆成“小”和“华”分别进行搜索），而"match_phrase"是完全匹配，不会拆词。
+
+
+ 
+*ES查询可以做普通的条件查询、范围查询、排序、分页、聚合查询等
+ 还可以定义我们数据记录json的属性的类型，有的类型可以被分词有的类型不行，使得查询改属性时候去确定是否分词。
+ 如果将我们数据记录json的tel属性的类型定义为index:false，即不能索引，则说明不能通过tel进行查询。
+
+*ES各种概念和关系型数据库类比
+数据库                 ES                        
+database             index                         
+table                   type（新版本已删除，当初是为了和关系型数据库对应）
+row                     document
+column                filed                    
+schema                mapping
+
+*倒排索引
+ -相对于正排索引而言。 正排索引是指比如传统关系型数据库通过主键id索引快速找到对应的行或内容。
+  id              content
+  1001          我是张三
+  1002          我是张三丰
+ -倒排索引则是通过内容去找主键id
+  keyword       id
+  张三             1001,1002
+
+*通过elasticsearch-head浏览器插件可以看ES集群状态
+ 在视图中通过黄色绿色灰色来标记节点分片的状态 ，比如副本变灰色说明不正常
+ 方块为分片，如果方块边框加粗则为主分片。
+ 
+？ES集群新增节点后数据分片副本可以自动平均分布
+  场景：如果分片为3，副本为3（即每个分片一个副本)
+           当只有一个节点服务器，则分片都会集中在这个节点
+           当增加一个节点服务器，则副本会启用分布到其中一个节点，
+
+*主分片数量在集群运行时是不能改的，副本数量可以改，副本数量多的话吞吐量就会提升
+ 
+*ES集群中有master节点和slave节点，当master节点宕机，会进行master节点选举切换
+
+*ES中如果类似简历分了多张表，那么如何join查询。
+  要点和注意事项详见csdn收藏《Elasticsearch之join关联查询》https://blog.csdn.net/lzxlfly/article/details/127925375
+    一般ES存储数据的数据结构，我们都是按照前端搜索结果所需字段+搜索条件字段进行组织。 比如简历搜索只需要头像、名字、年龄等信息，则ES就存储这些信息
+   注意：
+       1、在Elasticsearch这样的分布式系统中执行类似SQL的join连接是代价是非常大的。然而，Elasticsearch却给我们提供了基于水平扩展的两种连接形式 。有人测试在6个分片的前提下，且子表数据量在千万量级的情况下，关联查询的耗时还是在秒内的，许多场景还是可以接受的。
+       2、在es中为了保证良好的查询性能，最佳的实践是将数据模型设置为非规范化文档，通过字段冗余构造宽表，即存储在一个索引中。
+
+*spring-boot-starter-data-elasticsearch使用：
+ 参考收藏《elasticsearchRestTemplate客户端使用》
+ 在增删查索引库时有两种方式：
+  1、通过IndexCoordinates类操作，如创建索引：
+       boolean isCreate = restTemplate.indexOps(IndexCoordinates.of("base_info")).create();//直接使用字符串来指定索引名
+  2、通过索引实体类的class操作
+       boolean isCreate = restTemplate.indexOps(BaseInfo.class).create()//用BaseInfo类中注解信息来创建，如果报分片数量设置错误，则需要在BaseInfo注解中指定分片数量
+  *几个操作的类
+   elasticsearchTemplate.queryForPage   #是查询一个分页列表，用的就是一个对象实例
+   QueryBuilders  查询条件构造器
+   NativeSearchQuery 原生的查询条件类，QueryBuilders最终也是要通过NativeSearchQuery进行包装才能给ElasticsearchRestTemplate使用
+   QueryBuilders                    #设置查询条件,是ES中的类
+   SortBuilders                     #设置排序条件
+   HighlightBuilder                 #设置高亮显示
