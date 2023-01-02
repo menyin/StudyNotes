@@ -1,4 +1,4 @@
-*mysql8在安装后intellij或Navicat都连接不上，报错“ The last packet sent successfully to the server was 0 milliseconds ago.”
+﻿*mysql8在安装后intellij或Navicat都连接不上，报错“ The last packet sent successfully to the server was 0 milliseconds ago.”
  后来用telnet连接3306连接不上，于是在服务器开了防火墙和端口，还是不行
  后来又在阿里云服务器【安全组】里开了端口，还是不行
  后来又报错“message from server: "Host '110.87.116.253' is not allowed to connect to this MySQL server". ” 
@@ -73,8 +73,8 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
       基于代理：在中间代理服务处理。 性能没有jdbc方式高，但是屏蔽了分库细节，开发人员使用简单。还跨语言（支持异构语言系统）
                        Mycat 开源中间件
                        TDSQL 腾讯云的分布式数据库（详见TDSQL MySQL版文档 https://cloud.tencent.com/document/product/557/7700）
-      基于JDBC:   属于jdbc直连，在应用层来处理。性能比代理方式高，但是要自己配置分片规则等。只能单一的java语言用
-                       Sharedingsphere
+      基于JDBC:   属于jdbc直连，在应用层来处理。性能比代理方式高，但是要自己配置分片规则等。只能单一的java语言用Sharedingsphere
+                  从yaml配置spring.shardingsphere.datasource里也可以看出：它的数据源是shardingsphere的特定数据源
        
   双写：在数据增删改查的时候  发给kafka 同步到es，用es去做查询
 
@@ -124,6 +124,54 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
  3.Kakfa中间件
 
 
+*ShardingSphere相关核心概念：
+ *真实表：如果订单表分为t_order_0、t_order_1、....这些表就叫真实表
 
+ *逻辑表：与真实表相对，t_order则为逻辑表
+
+ *数据节点：数据分片的最小单元。由数据源名称和数据表组成，例：ds_0.t_order_0。
+
+ *绑定表：​ 指分片规则一致的主表和子表。例如：t_order表和t_order_item表，均按照order_id分片，则此两张表互为绑定表关系。绑定表之间的多表关联查询不会出现笛卡尔积关联，关联查询效率将大大提升。
+           简单的说就是t_order_item_0和t_order_0是相关联的，它们才有相互关联的数据，而t_order_item_0和t_order_1是不关联的，没有相关数据。
+
+ *广播表：？？？
+
+ *分片键：用于分片的数据库字段，是将数据库(表)水平拆分的关键字段。例：将订单表中的订单主键的尾数取模分片，则订单主键为分片字段。
+
+ *分片算法：目前提供4种分片算法？？和分片策略不同
+
+ *分片策略：包含分片键和分片算法，由于分片算法的独立性，将其独立抽离。真正可用于分片操作的是分片键 + 分片算法，也就是分片策略。目前提供5种分片策略。
+
+*ShardingSphere相关配置：
+ spring.shardingsphere.props.sql.show=true  可以打印出执行的sql。 这里分为Logic SQL（逻辑上的sql）和Actual SQL（真实执行的sql）
  
+*分片策略： 实际上分片策略不仅仅是负责将数据按规则存储到对应分片中，更重要的是在查询的时候快速定位到数据所在分片
+ 
+ *Inline策略:  根据单一分片建进行精确分片
+  当业务上使用分片键作为查询条件进行精确查询数据时，Shardingsphere会先精确的查找对应的数据分片，然后再去查找。
+  注意：要求此时这个分片建的值要能够通过分片的策略算法计算出对应的分片
+        在in（1,2,3）查询中，实际上Inline策略判断不出数据是不是在同一个分片，所以会全分片查找，这也可能导致性能下降。
+  如：select * from user where userId=123。 则Shardingsphere会先根据之前分片规则去计算userId=123是放置在哪个分片，先找到分片再查询。而并不会到所有分片上去查询。
+      具体效果，可以查看输出的LogicSQL和ActualSQL
+
+ *标准策略： 根据单一分片建进行精确或者范围分片
+  如果使用Inline策略，此时对分片键进行between查询，则会报错。 如：wrapper.between("userId",123,456);...
+  所以就不能用Inline策略，而使用标准策略。 就能支持范围查询了。
+  此时，分片策略规则就不能使用Groovy表达式（如t_user$->{0..1}）,而要指定相应的分配策略类，包含精确查询的类和范围查询的类（也会区分分库的算法类和分表的算法类）
+  如果是like查询类型，一般在这种大数据是不太使用的。 性能不高。
+所以就不考虑了
+  
+ *complex策略： 根据多个分片键进行精确或范围分片
+ Inline和标准策略都是单一分片键，而complex策略是多分片键策略
+
+ *Hint策略： 使用与SQL无关的方式进行分片，即查询和插入数据时条件和分片键可能不相关。
+ 此时分片的策略相当于有点强制根据特定规则进行，只是这种规则不和字段条件相关联
+ 
+ 注意：如select * from user where CAST(userId as char) ='12345' 类似这种sql，shardingsphere是很难找出分片键userId的
+       也就是我们涉及分表分库的表的查询不能太复杂，否则shardingsphere很难去理解语义并进行sql的重写。
+       再如：select * from db2.t_user;//会直接忽略db2进行SQL重写，如  select * from t_user2;
+       再如：select * from t_user union all select * from t_user;//看后面一个t_user则不会重写了
+       再如：select max(cid) from t_user group by user_id having userId='123'; //这个也会报错
+
+ 总之：分库分表的分片策略的核心在于sql，只有能被shardingsphere识别重写的sql才能做分片策略的可能
 =======================分库分表 end==============================
