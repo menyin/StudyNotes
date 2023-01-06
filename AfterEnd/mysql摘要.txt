@@ -201,6 +201,7 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 
  总之：分库分表的分片策略的核心在于sql，只有能被shardingsphere识别重写的sql才能做分片策略的可能
 
+
 *具体扩展学习详见bili《B站最牛的Mysql分库分表教程（2022最新版）》
 *新版本的shardingsphere新增分片规则
  Sharding By Mod 可以设置取模的数量n，然后进行分片
@@ -226,5 +227,23 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 *uuid是字符串主键排序性能低。
  mysql要对主键进行排序，排成一颗B+树。
  我们希望的主键是能单调递增或递减的。才能好排序成B+树
+
+
+*通常使用Shardingsphere，会结合多数据源进行使用。 
+ 也就是或只有部分分库分表，这部分的业务必须通过Shardingsphere的数据源进行。此时就要在业务的services里通过@DS注解指明Shardingsphere数据源
+
+？？按照jeecg-boot官网文档，将shardingshpere的testdemo集成，在测试添加数据时候一直报栈溢出。 这个问题一直搞了3天
+     经过研究在src/main/java/org/jeecg/boot/shardingsphere/config/DataSourceConfiguration.java的shardingDataSource在注入到spring容器里有出现循环引用问题。
+     然后一直检查配置，检查DataSourceConfiguration配置是否有shardingsphere版本差异，最终也是没有结果。 
+     最终推断，问题应该出在yml配置上。
+     原本jeecg官网是将jeecg-sharding.yml单独放到nacos，然后通过本地的application.yml里添加“- optional:nacos:jeecg-sharding.yaml”引入。 
+     于是我将jeecg-sharding.yml内容直接拷贝合并到nacos上的jeecg-dev.yaml里面，结果成功了，问题解决了。 
+？？虽然解决了上述问题，但为什么官网的方式的配置文件会不生效？     
+      1、发现jeecg-boot-starter-shardingsphere项目里有application.yml，并且配置了spring.profiles.active: sharding
+      2、intelliJ编译使用的是dev模式编译启动，
+      3、在jeecg-system-cloud-start项目的application.yml里配置了- optional:nacos:jeecg-@profile.name@.yaml
+      那么profile.name实际是dev还是sharding
+   
+
 
 =======================分库分表 end==============================
