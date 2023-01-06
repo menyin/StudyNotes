@@ -96,4 +96,26 @@
 
 *在使用项目一些工具依赖时，可以优先到spring-boot-dependencies去查找依赖。
 
-*Spring Boot 配置文件的加载顺序，依次为 bootstrap.properties -> bootstrap.yml -> application.properties -> application.yml ，其中 bootstrap.properties 配置为最高优先级
+**sprngboot配置文件相关：
+ *Spring Boot 配置文件的加载顺序，依次为 bootstrap.properties -> bootstrap.yml -> application.properties -> application.yml ，其中 bootstrap.properties 配置为最高优先级
+
+ *springboot项目，多环境配置通过在application.yml里配置spring.profiles.active。如：spring.profiles.active: dev 
+ .getProperty("spring.profiles.active")
+ *springboot项目多配置文件还可以通过spring.profiles.include配置。
+   如：
+   spring:
+   profiles:
+     include:
+       - sharding
+       - kanyun
+
+ *项目中引入的jar包里也有application.yml文件，那么这里面的配置会覆盖项目的application.yml
+
+ *springboot的配置文件可以放置于不同路径下，不同路径的优先级有所不同，优先级由高到低如下：
+ file:./config/ (当前项目路径config目录下);
+ file:./ (当前项目路径下);
+ classpath:/config/ (类路径config目录下);
+ classpath:/ (类路径config下).
+ 优先级由高到底，高优先级的配置会覆盖低优先级的配置；
+ SpringBoot会从这四个位置全部加载配置文件并互补配置；
+ 
