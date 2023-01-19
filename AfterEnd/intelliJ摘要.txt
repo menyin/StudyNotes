@@ -19,6 +19,8 @@ settings -> plugins -> 设置-> Manage Repositories 中添加 https://plugins.z
 
 *intellij两个项目同时开启两个tomcat时要更改不同的端口号，包括JMX Port
 
+*隐藏文件功能：在intellij的项目的目录里，有时候会有显示.gitignore等一些文件，可以通过settings-File Types...里设置
+
 *intelliJ菜单栏
  Build是项目构建方面工具
  VCS是版本管理方面的工具
