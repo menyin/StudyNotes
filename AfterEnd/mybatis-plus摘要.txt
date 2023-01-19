@@ -26,6 +26,7 @@
            LambdaQueryWrapper和QueryWapper的区别：
                 QueryWrapper 的列名匹配使用的是 “数据库中的字段名(一般是下划线规则)” 如：queryWrapper.inSql(“user_name”,"jack");
                 LambdaQueryWrapper 的列名匹配使用的是“Lambda的语法，偏向于对象”  如：lambdaQueryWrapper.inSql(SysUser::getUserName,"jack");
+       queryWrapper.like(condition,"user_name","%jack%");//注意condition为true才会拼接该like条件
 
 *逻辑删除插件
  使用方法：1、实体属性配置@TableLogic；2、配置注册逻辑删除插件； 3、yml或properties配置逻辑删除值；4、正常使用mybatisplus的删除方法
