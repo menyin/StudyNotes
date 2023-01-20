@@ -230,6 +230,15 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
 
 
 ============================================= jeecg spring cloud begin ======================================================
+**jeecg-boot很多的功能模块并不是用springboot的starter模式，比如一些静态工具类XxxUtil，
+   如：MinioUtil的配置是通过springIOC初始化时加载MinioConfig对象从而完成配置参数初始化（如${jeecg.minio.minio_url}），并且初始化MinioUtil的静态参数。
+       minioClient实例也是在静态类里自己维护，并未交给springIOC进行维护。
+   问题：虽然使用可以正常使用，但会有一些问题存在：
+         1、XxxUtil工具类都是位于jeecg-boot-base-core，被作为基础构件被具体项目引用。
+         2、XxxUtil工具类实际上是在系统启动后静态加载并且没有统一管理，并未实现按需加载。
+         3、XxxUtil工具类及相关类加载有读取配置文件的，则具体项目即使有些工具不用也得写配置，否则没有相关配置则会报错，
+   优化：所有的工具类等都转为starter并将所有bean都交由springIOC管理，工具相关依赖还是引入，但是bean加载控制通过@Conditional的派生类俩控制。
+         如：具体项目有些工具不使用则不在配置文件里做配置，而通过springboot的@ConditionalOnProperty可以控制有配置才加载bean
 
 *使用archetype生成微服务模块
  官方文档使用以下命令，但是会报错
