@@ -22,7 +22,7 @@
 *springboot配置
   *springboot每个配置都有对应的starter组件。
   *springboot常用配置（相关配置到官网进行搜索https://docs.spring.io/spring-boot/docs/2.6.14/reference/html/ 点击Application Properties目录）
-    日志配置logging.level.root=debug 
+    日志配置logging.level.root=debug
   *配置的格式：application.yml（主流）、application.properties、application.yaml
   *配置文件加载顺序：
     优先级：application.properties>application.yml>application.yaml
@@ -31,8 +31,8 @@
     配置文件4级分类：配置第四级覆盖第三级覆盖第二级覆盖第一级。 实际应用中，通过不同的目录可以设置不同的密码或权限就可以进行权限管理
             一级：resource目录下的配置文件，如application.yml。 这个目录的配置文件一般是开发人员使用
             二级：resource/config目录下的配置文件，这个目录的配置文件一般给项目经理使用
-            三级：在服务器jar包所在目录下的配置文件，这个目录的配置一般给运维人员（如银行系统运维人员）      
-            四级：在服务器jar包所在目录下的config目录的配置文件，这个目录的配置一般给高级人员（如银行行长）      
+            三级：在服务器jar包所在目录下的配置文件，这个目录的配置一般给运维人员（如银行系统运维人员）
+            四级：在服务器jar包所在目录下的config目录的配置文件，这个目录的配置一般给高级人员（如银行行长）
 
   *自定义配置文件：springboot默认加载“application.yml”名称的配置文件，那么怎么让springboot识别自定义名称的配置文件呢？
             方式一：通过jar运行配置临时属性--spring.config.name=myApp可以使得“myApp.yml”配置文件也被识别生效（当然intellij要配置识别）
@@ -49,7 +49,7 @@
            通过spring.profiles.include:appUser,appRole...进行设置，则appUser.xx,appRole.xx等配置文件就能生效了。并且后面配置文件会覆盖前面的配置文件
            通过spring.profiles.group.dev=devAppUser,devAppRole和spring.profiles.group.pro=proAppUser,proAppRole可以设置不同环境分组
            注意：springboot2.4+用group属性替代了include属性，group也是主流
- 
+
   *在yaml里打配置时没有提示：Project Settings->Facets->点击右侧顶部"绿叶"->点击+号选中对应的yaml配置文件
 
   *yaml和yml格式要求注意：
@@ -62,7 +62,7 @@
              如likes:
                 - game
                 - music
-             再如：users: 
+             再如：users:
                      -
                       name: jack
                       age: 18
@@ -82,9 +82,9 @@
       public class UserProperties{
          private String name;
          private int age;
-         ...    
+         ...
       }
- 
+
    *配置文件里的属性相互引用：如tmpDir：${baseDir}\temp
    *加载测试专用属性：@SpringbootTest(properties = {"test.myprop=11"}),然后就可以在测试类里用@Value("${test.myprop}")注入引用
                       @SpringbootTest(args = {"--test.myprop=11"}),然后就可以在测试类里用@Value("${test.myprop}")注入引用
@@ -106,24 +106,24 @@
    H2
    HSQL
    Derby
- 
+
 *缓存：
  springboot已经统一了缓存规范，缓存实现可以用以下等方案，注解@EnableCaching、@Cacheable、@CachePut这些都是一样的
  常用注解：
   @EnableCaching 注解在启动类，标志开启springboot的缓存
-  @Cacheable 被注解的方法执行时会添加对应的缓存 
+  @Cacheable 被注解的方法执行时会添加对应的缓存
   @CachePut 被注解的方法执行时会添加对应的缓存
   @CacheEvict 被注解的方法执行时会删除对应的缓存
-  
+
  *simple：默认的缓存方案（内存）
-  引入spring-boot-starter-cache 
+  引入spring-boot-starter-cache
   引导类加@EnableCaching
   在service方法中使用缓存注解@Cacheable或者@CachePut
   如   @Cacheable(value="cacheSpace",key="#id")  //value缓存的名称空间，key是缓存查询的key
        public Book getById(String id){return bookDao.selectById(id);}
 
- *redis 
-  springboot的缓存规范也整合了redis，此时redis是作为缓存来使用。 
+ *redis
+  springboot的缓存规范也整合了redis，此时redis是作为缓存来使用。
   基本原理是将@Cacheable(value="cacheSpace",key="#id")里的cacheSpace和id拼接作为缓存key来存储到redis中
   配置spring.cache.redis...可以设置相关参数，包括过期时间。
  *Ecache
@@ -137,18 +137,18 @@
 *redis
   RedisTemplate
   问题：为什么代码用redisTemplate保存的值，再到服务器redis-cli进行连接时获取不到？
-  原因：StringRedisTemplate和redisTemplate的区别：前者是操作String后者是操作对象（需要序列化）  
+  原因：StringRedisTemplate和redisTemplate的区别：前者是操作String后者是操作对象（需要序列化）
        使用RedisTemplate保存的key、value都是经过序列化的，而在用redis-cli连接服务器操作时key、value都是字符串
        所以解决上述问题：要么序列化方式要调整，要么用StringReidsTemplate
 
   Jedis
     springboot默认不是使用Jedis，所以要使用要导入jedis的依赖包
   Lettuce
-    springboot默认的redis的客户端实现技术 
+    springboot默认的redis的客户端实现技术
   jedis和Lettuce的区别：
     jedis连接Redis服务器是直连模式，当多线程模式下使用jedis会存在线程安全问题，解决方案可以通过配置连接池使每个连接专用，这样整体性能就大受影响。
     lettuce是基于Netty框架与Redis服务器连接，底层采用StatefulRedisConnection。StatefulRedisConnection自身是线程安全，可以保障并发访问安全。
-          所以一个连接可以被多线程复用。当然lettcus也支持多连接实例一起工作。 
+          所以一个连接可以被多线程复用。当然lettcus也支持多连接实例一起工作。
 
 *测试相关：
    *加载测试专用属性：@SpringbootTest(properties = {"test.myprop=11"}),然后就可以在测试类里用@Value("${test.myprop}")注入引用
@@ -159,8 +159,8 @@
                         在测试引导类里@Autowired对应的测试专用bean（如Msg）
                         注意：springboot的单元测试总体原理就是：在测试引导类里不仅要加载源码的资源，也要加载测试相关的专用资源。然后运行测试
    *测试web应用：
-               *在测试引导类中启动web环境：测试引导类加@SpringbootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//启动端口可以选自定义和随机 
-               *开启模拟调用web模式：测试引导类加@AutoConfiguraMockMvc（具体调用方式网上查，不做深究...）               
+               *在测试引导类中启动web环境：测试引导类加@SpringbootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//启动端口可以选自定义和随机
+               *开启模拟调用web模式：测试引导类加@AutoConfiguraMockMvc（具体调用方式网上查，不做深究...）
                *业务层测试事务回滚：应用场景是我们执行测试但是不想在数据库留下测试数据。 所以在测试通过后对执行的事务进行回滚。 用@Transaction注解在测试引导类。
                *测试用例设置随机数据：在测试配置文件里设置test.user.name=${random.value}然后在测试代码中获取值。 random对象下提供了各种类型的随机值，并可设定随机值的范围
    *@BeforeEach和@AfterEach注解的测试方法是在所有测试方法之前和之后运行的方法。可以做一些初始化或收尾的工作。
@@ -174,7 +174,7 @@
 *springboot整合starter组件
  *整合junit及单元测试的使用详见黑马课程23集
    注意代码的引导类所在包和测试引导类所在包不一致，单元测试要正常运行则测试引导类需要用进行指定classes，即@SpringBootTest(classes=SpringbootApplication.class)
- *整合MybatisPlus（检查MP），用intellij创建没有MP对应的组件，可以手动加maven依赖整合
+ *整合MybatisPlus（简称MP），用intellij创建没有MP对应的组件，可以手动加maven依赖整合
   注意：平常调试可以在配置里设置输出执行日志，可以看到具体执行的sql
  *整合Druid
    注意:不管什么数据源，可以正常配置spring.datasource下的url、username...，然后通过spring.datasource.type=com.alibaba.druid.pool.DruidDataSource来指定数据源类型
@@ -183,15 +183,15 @@
 *springboot运维相关：
   打包运行：
      windows环境：用intellij打包（可参考jeecg-boot打包文档）或者用“mvn pakage”
-                    注意：打包时会执行测试，如果有单元测试demo会发现它们都会执行一遍。如果要跳过测试，可以在intellij的maven生命周期管理的工具栏上有对应工具可点击 
-                          这些打包命令都要在pom文件里引入spring-boot-maven-plugin插件。？运行java -jar xxx.jar报错“xxx.jar中没有主清单属性”，可能是因为引入该插件
-                          *windows查看端口被谁占用命令：netstat -ano | findstr "80"   获取到pid（如9480）再用命令 tasklist | findstr "9480"  如果想杀死该进程则用taskkill -f -pid "9480"              
+                    注意：打包时会执行测试，如果有单元测试demo会发现它们都会执行一遍。如果要跳过测试，可以在intellij的maven生命周期管理的工具栏上有对应工具可点击
+                          这些打包命令都要在pom文件里引入spring-boot-maven-plugin插件。？运行java -jar xxx.jar报错“xxx.jar中没有主清单属性”，可能是因为没引入该插件
+                          *windows查看端口被谁占用命令：netstat -ano | findstr "80"   获取到pid（如9480）再用命令 tasklist | findstr "9480"  如果想杀死该进程则用taskkill -f -pid "9480"
      linux环境：运行可参考jeecg-boot打包文档
-                
+
   临时属性:
      运行java -jar xxx.jar --server.port=8090   此命令的--server.port就是临时属性，可以覆盖我们的springboot里的配置。
      intellij里的Run/Debug Configuration里的Program arguments项也是配置临时属性的
-     在springboot的引导类的main方法的args参数就是这些临时属性。所以SpringbootApplication.run(xxx.class,args)里的arg也可以自定义           
+     在springboot的引导类的main方法的args参数就是这些临时属性。所以SpringbootApplication.run(xxx.class,args)里的arg也可以自定义
   高级配置：
   多环境开发：
   日志：
@@ -205,12 +205,12 @@
  使用方式：
     手工启动热部署：引入依赖spring-boot-devtools，使用项目“Build Project”启动热部署（快捷键Ctrl+F9）。
     自动启动热部署：在手动热部署基础上在settings-compiler勾选Build project automatically、另外ctrl+shift+alt+/进入Registry勾选compiler.automake.allow.when.app.running
-                    注意：*自动热部署设置好后，要intellij编辑器失去焦点5s后才会进行重新刷新构建。    
+                    注意：*自动热部署设置好后，要intellij编辑器失去焦点5s后才会进行重新刷新构建。
                           *有些资源有参与热部署，有些未参与。 通过配置spring.devtools.restart.exclude: static/***,public/**来排除热部署
  			   默认不参与热部署的目录有/META-INF/maven、/META-INF/resource、/resources、/static、/public、/templates
                           *spring.devtools.restart.enabled=false用于关闭热部署，在实际部署中，由于诸多配置文件相互覆盖，造成该配置失效。 可以根据前面学过的“总的配置优先级顺序”到高一级里配置。
                            如系统环境变量配置。如在springboot引导类代码里设置System.setProperty("spring.devtools.restart.enabled","false")
-
+               具体参考csdn《IDEA2021之后版本的热部署》
 
 *@ConfigurationProperties的作用
  *用于将配置映射成具体类
@@ -223,8 +223,8 @@
  *@EnableConfigurationProperties
   @EnableConfigurationProperties(HelloProperties.class)注解通常用于springboot的starter组件的启动类
   它有2个作用：*为starter指定配置映射类为HelloProperties开启属性绑定（此时HelloProperties类不用再设置@Component注解就能用@ConfigurationProperties）
-               *将HelloProperties实例注入到spring容器中（所以如果HelloProperties类再使用@Component就会启动报错“重复bean”）
-               注意：如果已经@EnableConfigurationProperties(HelloProperties.class)，再在HelloProperties类设置@Component("helloProperties")则会造成注册两个不同名同类型bean
+               *将HelloProperties实例注入到spring容器中（所以如果HelloProperties类再使用@Component就可能会启动报错“重复bean”）
+               注意：如果已经@EnableConfigurationProperties(HelloProperties.class)，再在HelloProperties类设置@Component("helloProperties2")则会造成注册两个不同名同类型bean
 
  *松散绑定：配置文件里的属性名的"_"、"-"、驼峰命名等都能匹配到@ConfigurationProperties的映射配置类属性上，其中"_"、"-"都会被忽略去除然后进行匹配
             主流的模式是"-"(烤肉串模式)或驼峰模式，即myprop.ip-address或myprop.ipAddress
@@ -245,7 +245,7 @@
 
 
       }
-  *JSR303数据校验规范：bean的数据校验，这并不springboot的规范。 
+  *JSR303数据校验规范：bean的数据校验，这并不springboot的规范。
      使用方式：先导入依赖validation-api（这是JSR303的规范依赖），导入依赖hibernate-validator（这是JSR303规范的实现类框架）
                在bean类用@Vlidated，在对应的属性用相应的限制校验注解，如@Max(value = 8888,message="值不能超过8888")
 
@@ -267,7 +267,7 @@
        6、将设置集Ap作为默认配置加载（约定大于配置），减少开发者配置工作量
             如：用@ConditionalOnMissingBean(name = {"redisTemplate"})标记RedisAutoConfiguration#redisTemplate()方法，实现有则不加载，无则创建加载redisTemplate对象的功能
        7、开放设置集Ap的配置覆盖接口，由开发者根据自身需求决定是否覆盖默认配置。
-      
+
     *变更自动配置
       添加：添加resources/META-INF/spring.factories文件，在里面定义新增的自动配置类
       排除：方式一：配置文件里配置spring.autoconfigure.exclude属性
@@ -280,7 +280,7 @@
            springIOC的bean的名称很重要，具体名称可以application.getBeanDefinitionNames()遍历查找。如在springboot定时任务注解中根据beanName注入动态参数如下：
               @Scheduled(cron="0/#{myProperties.propone:5}")   //此处用EL表达式读取bean的属性。但是关键问题是这bean在springIOC的名称要是myProperties并且不能是全路径类名等，否则将读取不到。如com.cny.myProperties中com会被认为是一个bean但实际是没有的。
               public void print(){....}                        //此处如果用$符号则和@Value一样读取配置文件，但是就不能读myProperties类了（它可能有一些处理逻辑）
- 
+
  *自定义starter
      *提示插件
        *在项目或者starter包里有引用spring-boot-configuration-processor才能提示，打包的时候会在resources/META-INF/spring-configuration-metadata.json
@@ -328,7 +328,7 @@
 *@Autowired默认是bean是必须的，通过required=false可设置为非必须
 
 ？spring-boot-autoconfigure-2.6.6.jar这个类里面有一些springboot官方starter的配置类，如MailSenderAutoConfiguration是spring-boot-starter-mail的配置类
-？为什么有的jar包没有类只有一些文件。如spring-boot-starter-data-redis-reactive-2.6.6.jar只有LICENSE.txt、MANIFEST.MF、NOTICE.txt三个文件
+？为什么有的jar包没有类只有一些文件。如spring-boot-starter-data-redis-reactive-2.6.6.jar只有LICENSE.txt、MANIFEST.MF、NOTICE.txt三个文件 ！可能sprngboot109个默认自动配置类已经包含了，也可能单独一个xxx-spring-boot-autoconfigure包下（如mybatis-spring-boot-autoconfigure）
 ？jeecg的jeecg-boot-base-core和jeecg-boot-common里面有一些依赖组件需要配置文件里有相应的配置，如ES就需要相应的配置，目前能想到方法就是：加对应配置（相对简单但会有很多无用配置）或启动类将相关组件类排除（比较难搞）
 ？我们平常的一些starter组件一般到哪里去找源码？ 通过intellij下载源码、GitHub...?
 ================================================
@@ -409,7 +409,7 @@ StaticConfig
  十八、listeners.started(context);使用广播和回调机制通知监听器springboot容器启动成功
  十九、listeners.running(context);使用广播和回调机制通知监听器springboot容器已成功running
  二十、最后返回当前的上下文
- 
+
 
 *intellij创建maven项目时，加载慢。解决方式：在创建maven项目时加上archtypeCatalog参数
  详见https://www.cnblogs.com/del88/p/6286887.html
