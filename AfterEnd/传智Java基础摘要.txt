@@ -1367,6 +1367,10 @@ ${user.home}/logs/...
 
 *windows安装openSSL   用此命令连接服务器 ssh -p 端口号 用户名@登录地址
 
+
+*windows查看端口被谁占用命令：netstat -ano | findstr "80"   获取到pid（如9480）再用命令 tasklist | findstr "9480"  如果想杀死该进程则用taskkill -f -pid "9480"
+
+                              
 *centos7安装后默认网卡是关闭的，用ip addr是查不到ip的，可以进行相关设置。编辑配置文件/etc/sysconfig/ifcfg-ens33
 
 *查看一个软件是否安装，如mysql 使用命令rpm -qa|grep mysql

@@ -19,6 +19,8 @@ settings -> plugins -> 设置-> Manage Repositories 中添加 https://plugins.z
 
 *intellij两个项目同时开启两个tomcat时要更改不同的端口号，包括JMX Port
 
+*隐藏文件功能：在intellij的项目的目录里，有时候会有显示.gitignore等一些文件，可以通过settings-File Types...里设置
+
 *intelliJ菜单栏
  Build是项目构建方面工具
  VCS是版本管理方面的工具
@@ -46,7 +48,7 @@ settings -> plugins -> 设置-> Manage Repositories 中添加 https://plugins.z
  Ctrl+F12 在当前文件按此快捷键可以查看当前类的结构大纲视图
  Ctrl+Shift+Alt+U 必须要在pom.xml里按此快捷键，可以显示maven项目的依赖拓扑图。单击相应的依赖项可以链接到相应的配置节点。
                   如果是类文件里按此快捷键，则显示类的依赖拓扑图。
- Ctrl+H和Ctrl+Alt+H查看方法调用层次关系,类的层次关系
+ Ctrl+H和Ctrl+Alt+H 类的层次关系，查看方法调用层次关系 !!!常用
  Ctrl+Alt+B 可以查看当前父类或接口的子类或实现类
  Ctrl+Shift+。折叠当前代码块，Ctrl+。打开当前代码块
  ctrl+鼠标点击方法名 查找到方法使用处，必须关联下载的源码。并且在使用此快捷键是有一个提示设置，要设置搜索的范围。

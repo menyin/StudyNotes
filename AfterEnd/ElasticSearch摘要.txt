@@ -1,4 +1,4 @@
-*基本学习：
+﻿*基本学习：
  学习bilibili尚硅谷教学视频，学习笔记详见csdn《Elasticsearch学习笔记》https://blog.csdn.net/u011863024/article/details/115721328
  文档看美特《elasticsearch深入查询.doc》
  中文文档https://docs.kilvn.com/elasticsearch/
@@ -99,7 +99,9 @@ schema                mapping
        2、在es中为了保证良好的查询性能，最佳的实践是将数据模型设置为非规范化文档，通过字段冗余构造宽表，即存储在一个索引中。
 
 *spring-boot-starter-data-elasticsearch使用：
+（springboot默认整合的客户端），一般都用高级客户端（要重新自己整合）
  参考收藏《elasticsearchRestTemplate客户端使用》
+ *elasticsearchRestTemplate是低级别客户端
  在增删查索引库时有两种方式：
   1、通过IndexCoordinates类操作，如创建索引：
        boolean isCreate = restTemplate.indexOps(IndexCoordinates.of("base_info")).create();//直接使用字符串来指定索引名
@@ -112,3 +114,9 @@ schema                mapping
    QueryBuilders                    #设置查询条件,是ES中的类
    SortBuilders                     #设置排序条件
    HighlightBuilder                 #设置高亮显示
+
+*ES高级客户端
+ 因为该客户端保持与ES技术上同步更新，因此在性能操作等方面都比较强些
+ 引入依赖elasticsearch-rest-high-level-client
+ 配置：springbo并没有提供默认的配置（也没有注入客户端对象到spring IOC），要自己硬编码去初始化客户端对象（后期研究下如何去做优化）
+ ？这部分要再写下测试demo
