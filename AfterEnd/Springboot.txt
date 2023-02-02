@@ -263,6 +263,7 @@
            注意：这里全部是springboot为各项技术整合而编写的自动配置类，如RedisAutoConfiguration。
                虽然有自动配置类，但是该配置类加载到springIOC往往都有条件的，如自动配置类添加了@ConditionalOnClass({RedisOperations.class})
                此时只有项目中引入对应的starter依赖，带有条件对应的类(如：RedisOperations.class)，从而实现有加starter才能加载对应的自动配置类效果。
+               常用的@Conditional子集注解要了解，如@ConditionalOnProperty
        5、将技术集A具有使用条件的技术约定出来，设置条件加载，由开发者决定是否使用该技术（如@ConditionalOnClass）
        6、将设置集Ap作为默认配置加载（约定大于配置），减少开发者配置工作量
             如：用@ConditionalOnMissingBean(name = {"redisTemplate"})标记RedisAutoConfiguration#redisTemplate()方法，实现有则不加载，无则创建加载redisTemplate对象的功能
