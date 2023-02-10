@@ -211,6 +211,7 @@
                           *spring.devtools.restart.enabled=false用于关闭热部署，在实际部署中，由于诸多配置文件相互覆盖，造成该配置失效。 可以根据前面学过的“总的配置优先级顺序”到高一级里配置。
                            如系统环境变量配置。如在springboot引导类代码里设置System.setProperty("spring.devtools.restart.enabled","false")
                具体参考csdn《IDEA2021之后版本的热部署》
+               注意：使用spring-boot-devtools自动部署可能引发一些类加载器问题，报错导致项目不能启动（jeecg-boot遇到过）
 
 *@ConfigurationProperties的作用
  *用于将配置映射成具体类

@@ -1,7 +1,7 @@
 ﻿*mysql8在安装后intellij或Navicat都连接不上，报错“ The last packet sent successfully to the server was 0 milliseconds ago.”
  后来用telnet连接3306连接不上，于是在服务器开了防火墙和端口，还是不行
  后来又在阿里云服务器【安全组】里开了端口，还是不行
- 后来又报错“message from server: "Host '110.87.116.253' is not allowed to connect to this MySQL server". ” 
+ 后来又报错“message from server: "Host '110.87.116.253' is not allowed to connect to this MySQL server". ”
  于是通过百度用命令update user set host = '%' where user ='root';和flush privileges;设置了允许  即可详见cndn收藏
  如果上一步命令执行错误，可以先将%换成localhost执行成功后，重新进入myql再执行上一步即可。
  有时候执行unpdate命令后还是连接不上3306端口，是因为my.cf里设置了skip-grant-tables造成，删除了重启mysql即可。
@@ -25,7 +25,7 @@
                     select concat ('#',id, name, score) as 别名 from 表名；
  格式化：FORMAT函数，第二参数是小数点的位数，有四舍五入的功能。
              SELECT FORMAT(100000,2);--输出100,000.00
-               
+
 *count(*) 和 count(1)和count(col_name) 有什么区别
 count(*)=count(1)>count(主键)>count(name)
 count(*) 其实统计的就是全表的数据条数，会被sql优化器优化成count(0),如果表中有二级索引的话会优化走二级索引。
@@ -54,9 +54,9 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 
 *创建FEDERATED类型的表可以连接访问到远程服务器的表。但是在很多查询方面效率比较低，所以比较冷门。
  详见https://www.lanmper.cn/mysql/t8111
- 
 
-*查看最大连接数命令 show variables like '%max_connections%';  
+
+*查看最大连接数命令 show variables like '%max_connections%';
   mysql的最大连接数默认是100（mysql5.x版本是151）, 最大可以达到16384。
   不同版本有所差异
 
@@ -65,7 +65,7 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 预估数据量：3年内单表数据量大于500w或单数据文件大于2G才考虑分库分表
 预估数据趋势：像订单这类持续高速增长的数据今早考虑分库分表，并预留空间。像用户表后期会放缓增长则可以延期考虑分库分表
 预估应用场景：频繁变更字段不宜作为分片键，不适合做分库分表。会涉及数据迁移
-预估业务复杂度：业务逻辑和分片逻辑绑定会给sql执行带来很多限制，所以如查询逻辑变化非常大，不建议分表分库。 
+预估业务复杂度：业务逻辑和分片逻辑绑定会给sql执行带来很多限制，所以如查询逻辑变化非常大，不建议分表分库。
 
 *分库分表的核心是sql语句，即在增删改查过程中，如何根据分片算法对sql语句进行解析或路由。
 
@@ -85,13 +85,13 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
                        TDSQL 腾讯云的分布式数据库（详见TDSQL MySQL版文档 https://cloud.tencent.com/document/product/557/7700）
       基于JDBC:   属于jdbc直连，在应用层来处理。性能比代理方式高，但是要自己配置分片规则等。只能单一的java语言用Sharedingsphere
                   从yaml配置spring.shardingsphere.datasource里也可以看出：它的数据源是shardingsphere的特定数据源
-       
+
   双写：在数据增删改查的时候  发给kafka 同步到es，用es去做查询
 
 *分库分表产生的问题：
 ？分布式主键问题：
 ？分布式事务问题
-？SQL路由：sql分发到哪个节点执行？原封不动的转发吗？ 
+？SQL路由：sql分发到哪个节点执行？原封不动的转发吗？
 ？结果合并、零散数据合并问题：每个节点只包含部分结果，如何合并？ 如查询收入前十的用户，那么就得从多个分片分别查询前十再汇总合并。
 
 *分库分表解决方案-Mycat
@@ -161,12 +161,12 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 
 *ShardingSphere相关配置：
  spring.shardingsphere.props.sql.show=true  可以打印出执行的sql。 这里分为Logic SQL（逻辑上的sql）和Actual SQL（真实执行的sql）
- 
-*分片策略： 
+
+*分片策略：
   实际上分片策略不仅仅是负责将数据按规则存储到对应分片中，更重要的是在查询的时候快速定位到数据所在分片
   所以在不同的查询sql语句中，shardingsphere需要根据分片规则对sql语句进行改造，让它能够找到对应的数据分片，提升性能。
-  详见blogs《sharding-jdbc 分库分表的 4种分片策略，还蛮简单的》          
- 
+  详见blogs《sharding-jdbc 分库分表的 4种分片策略，还蛮简单的》
+
  *Inline策略:  根据单一分片建进行精确分片
   当业务上使用分片键作为查询条件进行精确查询数据时，Shardingsphere会先精确的查找对应的数据分片，然后再去查找。
   注意：要求此时这个分片建的值要能够通过分片的策略算法计算出对应的分片
@@ -179,20 +179,20 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
   所以就不能用Inline策略，而使用标准策略。 就能支持范围查询了。
   此时，分片策略规则就不能使用Groovy表达式（如t_user$->{0..1}）,而要指定相应的分配策略类，包含精确查询的类和范围查询的类（也会区分分库的算法类和分表的算法类）
   如果是like查询类型，一般在这种大数据是不太使用的。 性能不高。所以就不考虑了
-  总体原理：执行sql语句（可能是查询或增删改），根据配置的分片策略计算出对应的库及表名称，进行sql重新构造，使得根据分片策略规则到指定的库和表操作。 
+  总体原理：执行sql语句（可能是查询或增删改），根据配置的分片策略计算出对应的库及表名称，进行sql重新构造，使得根据分片策略规则到指定的库和表操作。
   包含两种分片算法：精确分片算法和范围分片算法
                     精准分片算法：根据分片键的值计算具体的分库或分表的分片名称（根据配置的是分库的还是分表的策略，原理一致），算法类的doSharding方法返回单一的String类型
                     范围分片算法：根据分片键的范围计算具体的分库或分表的分片名称集合（根据配置的是分库的还是分表的策略，原理一致），算法类的doSharding方法返回多个的String集合类型
-                    
-  
+
+
  *complex策略： 根据多个分片键进行精确或范围分片
  Inline和标准策略都是单一分片键，而complex策略是多分片键策略
- 相比上两种分片策略，complex策略原理是一样的，只是分片键由一变多。 
+ 相比上两种分片策略，complex策略原理是一样的，只是分片键由一变多。
 
  *Hint策略： 使用自定义的方式进行分片，特点是分片键或者分库的键值可以通过HintManager工具类进行灵活自定义设置，无需在配置文件中写死。
   注意：在调用 SQL 前通过 HintManager 指定分库、分表信息。由于每次添加的规则都放在 ThreadLocal 内，所以要先执行 clear() 清除掉上一次的规则！
   在具体的策略类代码doSharding方法中也能拿到HintManager设置的分片键。
- 
+
  注意：如select * from user where CAST(userId as char) ='12345' 类似这种sql，shardingsphere是很难找出分片键userId的
        也就是我们涉及分表分库的表的查询不能太复杂，否则shardingsphere很难去理解语义并进行sql的重写。
        再如：select * from db2.t_user;//会直接忽略db2进行SQL重写，如  select * from t_user2;
@@ -206,7 +206,7 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 *新版本的shardingsphere新增分片规则
  Sharding By Mod 可以设置取模的数量n，然后进行分片
  Sharding By Datetime 可以根据时间范围进行分片，相当于根据时间归档
- 
+
 *shardingsphere暴露了很多spi扩展供开发者实现更多的扩展。 如主键生成策略就可以通过其spi规定进行自定义编写
 
 *时间范围分片和取模分片
@@ -214,7 +214,7 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
  取模分片：在分片扩展的时候要进行数据迁移。  此问题也会引出hash一致性算法。
  也可以结合两种分片，如订单先按时间范围分片再按取模分片，如10月、11月，10月份订单量少，所以设定取模2，而11月份订单量大设定取模5，这样就可以通过不同月份不同取模来优化数据分片
 
-*基因法多分片查询 
+*基因法多分片查询
  场景：用户表通常我们用userId作为分片键，但是在登录或查询用户时往往是使用userName来查询。 这时候如不能进行分片算法计算，则会全分片去查询所有分片用户表。
  解决：将userName进行hash得到的数字hashCode+userId进行改造，作为分片键。  hashCode可以截取后面部分数字，因为如果分片数量只有8，则这个hashCode只需要大于8的数即可取模
        如果把hashCode看作二进制的数，则相当于只需要取后3位，然后将后3位的数字和userId进行融合，组合成一个新的分片键字段（比如叫fenpianKey）则fenpianKey
@@ -229,21 +229,25 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
  我们希望的主键是能单调递增或递减的。才能好排序成B+树
 
 
-*通常使用Shardingsphere，会结合多数据源进行使用。 
+*通常使用Shardingsphere，会结合多数据源进行使用。
  也就是或只有部分分库分表，这部分的业务必须通过Shardingsphere的数据源进行。此时就要在业务的services里通过@DS注解指明Shardingsphere数据源
 
 ？？按照jeecg-boot官网文档，将shardingshpere的testdemo集成，在测试添加数据时候一直报栈溢出。 这个问题一直搞了3天
      经过研究在src/main/java/org/jeecg/boot/shardingsphere/config/DataSourceConfiguration.java的shardingDataSource在注入到spring容器里有出现循环引用问题。
-     然后一直检查配置，检查DataSourceConfiguration配置是否有shardingsphere版本差异，最终也是没有结果。 
+     然后一直检查配置，检查DataSourceConfiguration配置是否有shardingsphere版本差异，最终也是没有结果。
      最终推断，问题应该出在yml配置上。
-     原本jeecg官网是将jeecg-sharding.yml单独放到nacos，然后通过本地的application.yml里添加“- optional:nacos:jeecg-sharding.yaml”引入。 
-     于是我将jeecg-sharding.yml内容直接拷贝合并到nacos上的jeecg-dev.yaml里面，结果成功了，问题解决了。 
-？？虽然解决了上述问题，但为什么官网的方式的配置文件会不生效？     
+     原本jeecg官网是将jeecg-sharding.yml单独放到nacos，然后通过本地的application.yml里添加“- optional:nacos:jeecg-sharding.yaml”引入。
+     于是我将jeecg-sharding.yml内容直接拷贝合并到nacos上的jeecg-dev.yaml里面，结果成功了，问题解决了。
+
+？？虽然解决了上述问题，但为什么官网的方式的配置文件会不生效？
       1、发现jeecg-boot-starter-shardingsphere项目里有application.yml，并且配置了spring.profiles.active: sharding
+         答：具体项目在idea执行debug时maven会设置spring.profiles.active=dev，从而覆盖问题所述的配置
       2、intelliJ编译使用的是dev模式编译启动，
       3、在jeecg-system-cloud-start项目的application.yml里配置了- optional:nacos:jeecg-@profile.name@.yaml
-      那么profile.name实际是dev还是sharding
-   
+         那么profile.name实际是dev还是sharding
+         答：最终是dev。实际上如果是optional:nacos:jeecg-xxx。yaml，则spring将xxx字符串解读成环境参数。
+            只要项目本地主配置文件application.yml里环境参数加上xxx即可，如spring.profiles.active=dev,xxx
+
 
 
 =======================分库分表 end==============================
