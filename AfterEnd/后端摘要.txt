@@ -1,2 +1,4 @@
 *AI写代码技术：https://chat.openai.com/chat   账号xysppq6qf@bnm2327.com 密码：gd...
  涉及关键词：OCR、OpenCV
+
+*美团相关技术文章：https://tech.meituan.com/2022/05/12/principles-and-practices-of-completablefuture.html
