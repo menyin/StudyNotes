@@ -333,6 +333,39 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 =======================分库分表 end==============================
 
 ============================ mysql begin ============================
+
+*此部分摘要学习bili《黑马程序员 MySQL数据库入门到精通》 文档在网盘java/黑马MySQL数据库
+
+*sql分类
+     DDL（Data Definition Language）数据定义语言，用来定义数据库对象(数据库，表，字段)
+     DML（Data Manipulation Language）数据操作语言，用来对数据库表中的数据进行增删改
+         内外连接（画两个交叉的园）：
+            
+            内连接（交叉部分）：
+                     自连接（交叉部分）：select a.name son，b.name farther from person a, person b where a.prentId=b.id; //子父都在同一张表。注意from person a, person b这种写法也叫隐式内连接
+            左连接（左边+交叉部分）：
+            左连接（右边边+交叉部分）：
+         子查询：
+     DQL（Data Query Language） 数据查询语言，用来查询数据库中表的记录
+         基本语法： SELECT 字段列表 FROM 表名列表 WHERE 条件列表 GROUP BY 分组字段列表 HAVING 分组后条件列表 ORDER BY 排序字段列表 LIMIT 分页参数
+         执行顺序： FROM 表名列表 WHERE 条件列表 GROUP BY 分组字段列表 HAVING 分组后条件列表 SELECT 字段列表 ORDER BY 排序字段列表 LIMIT 分页参数
+                         不同于基本语法顺序，执行顺序将“SELECT 字段列表”置后，验证以下sql 发现报错，因为eage这个再select里定义的别名，比where晚执行
+                         select e.name ename , e.age eage from emp e where eage > 15 order by age asc;
+         
+     DCL （Data Control Language）数据控制语言，用来创建数据库用户、控制数据库的访问权限
+
+*函数
+   分类：字符串函数、数值函数、日期函数、流程函数
+
+*约束
+  分类：非空约束、唯一约束、主键约束、外键约束、默认值约束、检查约束(8.0.16版本之后才有）
+  注意：外键约束下，父表数据（如depart父表、employee子表）删除和更新会触发删除/更新行为：
+           NO ACTION 检查子表有外键不允许父表删除或更新记录，和RESTRICT一样
+           RESTRICT 检查子表有外键不允许父表删除或更新记录，和NO ACTION 一样
+           CASCADE 父表删除或更新记录时，级联删除或更新子表数据外键字段
+           SET NULL 父表删除或更新记录时，子表相关外键字段设置为null
+           SET DEFAULT父表删除或更新记录时，子表相关外键字段设置为默认值，innoDB不支持
+  
 ?共享锁、独占锁
 
 ？行锁、表锁
