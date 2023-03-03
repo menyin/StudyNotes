@@ -146,9 +146,11 @@
   Lettuce
     springboot默认的redis的客户端实现技术
   jedis和Lettuce的区别：
-    jedis连接Redis服务器是直连模式，当多线程模式下使用jedis会存在线程安全问题，解决方案可以通过配置连接池使每个连接专用，这样整体性能就大受影响。
-    lettuce是基于Netty框架与Redis服务器连接，底层采用StatefulRedisConnection。StatefulRedisConnection自身是线程安全，可以保障并发访问安全。
-          所以一个连接可以被多线程复用。当然lettcus也支持多连接实例一起工作。
+    Jedis是同步的，不支持异步，Jedis客户端实例不是线程安全的，需要每个线程一个Jedis实例，所以一般通过连接池来使用Jedis，但连接池性能就大受影响。
+    lettuce是基于Netty框架与Redis服务器连接，多线程可以公用一个连接，底层的StatefulRedisConnection自身是线程安全，可以保障并发访问安全。支持异步
+    实际上：jedis和lettuce都使用了连接池，前者使用的是我们普通的tcp连接，而后者使用的是netty的channel连接，后者性能高并且可以保证线程安全。 
+                因为底层netty的channel是使用selecter去轮询，所以一定程度上讲是“同步”，而jedis却是基于线程的一种方式，其微观切换是时间片切换。 
+             
 
 *测试相关：
    *加载测试专用属性：@SpringbootTest(properties = {"test.myprop=11"}),然后就可以在测试类里用@Value("${test.myprop}")注入引用
