@@ -39,3 +39,7 @@
  https://mozilla.github.io/pdf.js/legacy/web/viewer.html
 
 *前端框架
+
+
+*浏览器调试
+ Network版面下 transferred 1.1M和resources 3.4M的区别：前者是页面压缩后传输的容量，后者是页面未压缩或者说是解压后的容量。
