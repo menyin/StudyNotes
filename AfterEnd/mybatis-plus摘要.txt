@@ -1,8 +1,16 @@
 ﻿*yml或properties可以配置sql日志输出
 
-*主键生成策略：自增、UUID、雪花算法、
- UUID缺点：没有排序、字符串存储查询效率低、存储空间大-大数据有问题-传输量大、不可读
- 雪花算法：Twitter开源的分布式id生成算法，生成的id几乎全球唯一 @TableId(type = IdType.ASSIGN_ID),其中IdType.ASSIGN_ID就是雪花算法生成的
+*主键生成策略：
+   IdType.AUTO：自增
+   IdType.NONE：
+   IdType.INPUT：此类型分2种情况，一是程序里面自己指定主键，另一种是利用MyBatis-Plus自带的如下主键生成器生成（DB2KeyGenerator、H2KeyGenerator、KingbaseKeyGenerator....）
+   IdType.ASSIGN_ID：雪花算法，Twitter开源的分布式id生成算法，生成的id几乎全球唯一 @TableId(type = IdType.ASSIGN_ID),其中IdType.ASSIGN_ID就是雪花算法生成的,基本上保持自增的。
+   IdType.ASSIGN_UUID： UUID缺点：没有排序、字符串存储查询效率低、存储空间大-大数据有问题-传输量大、不可读
+
+
+
+ 
+ 
  ？几种算法区别有待了解
 
 *自动填充：比如updateTime和createTime 
