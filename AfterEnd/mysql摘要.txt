@@ -376,3 +376,19 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
   *用户A查询一条纪录，然后修改该条纪录；这时用户B修改该条纪录，这时用户A的事务里锁的性质由查询的共享锁企图上升到独占锁，而用户B里的独占锁由于A 有共享锁存在所以必须等A释放掉共享锁，而A由于B的独占锁而无法上升的独占锁也就不可能释放共享锁，
   
 ============================ mysql end    ============================
+
+？resume写入记录时失败，
+  1、用SHOW PROCESSLIST;命令查看，发现有记录waiting for handler commit
+    详见http://blog.itpub.net/29990276/viewspace-2827118/   大概是说磁盘满了写不进去。？怎么查看linux查看磁盘占用情况：
+  2、用df -hl命令查看磁盘占用情况：发现有的分区已经写满。 ？那么数据库表数据文件再哪里：
+     注意概念：
+     Filesystem：文件系统
+     Size： 分区大小
+     Used： 已使用容量
+     Avail： 还可以使用的容量
+     Use%： 已用百分比
+     Mounted on： 挂载点
+  3、用show global variables like "%datadir%";命令查看数据目录，进入后发现caisheng.resume的idb数据文件占25G+  ？那么mysql单库或单表占用磁盘空间最大能多少：
+
+  数据库大数据表备份（服务器没有多余的空间放备份文件，所以似乎不能这样备份）：mysqlhotcopy -u root -p db1 db2 … dbn  详见https://www.aieok.com/article/share/356.html
+
