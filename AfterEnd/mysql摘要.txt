@@ -7,7 +7,24 @@
  有时候执行unpdate命令后还是连接不上3306端口，是因为my.cf里设置了skip-grant-tables造成，删除了重启mysql即可。
  注意：因为安装mysql时没有设置忽略大小写，导致quartz的某些表无法被正确查找到，所以安装mysql时候最好先设置忽略大小写
 
-*常用命令service mysqld start|restart|stop
+*常用命令
+ service mysqld start|restart|stop  启停命令
+ SHOW PROCESSLIST;显示哪些线程正在运行（前100条）。如果想全列出请使用show full processlist;
+ show variables like 'datadir'; 查看数据存储目录
+ show status like 'Threads%';查看数据库连接情况
+ select concat(truncate(sum(data_length)/1024/1024,2),'MB') as data_size,
+       concat(truncate(sum(max_data_length)/1024/1024,2),'MB') as max_data_size,
+       concat(truncate(sum(data_free)/1024/1024,2),'MB') as data_free,
+       concat(truncate(sum(index_length)/1024/1024,2),'MB') as index_size
+ from information_schema.tables where TABLE_SCHEMA = 'caisheng'; 查看数据库占用磁盘空间，如：23961.10MB,0.00MB,7.00MB,37.57MB
+
+ SELECT CONCAT(TRUNCATE(SUM(data_length)/1024/1024,2),'MB') AS data_size,
+       CONCAT(TRUNCATE(SUM(max_data_length)/1024/1024,2),'MB') AS max_data_size,
+       CONCAT(TRUNCATE(SUM(data_free)/1024/1024,2),'MB') AS data_free,
+       CONCAT(TRUNCATE(SUM(index_length)/1024/1024,2),'MB') AS index_size
+ FROM information_schema.tables WHERE TABLE_NAME = 'resume'; 查看数据库表占用磁盘空间，如：23961.00MB,0.00MB,7.00MB,37.56MB
+
+ 
 
 
 
@@ -391,4 +408,27 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
   3、用show global variables like "%datadir%";命令查看数据目录，进入后发现caisheng.resume的idb数据文件占25G+  ？那么mysql单库或单表占用磁盘空间最大能多少：
 
   数据库大数据表备份（服务器没有多余的空间放备份文件，所以似乎不能这样备份）：mysqlhotcopy -u root -p db1 db2 … dbn  详见https://www.aieok.com/article/share/356.html
+
+解决方案：
+  物理备份至我的云盘（不安全）
+  云服务器扩容（看价格）
+  买阿里云数据库（看价格）
+
+*数据库备份之路：（尝试了各种命令工具都有问题，最终用Navicat备份还原轻松简单）
+ 场景：aliyun服务器磁盘空间105G，剩余25G，但是caisheng数据库大小有25G+，需要进行数据库备份还原。  阿里云linux和本地windows的Mysql版本均为8.0.21
+ 方法一：（用mysql的ibd数据文件备份还原）
+             1、本地数据库新建caisheng数据库和resume表，执行alter table resume DISCARD TABLESPACE，停止本地mysql服务（net stop MySQL80）
+             2、复制mysql服务器的/var/lib/mysql/caisheng/resume.ibd到本地，执行alter table table_name IMPORT TABLESPACE，重启本地mysql服务（net start MySQL80）
+             结果：执行ALTER TABLE table_name IMPORT TABLESPACE; 报错Error Code:1812. Tablespace is missing for table <table_name> 是因为copy的ibd文件没有赋权，需要chown mysql:mysql table_name.ibd --赋权限
+                      但是在windows上不知道怎么更改权限？？
+ 方法二：（用mysqldump备份还原）详见黑马教程
+             1、阿里云服务器执行 mysqldump -uroot -p caisheng > resume.sql 生成resume.sql和resume.txt两个文件（结构和数据）
+             2、本地mysql执行show  variables like '%secure_file_priv%'; 查出安全目录，将1步文件放在该目录
+             3、本地mysql执行source C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\resume.sql导入结构，再执行mysqlimport -uroot -p2143 C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\resume.txt
+             结果：报错：ERROR 3140 (22032): Invalid JSON text: "Missing a comma or '}' after an object member." at position 350 in value for column 'resume.json'.
+ 方法三：（用Navicat的备份还原工具）
+             1、Navicat连接阿里云caisheng库、选中caisheng库点击菜单栏备份进行备份（生成到固定目录C:\Users\Administrator\Documents\Navicat\MySQL\Servers\aliyun）生成caisheng目录，内含20230410134517.nb3和caisheng.nbakmysql
+             2、将1步caisheng目录拷贝到C:\Users\Administrator\Documents\Navicat\MySQL\Servers\localhost
+             3、Navicat连接本地caisheng空库（非空库也行），选中caisheng库点击菜单栏备份菜单，再界面中点‘还原备份’，则会显示2步中拷贝过来的备份，选中指定备份进行还原即可。
+             结果：非常好用便捷
 
