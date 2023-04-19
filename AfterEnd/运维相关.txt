@@ -1,0 +1,95 @@
+？让如何让自己的电脑被公网上的其他电脑访问到？
+    除了内网穿透和ddns之外还有其他办法吗？
+    https://www.zhihu.com/question/543455641/answer/2576249694
+
+*DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。
+ ？那么家庭宽带的动态公网ip就能通过DDNS实现让外网访问自己的服务器
+   详见 csdn 《配置项目外网访问（公网IP+DDNS）》
+
+
+
+？局域网在物理上是不是一定要在同一区域或者连接相同的路由器
+
+？家庭宽带申请的公网ip和企业宽带公网ip有什么区别
+  https://m.163.com/dy/article/HF54ASC10538U2BB.html
+
+*梯子：
+ 一元机场 https://xn--4gq62f52gdss.com/#/register?code=NaPksl5S  账号：845257580@qq.com
+ Omega https://mymonocloud.com/   注册账号：845257580@qq.com，登录账号fanyinyumeng
+ chatGPT用一元机场被限速了，因为一元机场切换节点其实是假切换，因为IP都是一样的。
+
+
+
+？家庭宽带能申请固定ip地址吗？
+   一般只能申请动态公网ip
+
+*多台Linux服务器之间可以配置免密码互相SSH登陆
+
+*一般开发者不会以root用户登录或启动（确保安全，养成良好的习惯）
+
+
+
+*黑马推荐大数据学习时，可用亚马逊aws免费云服务器
+ 详见http://sh.itheima.com/areanew/shenzhen/cloud/20190801/192005.html
+
+*云服务器系统学习详见黑马《2023新版Hadoop课程》学习资料“0-前置章节-环境准备.pptx”
+
+？网段，局域网
+   云服务器中如何设置虚拟的局域网（即VPC（virtual private cloud）私有虚拟局域网）,VPC就相当于拉了一个家庭带宽，属于个人的私有网络
+
+*在云服务创建VPC时，会让填写网段，如192.168.0.0/16 其中16代表可提供/16级别的子网掩码（65535个IP）,即2的16次方
+ 注：192.168.0.0相当于后两位的0.0是可变的，他们会可以有2^8*2^8个值作为ip，即2^16
+       通过VPC创建，每个云服务器实例创建时可以分配一个私网地址（即局域网IP）
+       VPC内都共享公网IP和带宽
+       在云服务器开放端口时，有一列“授权对象” 即允许哪些IP访问这个开放端口，如0.0.0.0即所有
+
+
+Pod调度
+​ 在默认情况下，一个Pod在哪个Node节点上运行，是由Scheduler组件采用相应的算法计算出来的，这个过程是不受人工控制的。但是在实际使用中，这并不满足的需求，因为很多情况下，我们想控制某些Pod到达某些节点上，那么应该怎么做呢？这就要求了解kubernetes对Pod的调度规则，kubernetes提供了四大类调度方式：
+
+************************************** k8s beign *************************************************
+k8s集群初始化时得到的信息：
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
+    --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
+
+
+************************************** k8s end *************************************************
+*k8s可以看做是一个资源调度操作的服务。在多台服务器中安装，然后进行统一管理。 
+ 这些服务器分为master节点和work节点，master负责调度，work负责实际资源的使用。 
+
+*k8s资源管理方式：
+   命令式对象管理：直接使用命令去操作kubernetes资源
+   kubectl run nginx-pod --image=nginx:1.17.1 --port=80
+   命令式对象配置：通过命令配置和配置文件去操作kubernetes资源
+   kubectl create/patch -f nginx-pod.yaml
+   声明式对象配置：通过apply命令和配置文件去操作kubernetes资源
+   kubectl apply -f nginx-pod.yaml
+
+？用kubectl run pod --image=nginx -n dev创建了一个pod
+   然后用kubectl get pod -n dev查看时，STATUS状态为creating或ImagePullBackOff
+  magePullBackOff错误比较简单，镜像下载失败，要么网络设置有问题，要么没有设置镜像源，详见csdn《【k8s】ImagePullBackOff 错误处理》
+  目前镜像无法下载
+  ！发现node2节点ssh都无法连接（在192.168.1.30电脑里可以连接），后面复制了node1虚拟机为node2重新配置了ip为192.168.1.222
+    ？那么如何删除集群节点，重新添加：
+     #重置kubeadm用命令：kubeadm reset
+     #删除k8s配置文件和证书文件用命令：rm -rf /etc/kubernetes/kubelet.conf /etc/kubernetes/pki/ca.crt #删除k8s配置文件和证书文件
+     #使用master初始化k8s集群时生成的带token的命令进行节点添加（要用node2的root账号）：
+         kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
+         --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
+   ？那么如何删除掉之前部署运行的nginx容器呢（因为master、node1都有部署成功，node2由于ip网络原因未成功）
+      删除nginx的pod、service等，重新部署运行后，用kubectl get pods,service查看pod/nginx的状态，发现一直是ContainerCreating //等后面再想办法解决。
