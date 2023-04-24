@@ -44,10 +44,12 @@
        在云服务器开放端口时，有一列“授权对象” 即允许哪些IP访问这个开放端口，如0.0.0.0即所有
 
 
+
+************************************** k8s beign *************************************************
+
 Pod调度
 ​ 在默认情况下，一个Pod在哪个Node节点上运行，是由Scheduler组件采用相应的算法计算出来的，这个过程是不受人工控制的。但是在实际使用中，这并不满足的需求，因为很多情况下，我们想控制某些Pod到达某些节点上，那么应该怎么做呢？这就要求了解kubernetes对Pod的调度规则，kubernetes提供了四大类调度方式：
 
-************************************** k8s beign *************************************************
 k8s集群初始化时得到的信息：
 
 Your Kubernetes control-plane has initialized successfully!
@@ -68,6 +70,7 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
     --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
 
 
+
 ************************************** k8s end *************************************************
 *k8s可以看做是一个资源调度操作的服务。在多台服务器中安装，然后进行统一管理。 
  这些服务器分为master节点和work节点，master负责调度，work负责实际资源的使用。 
@@ -84,7 +87,7 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
    然后用kubectl get pod -n dev查看时，STATUS状态为creating或ImagePullBackOff
   magePullBackOff错误比较简单，镜像下载失败，要么网络设置有问题，要么没有设置镜像源，详见csdn《【k8s】ImagePullBackOff 错误处理》
   目前镜像无法下载
-  ！发现node2节点ssh都无法连接（在192.168.1.30电脑里可以连接），后面复制了node1虚拟机为node2重新配置了ip为192.168.1.222
+  ！发现node2节点ssh都无法连接（在192.168.1.30电脑里可以连接），后面复制了node1虚拟机为node2重新配置了ip为192.168.1.222。具体原因应该是192.168.1.202被冲突了
     ？那么如何删除集群节点，重新添加：
      #重置kubeadm用命令：kubeadm reset
      #删除k8s配置文件和证书文件用命令：rm -rf /etc/kubernetes/kubelet.conf /etc/kubernetes/pki/ca.crt #删除k8s配置文件和证书文件
@@ -93,3 +96,63 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
          --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
    ？那么如何删除掉之前部署运行的nginx容器呢（因为master、node1都有部署成功，node2由于ip网络原因未成功）
       删除nginx的pod、service等，重新部署运行后，用kubectl get pods,service查看pod/nginx的状态，发现一直是ContainerCreating //等后面再想办法解决。
+     ！运行kubectl get pod -n kube-system查看k8s集群相关组件，发现flannel网络插件的状态是Init:ImagePullBackOff，说明没有安装成功，难怪上面的nginx部署不了（处于ContainerCreating状态）
+     ！针对flannel网络插件无法拉取安装都是建议将kube-flannel.yml替换成quay-mirror.qiniu.com，尝试都不行。 后面搜索“安装kube-flannel时怎么使用阿里镜像源”找到csdn《kube-flannel.yml镜像我已经修改成阿里云的了》可用
+   ？当我kubectl run pod --image=nginx -n dev创建运行一个nginx，然后kubectl delete pod pod-864f9875b9-pcw7x删除不了，要加名称空间：kubectl delete pod pod-864f9875b9-pcw7x -n dev
+      但是当我删除了nginx的pod，它又会自动创建（通过kubectl get pod -n dev可查看）！这是因为当前Pod是由Pod控制器创建的，控制器会监控Pod状况，一旦发现Pod死亡，会立即重建。解决方案就是对应的控制器也要删除：
+      # 先来查询一下当前namespace下的Pod控制器：kubectl get deploy -n  dev
+      # 接下来，删除此Pod的Pod控制器  kubectl delete deploy nginx -n dev
+      注意：Deployment是一种控制器
+      
+
+*虽然每个Pod都会分配一个单独的Pod IP，然而却存在如下两问题：
+ - Pod IP 会随着Pod的重建产生变化
+ - Pod IP 仅仅是集群内可见的虚拟IP，外部无法访问
+ 这样对于访问这个服务带来了难度。因此，kubernetes设计了Service来解决这个问题。
+
+*可通过一个命令来查看每种资源的可配置项
+ #   kubectl explain 资源类型         查看某种资源可以配置的一级属性
+ #   kubectl explain 资源类型.属性     查看属性的子属性
+
+*进入容器命令（pod-configmap是pod资源名称）：[root@master ~]# kubectl exec -it pod-configmap -n dev /bin/sh
+
+*查看k8s所有资源信息命令：kubectl api-resources
+
+*kubectl常用的一些flage参数 
+ -o yaml 格式化
+ -f  ？？
+
+*run命令通常用于创建运行一个deploy资源，如： kubectl run nginx --image=nginx:1.17.1 --port=80 --
+
+？部署了nginx后执行 kubectl get pods,service的CLUSTER-IP列是什么ip，有什么作用。！k8s集群内部ip，可以在集群的任何节点通过此cluster-ip访问该nginx服务
+   而外部访问要用具体节点ip+PORT(S)列的端口能访问，如192.168.1.201:30741
+
+
+？imagePullPolicy：IfNotPresent：本地有则使用本地镜像，本地没有则从远程仓库拉取镜像（本地有就本地  本地没远程下载）
+   那么这里的“本地”是指具体的k8s具体部署的节点，还是执行该yaml命令的节点
+
+？kubectl get pods ... 和kubectl get pod ...的区别。 运行了kubectl get pods和kubectl get pods 似乎没有什么区别
+
+？Deployment和ReplicaSet的区别
+
+？docker集群的高可用
+
+？多个命令同时执行，可以用&&连起来？ kubectl set image deploy pc-deployment nginx=nginx:1.17.4 -n dev && kubectl rollout pause deployment pc-deployment  -n dev
+
+？当k8s部署的一些应用动态的派发或者调整pod数量，这时候他们持久化的数据应该保存在哪里，又应该怎么去获取。 如redis的RDB备份文件。如mysql本地的idb数据文件
+   Horizontal Pod Autoscaler(HPA)动态调整pod数量
+
+？如果dockerpull一些镜像有问题，怎么通过浏览器下载完后再放到服务器上去使用
+  参考黑马k8s教程天4文档“安装metrics-server”
+
+*注意metrics使用kubectl top node命令是会报错，可以用kubectl top nodes
+
+？需要跟视频学习
+  ?天4  17~37（相关控制器概念）
+  ?天4  130~132、169~181（怎么编辑？  ）   ！相当于vim打开配置文件，保存后自动更新
+  ?天4  347~358 deploy更新策略？`重建更新`和`滚动更新`有啥区别
+  ?天4  347~469 版本回退整部分内容
+  ?天4  575~764 HPA控制器实践过程
+  ?天4  1097~ Service介绍
+  
+     
