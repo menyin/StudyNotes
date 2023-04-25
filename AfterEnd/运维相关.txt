@@ -1,4 +1,4 @@
-？让如何让自己的电脑被公网上的其他电脑访问到？
+﻿？让如何让自己的电脑被公网上的其他电脑访问到？
     除了内网穿透和ddns之外还有其他办法吗？
     https://www.zhihu.com/question/543455641/answer/2576249694
 
@@ -204,7 +204,7 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
           ？ TARGETS列是什么意思  ？targetCPUUtilizationPercentage：3意思是不是pod的cpu利用率达到3%就新开一个pod
   ?天4  1097~ Service介绍
   ?天2  apiServcer中的pod对象信息会随着时间的推移而更新，在宽限期内（默认30s），pod被视为dead 整个初始化过程要听下 
-  ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  
+  ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  !即 异常退出
 
 ？ipvsadm 安装：https://blog.csdn.net/C3080844491/article/details/52783285
   
