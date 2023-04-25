@@ -2,3 +2,8 @@
  涉及关键词：OCR、OpenCV
 
 *美团相关技术文章：https://tech.meituan.com/2022/05/12/principles-and-practices-of-completablefuture.html
+
+*极速数据网站https://www.jisuapi.com
+
+*chatGPT相关应用整理 https://github.com/TheExplainthis/AI-Products-All-In-One
+ chatGPT账号：xysppq6qf@bnm2327.com  密码：k6D98Qw07I或gd...或Cf...

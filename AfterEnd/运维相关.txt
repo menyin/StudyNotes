@@ -1,0 +1,210 @@
+？让如何让自己的电脑被公网上的其他电脑访问到？
+    除了内网穿透和ddns之外还有其他办法吗？
+    https://www.zhihu.com/question/543455641/answer/2576249694
+
+*DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。
+ ？那么家庭宽带的动态公网ip就能通过DDNS实现让外网访问自己的服务器
+   详见 csdn 《配置项目外网访问（公网IP+DDNS）》
+
+
+
+？局域网在物理上是不是一定要在同一区域或者连接相同的路由器
+
+？家庭宽带申请的公网ip和企业宽带公网ip有什么区别
+  https://m.163.com/dy/article/HF54ASC10538U2BB.html
+
+*梯子：
+ 一元机场 https://xn--4gq62f52gdss.com/#/register?code=NaPksl5S  账号：845257580@qq.com
+ Omega https://mymonocloud.com/   注册账号：845257580@qq.com，登录账号fanyinyumeng
+ chatGPT用一元机场被限速了，因为一元机场切换节点其实是假切换，因为IP都是一样的。
+
+
+
+？家庭宽带能申请固定ip地址吗？
+   一般只能申请动态公网ip
+
+*多台Linux服务器之间可以配置免密码互相SSH登陆
+
+*一般开发者不会以root用户登录或启动（确保安全，养成良好的习惯）
+
+
+
+*黑马推荐大数据学习时，可用亚马逊aws免费云服务器
+ 详见http://sh.itheima.com/areanew/shenzhen/cloud/20190801/192005.html
+
+*云服务器系统学习详见黑马《2023新版Hadoop课程》学习资料“0-前置章节-环境准备.pptx”
+
+？网段，局域网
+   云服务器中如何设置虚拟的局域网（即VPC（virtual private cloud）私有虚拟局域网）,VPC就相当于拉了一个家庭带宽，属于个人的私有网络
+
+*在云服务创建VPC时，会让填写网段，如192.168.0.0/16 其中16代表可提供/16级别的子网掩码（65535个IP）,即2的16次方
+ 注：192.168.0.0相当于后两位的0.0是可变的，他们会可以有2^8*2^8个值作为ip，即2^16
+       通过VPC创建，每个云服务器实例创建时可以分配一个私网地址（即局域网IP）
+       VPC内都共享公网IP和带宽
+       在云服务器开放端口时，有一列“授权对象” 即允许哪些IP访问这个开放端口，如0.0.0.0即所有
+
+
+
+************************************** k8s beign *************************************************
+
+Pod调度
+​ 在默认情况下，一个Pod在哪个Node节点上运行，是由Scheduler组件采用相应的算法计算出来的，这个过程是不受人工控制的。但是在实际使用中，这并不满足的需求，因为很多情况下，我们想控制某些Pod到达某些节点上，那么应该怎么做呢？这就要求了解kubernetes对Pod的调度规则，kubernetes提供了四大类调度方式：
+
+k8s集群初始化时得到的信息：
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
+    --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
+
+
+
+************************************** k8s end *************************************************
+*k8s可以看做是一个资源调度操作的服务。在多台服务器中安装，然后进行统一管理。 
+ 这些服务器分为master节点和work节点，master负责调度，work负责实际资源的使用。 
+
+*k8s资源管理方式：
+   命令式对象管理：直接使用命令去操作kubernetes资源
+   kubectl run nginx-pod --image=nginx:1.17.1 --port=80
+   命令式对象配置：通过命令配置和配置文件去操作kubernetes资源
+   kubectl create/patch -f nginx-pod.yaml
+   声明式对象配置：通过apply命令和配置文件去操作kubernetes资源
+   kubectl apply -f nginx-pod.yaml
+
+？用kubectl run pod --image=nginx -n dev创建了一个pod
+   然后用kubectl get pod -n dev查看时，STATUS状态为creating或ImagePullBackOff
+  magePullBackOff错误比较简单，镜像下载失败，要么网络设置有问题，要么没有设置镜像源，详见csdn《【k8s】ImagePullBackOff 错误处理》
+  目前镜像无法下载
+  ！发现node2节点ssh都无法连接（在192.168.1.30电脑里可以连接），后面复制了node1虚拟机为node2重新配置了ip为192.168.1.222。具体原因应该是192.168.1.202被冲突了
+    ？那么如何删除集群节点，重新添加：
+     #重置kubeadm用命令：kubeadm reset
+     #删除k8s配置文件和证书文件用命令：rm -rf /etc/kubernetes/kubelet.conf /etc/kubernetes/pki/ca.crt #删除k8s配置文件和证书文件
+     #使用master初始化k8s集群时生成的带token的命令进行节点添加（要用node2的root账号）：
+         kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
+         --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
+   ？那么如何删除掉之前部署运行的nginx容器呢（因为master、node1都有部署成功，node2由于ip网络原因未成功）
+      删除nginx的pod、service等，重新部署运行后，用kubectl get pods,service查看pod/nginx的状态，发现一直是ContainerCreating //等后面再想办法解决。
+     ！运行kubectl get pod -n kube-system查看k8s集群相关组件，发现flannel网络插件的状态是Init:ImagePullBackOff，说明没有安装成功，难怪上面的nginx部署不了（处于ContainerCreating状态）
+     ！针对flannel网络插件无法拉取安装都是建议将kube-flannel.yml替换成quay-mirror.qiniu.com，尝试都不行。 后面搜索“安装kube-flannel时怎么使用阿里镜像源”找到csdn《kube-flannel.yml镜像我已经修改成阿里云的了》可用
+   ？当我kubectl run pod --image=nginx -n dev创建运行一个nginx，然后kubectl delete pod pod-864f9875b9-pcw7x删除不了，要加名称空间：kubectl delete pod pod-864f9875b9-pcw7x -n dev
+      但是当我删除了nginx的pod，它又会自动创建（通过kubectl get pod -n dev可查看）！这是因为当前Pod是由Pod控制器创建的，控制器会监控Pod状况，一旦发现Pod死亡，会立即重建。解决方案就是对应的控制器也要删除：
+      # 先来查询一下当前namespace下的Pod控制器：kubectl get deploy -n  dev
+      # 接下来，删除此Pod的Pod控制器  kubectl delete deploy nginx -n dev
+      注意：Deployment是一种控制器
+      
+
+*虽然每个Pod都会分配一个单独的Pod IP，然而却存在如下两问题：
+ - Pod IP 会随着Pod的重建产生变化
+ - Pod IP 仅仅是集群内可见的虚拟IP，外部无法访问
+ 这样对于访问这个服务带来了难度。因此，kubernetes设计了Service来解决这个问题。
+
+*可通过一个命令来查看每种资源的可配置项
+ #   kubectl explain 资源类型         查看某种资源可以配置的一级属性
+ #   kubectl explain 资源类型.属性     查看属性的子属性
+
+*进入容器命令（pod-configmap是pod资源名称）：[root@master ~]# kubectl exec -it pod-configmap -n dev /bin/sh
+
+*查看k8s所有资源信息命令：kubectl api-resources
+
+*kubectl常用的一些flage参数 
+ -o 即--output 参数自定义输出格式，如：yaml
+ -f  即--filename，就是文件名称
+ -w 即--watch实时检测操作对象的更新  如命令：kubectl get deployment -n cny -w
+
+
+*run命令通常用于创建运行一个deploy资源，如： kubectl run nginx --image=nginx:1.17.1 --port=80 --
+
+*常用命令：
+ - apiVersion   \<string>     版本，由kubernetes内部定义，版本号必须可以用 kubectl api-versions 查询到
+ - kind \<string>                类型，由kubernetes内部定义，版本号必须可以用 kubectl api-resources 查询到
+
+*常用配置解释：
+  spec.hostNetwork 是否使用主机网络。即如：pod在安装在192.168.1.201节点上，设置hostNetwork=true,在该pod可以用到该201ip地址，并且要占用201节点一个端口。这样201端口容易不够或冲突
+  spec.containers.image: nginx:1.17.1 注意这里单写了应用镜像名+版本好，则它在搭建k8s集群时安装docker时指定的镜像源中pull镜像
+  spec.containers.imagePullPolicy：Always|IfNotPresent|Never   这里说的本地镜像应该是相对于pod所在的宿主机上的本地docker镜像
+  kubectl get pods -n dev执行后READY列值为1/2表示，当前pod有两个容器（根容器不算），有1个已经准备就绪
+
+*-f的含义：在Kubernetes中，kubectl create -f命令用于从YAML文件创建资源对象。其中，-f是一个缩写，表示--filename，其作用是指定要创建的Kubernetes资源对象的YAML文件路径。
+  例如，kubectl create -f pod-resources.yaml将会创建一个包含在pod-resources.yaml文件中定义的Pod资源对象。
+  如果您需要创建多个资源对象，可以将多个YAML文件路径作为参数传递给kubectl create -f命令，例如：kubectl create -f pod1.yaml -f pod2.yaml
+
+*Pod生命周期
+  *用一个yaml文件创建多个容器，会按定义顺序一个个创建，成功一个再创建一个。
+  *pod的创建和终止过程需特别关注理解，详见黑马文档2天“pod的创建过程”文本处拓扑图
+  *Pod会出现5种**状态**：
+    pedding（apiserver已经创建了pod资源对象，但它尚未被调度完成或者仍处于下载镜像）
+    running（pod已经被调度至某节点，并且所有容器都已经被kubelet创建完成）
+    succeded（pod中的所有容器都已经成功终止并且不会被重启）
+    failed（所有容器都已经终止，但至少有一个容器终止失败，即容器返回了非0值的退出状态）
+    unknown（未知）
+*亲和性调度
+ 原理：主要是根据node或pod进行亲和性判断，然后判断亲和条件，然后再根据是“硬性”或“软性”匹配，进行调度。
+          也就是说，先设置是node或pod亲和性，然后设置亲和条件，然后如果是“硬性”则如果条件不满足就调度不成功，如果是“软性”则条件不满足就调度到其它node或其它pod
+
+*Node污点：通过在node节点资源上设置污点，然后设置不同策略，实现排斥pod调度进来的功能。 具体策略如下
+    - PreferNoSchedule：kubernetes将尽量避免把Pod调度到具有该污点的Node上，除非没有其他节点可调度
+    - NoSchedule：kubernetes将不会把Pod调度到具有该污点的Node上，但不会影响当前Node上已存在的Pod
+    - NoExecute：kubernetes将不会把Pod调度到具有该污点的Node上，同时也会将Node上已存在的Pod驱离
+
+*pod容忍：虽然node节点设置了污点可以拒绝pod进来，但是pod也可以设置容忍来忽略node上的污点，“强行”调度进入有污点的node
+
+
+*Pod控制器
+
+*deployment也是pod控制器，支持两种pod更新策略:`重建更新`和`滚动更新`。滚动更新杀一小部分就启动一部分，更新过程可能存在2个版本pod
+
+？dockerfile和arges
+
+？k8s集群工作节点添加已经会了，那么如何集群中的工作节点或主节点？
+
+？部署了nginx后执行 kubectl get pods,service的CLUSTER-IP列是什么ip，有什么作用。！k8s集群内部ip，可以在集群的任何节点通过此cluster-ip访问该nginx服务
+   而外部访问要用具体节点ip+PORT(S)列的端口能访问，如192.168.1.201:30741
+
+
+？imagePullPolicy：IfNotPresent：本地有则使用本地镜像，本地没有则从远程仓库拉取镜像（本地有就本地  本地没远程下载）
+   那么这里的“本地”是指具体的k8s具体部署的节点，还是执行该yaml命令的节点
+
+？kubectl get pods ... 和kubectl get pod ...的区别。 运行了kubectl get pods和kubectl get pods 似乎没有什么区别
+
+？Deployment和ReplicaSet的区别
+
+？docker集群的高可用
+
+？多个命令同时执行，可以用&&连起来？ kubectl set image deploy pc-deployment nginx=nginx:1.17.4 -n dev && kubectl rollout pause deployment pc-deployment  -n dev
+
+？当k8s部署的一些应用动态的派发或者调整pod数量，这时候他们持久化的数据应该保存在哪里，又应该怎么去获取。 如redis的RDB备份文件。如mysql本地的idb数据文件
+   Horizontal Pod Autoscaler(HPA)动态调整pod数量
+
+？如果dockerpull一些镜像有问题，怎么通过浏览器下载完后再放到服务器上去使用
+  参考黑马k8s教程天4文档“安装metrics-server”
+
+？同时设置spec.selector.matchLabels和spec.selector.matchExpress，是叠加逻辑还是或逻辑
+   ！这两个配置就是一起使用的，属于“基于集合的Label Selector”（label有两种类型：一种基于等式，一种基于集合）
+
+*注意metrics使用kubectl top node命令是会报错，可以用kubectl top nodes
+
+？需要跟视频学习
+  ?天4  17~37（相关控制器概念）
+  ?天4  130~132、169~181（怎么编辑？  ）   ！相当于vim打开配置文件，保存后自动更新
+  ?天4  347~358 deploy更新策略？`重建更新`和`滚动更新`有啥区别及相关策略参数
+  ?天4  347~469 版本回退整部分内容
+  ?天4  575~764 HPA控制器实践过程，用什么压测？  用jmeter压测完，用kubectl get hpa -n dev -w查看，replicas升到10很久才降下来。
+          ？ TARGETS列是什么意思  ？targetCPUUtilizationPercentage：3意思是不是pod的cpu利用率达到3%就新开一个pod
+  ?天4  1097~ Service介绍
+  ?天2  apiServcer中的pod对象信息会随着时间的推移而更新，在宽限期内（默认30s），pod被视为dead 整个初始化过程要听下 
+  ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  
+
+？ipvsadm 安装：https://blog.csdn.net/C3080844491/article/details/52783285
+  

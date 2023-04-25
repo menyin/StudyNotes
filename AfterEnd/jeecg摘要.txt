@@ -313,10 +313,35 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
 *Nacos作为配置中心时，在管理后台中配置列表项里，有各种语言获取或监听配置的代码。 但nodejs、C++、Shell、Python语言却暂时没有
 
 *gateway的动态路由
+  动态路由基本原理：
+     gateway提供了RouteDefinitionRepository接口让开发者实现，gateway内部会调用该接口的getRouteDefinitions() 、save()、delete()来更新路由列表。
+     gateway有一个路由定义类RouteDefinition，它有一个FilterDefinition类列表字段。 这两个类规约了路由及它包含过滤器。
+  动态路由总体实现过程：
+     1、gateway项目启动时调用dynamicRouteLoader.refresh(null)；
+     2、refresh方法里面加载了nacos或redis上缓存的路由列表（在system项目启动会将路由列表缓存到redis）
+     3、调用dynamicRouteService一系列链路方法更新MyInMemoryRouteDefinitionRepository（即RouteDefinitionRepository接口的实现）
+     4、gateway内部会调用MyInMemoryRouteDefinitionRepository的getRouteDefinitions() 、save()、delete()来更新路由列表。
+     5、在执行完4步后，一般要通过spring的applicationEventPublisher发布进程内消息。此时内部会监听此消息，并把路由列表刷新。
+     注意：RouteDefinitionRepository接口里用到了Flux和Mono，是Reactor编程相关知识。
+  动态路由里的限流熔断过滤器基本原理：
+     详见csdn《SpringCloud Gateway 通过redis实现限流》《SpringCloud RedisRateLimiter原理及演示过程》
+     1、system后台【路由网关】新建路由时，路由里可以添加RequestRateLimiter过滤器。
+          构建RequestRateLimiter过滤器需以下几个参数：
+              key-resolver 指定一个解析器实现类（可用SpEL指定），解析器指定路由根据什么限流 。如jeecg默认可选三种解析器：ipKeyResolver、userKeyResolver、apiKeyResolver分别就是根据ip、用户、api路径限流。
+              redis-rate-limiter.replenishRate 指定限流令牌生成速度（单位：个/秒），有坑：不支持设置小数，最少为每秒 1 个
+              redis-rate-limiter.burstCapacity 指定令牌桶的容量（单位：个）
+              redis-rate-limiter.requestedTokens 指定每次用户请求消耗的令牌数
+      2、gateway默认是用RedisRateLimiter作为限流的实现（内部原理是令牌桶+lua脚本），需要引入spring-boot-starter-data-redis-reactive
+           RedisRateLimiter是分布式的实现，也可以自己找其它本地的实现
+      3、根据上述配置，RequestRateLimiter会用lua脚本定期生成令牌，当用户请求时会去拿令牌（拿不到应该是直接拒绝抛异常）
+           lua核心逻辑：local filled_tokens = math.min(capacity, last_tokens+(delta*rate)) //即取令牌桶容量和添加令牌后的令牌数中最小的值。保证令牌桶不会满。
+
+
   ？动态路由配置的处理逻辑：
      初始化：JeecgGatewayApplication启动时通过CommandLineRunner#run调用dynamicRouteLoader.refresh(null);
      刷新：？redis监听方式，在RequestRateLimiter第三方组件限流 ？？？有待研究
   ？jeecg后台【系统监控-路由网关】的配置
+  ？响应式编程Flux 和 Mono 的知识
  
 *gateway流控和token拦截
   ？通过限流来做token拦截，具体逻辑后续研究。-->最终目的是让新生成的erp

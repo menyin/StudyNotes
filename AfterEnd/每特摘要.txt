@@ -113,6 +113,15 @@
                         契约配置：openFeign的一些注解用的springmvc的注解都是映射自己原生的注解，如果涉及到老的SpringCloud项目就可能用到
                         超时时间配置：可以配置连接超时时间、读取超时时间等
                         自定义拦截器：可以统一的进行token携带处理。
+                        异步调用：feign10+添加了异步功能。详见csdn《Feign：如何实现异步调用》，主要是AsyncFeign的使用。
+		  注意：接口使用 @RequestLine注解可以实现异步，而@RequestMapping等springmvc相关注解则无法实现异步
+ 		           BaseInfoApiTest接口可以不用@FeignClient注解，因为"http://localhost:7010"参数已经指定了服务地址。当然@RequestLine要指定全路径
+                                       如不按照以上方式，使用正常的声明注解去使用feign客户端调用时会出问题。
+                              注意：spring-cloud-starter-alibaba-async是chatGPT提供的方案，但并不可用，找不到该组件。
+                              总结：使用上述方式其实并不是很方便。  实战中使用方式：
+                                       方式一：可以再服务端的services或者消费端代码处用CompletableFuture去合并多个任务。
+		           方式二（和上述方式一样测试失败）：用@Async注解服务端services方法（如果有返回值则需要返回值类型为Future），启动类用@EnableAsync。详见csdn《@Async的使用》
+
  ？openFeign如何配置相关负载均衡策略
     OpenFeign也是默认使用了负载均衡组件Ribbon，Ribbon又默认采用轮询策略
     详见csdn收藏《OpenFeign修改负载均衡策略》？实践无效，IRule找不到对应的class
@@ -166,6 +175,7 @@
 ？nginx多个子域名怎么映射到gateway机器上
 
 *服务保护sentinel：（详见https://github.com/alibaba/Sentinel/  有非常全面的中文文档）
+ *原理：滑动窗口算法、gateway里的过滤器
  *sentinel控制台启动有配置两个端口8718、8719。前者是控制台WebUI端口，后者是限流降级应用服务连接到sentinel控制台的端口
  *限流方式分为qps和线程。qps就是服务端限制每秒请求次数，而线程方式就是服务端限制每秒用多少个线程去处理请求（对于处理时间长的请求，如果不限制则会长期占用线程，导致其它服务无线程可用，即“服务雪崩”）。
      分类：
