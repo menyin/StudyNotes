@@ -198,10 +198,12 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
 ？需要跟视频学习
   ?天4  17~37（相关控制器概念）
   ?天4  130~132、169~181（怎么编辑？  ）   ！相当于vim打开配置文件，保存后自动更新
-  ?天4  347~358 deploy更新策略？`重建更新`和`滚动更新`有啥区别及相关策略参数
+  ?天4  347~358 deploy更新策略？`重建更新`和`滚动更新`有啥区别及相关策略参数  ！更新策略指的是镜像更新策略。
+        重建更新：全部老版本镜像删除后再重新启动全部新版本镜像。
+        滚动更新：一小部分一部分老版本镜像删除更新，新旧版本镜像会同时存在。注意滚动更新时会同时存在老replicaSet和新replicaSet，但是老的replicaSet不会被删除（用于做版本回退）
   ?天4  347~469 版本回退整部分内容
-  ?天4  575~764 HPA控制器实践过程，用什么压测？  用jmeter压测完，用kubectl get hpa -n dev -w查看，replicas升到10很久才降下来。
-          ？ TARGETS列是什么意思  ？targetCPUUtilizationPercentage：3意思是不是pod的cpu利用率达到3%就新开一个pod
+  ?天4  575~764 HPA控制器实践过程，用什么压测？教程里用postman的runner压测。我用jmeter压测完，用kubectl get hpa -n dev -w查看，replicas升到10很久才降下来。
+          ？ TARGETS列（如2%/3%）是什么意思！2%当前pod的cpu占用率，3%是阈值cpu占用率  ？targetCPUUtilizationPercentage：3意思是单个pod的cpu利用率达到3%就新开一个pod
   ?天4  1097~ Service介绍
   ?天2  apiServcer中的pod对象信息会随着时间的推移而更新，在宽限期内（默认30s），pod被视为dead 整个初始化过程要听下 
   ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  !即 异常退出
