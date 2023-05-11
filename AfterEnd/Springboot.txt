@@ -45,6 +45,7 @@
            在多个配置文件来分割不同配置文件，然后在主配置文件里用spring.profiles.active:dev来设置具体执行的环境
              注意：用spring.profiles.active:@profile.active@可以读取pom里配置的profile.active属性，从而在运行打包时可以实现加载不同环境配置文件（至于用哪个环境打包可以在intellij的maven的生命周期管理栏进行选择）
                    在intellij里有个bug：如果pom用activeByDefault设置了pro环境，但是debug运行还是加载dev环境，可以在maven生命周期栏里点击compile重新编译即可
+                   如果运行mvn clean install -Pdev,SpringCloud命令出错，可能是因为执行命令目录不对或者因为Windows命令行中使用的是不同于Unix/Linux的语法。需要加双引号，使用mvn clean install "-Pdev,SpringCloud"
   *多配置文件的引入：
            通过spring.profiles.include:appUser,appRole...进行设置，则appUser.xx,appRole.xx等配置文件就能生效了。并且后面配置文件会覆盖前面的配置文件
            通过spring.profiles.group.dev=devAppUser,devAppRole和spring.profiles.group.pro=proAppUser,proAppRole可以设置不同环境分组
