@@ -1,4 +1,4 @@
-？让如何让自己的电脑被公网上的其他电脑访问到？
+﻿？让如何让自己的电脑被公网上的其他电脑访问到？
     除了内网穿透和ddns之外还有其他办法吗？
     https://www.zhihu.com/question/543455641/answer/2576249694
 
@@ -180,6 +180,7 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 
 *deployment也是pod控制器，支持两种pod更新策略:`重建更新`和`滚动更新`。滚动更新杀一小部分就启动一部分，更新过程可能存在2个版本pod
 
+
 *在k8s的ConfigMap创建配置中，"|+" 是 YAML 语法中的一个特殊标记，表示接下来的文本块将保留原始缩进和换行符。在这种情况下，它用于保留 redis.conf 配置文件中的原始格式。
   data.redis.conf: |+ 表示 redis.conf 的值将是一个多行字符串，并且会保留字符串中的缩进。这样做是为了确保在生成的 ConfigMap 中，redis.conf 的内容与原始文件中的内容保持一致。
   在这个例子中，redis.conf 的值是 requirepass 123456，并且保留了该行的缩进（通常为两个空格或四个空格）。
@@ -203,6 +204,18 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 
 *仪表盘
  kube-dashboard、Rancher、
+
+*数据存储：
+  *企业级应用一般用NFS类型和高级存储类型
+  *PV和PVC：PV是屏蔽了具体存储类型（如NFS类型）的配置，做统一化，它是集群级别资源（没有namespace归属）。  而PVC是有namespace归属，它是对PV资源的做一些限制和规约及划分
+  *pv和pvc存储类型和普通的nfs区别关系
+    nfs就是一种目录共享的服务，对应“客户端pod”需要配置nfs类型的存储。 而CIFS、ClusterFS等也是目录共享服务，此时客户端如果用这些就要做不同类型的配置。
+    为了让“客户端pod”开发者不用了解那么多的配置，PV和PVC就屏蔽了这些类型的目录共享服务。PV和PVC作为一种资源而存在，“客户端pod”只需要统一的配置即可。
+  *configmap类型的存储支持动态更新，但是更新需要一定的时间。 
+
+*认证方式:
+ k8s支持3种认证方式，可以同时配置，客户端只要通过其中一种认证，就可以相应的通信。  
+
 
 ？dockerfile和arges
 
@@ -237,13 +250,15 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 ？需要跟视频学习
   ?天4  17~37（相关控制器概念）
   ?天4  130~132、169~181（怎么编辑？  ）   ！相当于vim打开配置文件，保存后自动更新
-  ?天4  347~358 deploy更新策略？`重建更新`和`滚动更新`有啥区别及相关策略参数
+  ?天4  347~358 deploy更新策略？`重建更新`和`滚动更新`有啥区别及相关策略参数  ！更新策略指的是镜像更新策略。
+        重建更新：全部老版本镜像删除后再重新启动全部新版本镜像。
+        滚动更新：一小部分一部分老版本镜像删除更新，新旧版本镜像会同时存在。注意滚动更新时会同时存在老replicaSet和新replicaSet，但是老的replicaSet不会被删除（用于做版本回退）
   ?天4  347~469 版本回退整部分内容
-  ?天4  575~764 HPA控制器实践过程，用什么压测？  用jmeter压测完，用kubectl get hpa -n dev -w查看，replicas升到10很久才降下来。
-          ？ TARGETS列是什么意思  ？targetCPUUtilizationPercentage：3意思是不是pod的cpu利用率达到3%就新开一个pod
+  ?天4  575~764 HPA控制器实践过程，用什么压测？教程里用postman的runner压测。我用jmeter压测完，用kubectl get hpa -n dev -w查看，replicas升到10很久才降下来。
+          ？ TARGETS列（如2%/3%）是什么意思！2%当前pod的cpu占用率，3%是阈值cpu占用率  ？targetCPUUtilizationPercentage：3意思是单个pod的cpu利用率达到3%就新开一个pod
   ?天4  1097~ Service介绍
   ?天2  apiServcer中的pod对象信息会随着时间的推移而更新，在宽限期内（默认30s），pod被视为dead 整个初始化过程要听下 
-  ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  
+  ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  !即 异常退出
 
 ？ipvsadm 安装：https://blog.csdn.net/C3080844491/article/details/52783285
 
