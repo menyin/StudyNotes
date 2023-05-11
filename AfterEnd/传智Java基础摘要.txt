@@ -1376,6 +1376,8 @@ ${user.home}/logs/...
 *查看一个软件是否安装，如mysql 使用命令rpm -qa|grep mysql
 
 *mkdir /dir1/dir2/dir3 -p 级联创建目录
+
+*windows下的批处理，详见csdn《bat批处理文件的注释，和常用简单命令》
 ***************liux学习 end   ***************
 
 
