@@ -72,6 +72,7 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
 
 
 ************************************** k8s end *************************************************
+***********具体详情资料详见网盘，黑马课程《容器集群管理系统k8s从入门到精通》**********
 *k8s可以看做是一个资源调度操作的服务。在多台服务器中安装，然后进行统一管理。 
  这些服务器分为master节点和work节点，master负责调度，work负责实际资源的使用。 
 
@@ -97,7 +98,9 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
    ？那么如何删除掉之前部署运行的nginx容器呢（因为master、node1都有部署成功，node2由于ip网络原因未成功）
       删除nginx的pod、service等，重新部署运行后，用kubectl get pods,service查看pod/nginx的状态，发现一直是ContainerCreating //等后面再想办法解决。
      ！运行kubectl get pod -n kube-system查看k8s集群相关组件，发现flannel网络插件的状态是Init:ImagePullBackOff，说明没有安装成功，难怪上面的nginx部署不了（处于ContainerCreating状态）
-     ！针对flannel网络插件无法拉取安装都是建议将kube-flannel.yml替换成quay-mirror.qiniu.com，尝试都不行。 后面搜索“安装kube-flannel时怎么使用阿里镜像源”找到csdn《kube-flannel.yml镜像我已经修改成阿里云的了》可用
+     ！针对flannel网络插件无法拉取安装都是建议将kube-flannel.yml替换成quay-mirror.qiniu.com，尝试都不行。 后面搜索“安装kube-flannel时怎么使用阿里镜像源”找到csdn《kube-flannel.yml镜像我已经修改成阿里云的了》可
+用。注意：如果kubectl get nodes 节点状态还是NotReady，可以参考csdn《K8S集群NotReady问题处理》  解决
+    
    ？当我kubectl run pod --image=nginx -n dev创建运行一个nginx，然后kubectl delete pod pod-864f9875b9-pcw7x删除不了，要加名称空间：kubectl delete pod pod-864f9875b9-pcw7x -n dev
       但是当我删除了nginx的pod，它又会自动创建（通过kubectl get pod -n dev可查看）！这是因为当前Pod是由Pod控制器创建的，控制器会监控Pod状况，一旦发现Pod死亡，会立即重建。解决方案就是对应的控制器也要删除：
       # 先来查询一下当前namespace下的Pod控制器：kubectl get deploy -n  dev
@@ -140,6 +143,15 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
   例如，kubectl create -f pod-resources.yaml将会创建一个包含在pod-resources.yaml文件中定义的Pod资源对象。
   如果您需要创建多个资源对象，可以将多个YAML文件路径作为参数传递给kubectl create -f命令，例如：kubectl create -f pod1.yaml -f pod2.yaml
 
+以下命令结果的CPU(cores)值为2m是什么意思？！2m代表2毫核。在 Kubernetes 中，CPU 的单位是 "millicores"（毫核），表示 1/1000 个 CPU 核心。在此例中，该 Pod 被限制为最大占用 2 毫核的 CPU 资源。
+[root@cdh-6 1.8+]# kubectl top pod -n database
+NAME                    CPU(cores)   MEMORY(bytes)
+redis-fb6bfcfdd-28qm2   2m           10Mi
+
+**特别注意在运行kubectl 相关的命令，尽量加上名称空间参数，否则可能会报错资源找不到。因为如果不指定-n名称空间，则会在默认名称空间里查找操作资源
+
+*作为测试环境
+
 *Pod生命周期
   *用一个yaml文件创建多个容器，会按定义顺序一个个创建，成功一个再创建一个。
   *pod的创建和终止过程需特别关注理解，详见黑马文档2天“pod的创建过程”文本处拓扑图
@@ -162,8 +174,35 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
 
 
 *Pod控制器
+ Deployment：简称Deploy，当pod的资源出现故障时，会尝试进行重启或重建pod。
+
+*几种常用Pod控制器的区别
 
 *deployment也是pod控制器，支持两种pod更新策略:`重建更新`和`滚动更新`。滚动更新杀一小部分就启动一部分，更新过程可能存在2个版本pod
+
+*在k8s的ConfigMap创建配置中，"|+" 是 YAML 语法中的一个特殊标记，表示接下来的文本块将保留原始缩进和换行符。在这种情况下，它用于保留 redis.conf 配置文件中的原始格式。
+  data.redis.conf: |+ 表示 redis.conf 的值将是一个多行字符串，并且会保留字符串中的缩进。这样做是为了确保在生成的 ConfigMap 中，redis.conf 的内容与原始文件中的内容保持一致。
+  在这个例子中，redis.conf 的值是 requirepass 123456，并且保留了该行的缩进（通常为两个空格或四个空格）。
+
+*挂载
+ 在配置pod的挂载目录时，无论是HostPath或NFS或PV等，注意一下配置的含义：
+  volumeMounts:
+     - name: mysql-persistent-storage  
+       mountPath: /var/lib/mysql
+
+  template: 
+    spec:                          
+      containers:              
+          volumeMounts:
+            - name: mysql-persistent-storage #指的是对应的实际存储对应，如此处使用HostPath类型存储，则mysql-persistent-storage就是对应volumes.name:mysql-persistent-storage配置的mysql-pv-claim
+              mountPath: /var/lib/mysql  #指的是pod的容器中实际的数据存储目录
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+
+*仪表盘
+ kube-dashboard、Rancher、
 
 ？dockerfile和arges
 
@@ -207,4 +246,194 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
   ?天2  pod重启策略，OnFailure ： 容器终止运行且退出码不为0时重启？  
 
 ？ipvsadm 安装：https://blog.csdn.net/C3080844491/article/details/52783285
+
+？docker本地打包好的镜像如何push到阿里云镜像源https://blog.csdn.net/Siebert_Angers/article/details/127439972  、  https://note.youdao.com/ynoteshare/index.html?id=f6d2a9e293f7817d99426841c5070b96&type=note&_time=1682478576703
+  docker本地打包好的镜像如何上传到服务器上
+
+？创建PV时，hostPath.path="/mnt/data"，那么这个目录在哪个节点上？ 
+  比如mysql安装时使用PV进行挂载，则mysql对应的pod在哪个节点PV的实际hostPath.path目录就在pod所在节点上。可以用kubectl get pod -o wide查看具体节点。 但是如果多个pod呢？
+
+？Rancher和k8s集群在同一局域网的不同网段，那么Rancher能管理k8s集群吗？！可以，但是网络联通传输会差些
+
+？Rancher部署时遇到问题（环境准备用黑马k8s教程，rancher具体安装才看云原生）：
+   在192.168.8.27上安装添加yum软件源时，导致yum不能使用，网络上很多方案都是改镜像源，清yum缓存等都无效。
+   最后使用以下安装centos-release软件包方案也是没用，但是叠加加上“将docker-ce.repo文件暂时清除再用yum”就可以了。
+   https://blog.51cto.com/u_14900374/2544835
+
+*Rancher部署完后管理员账号 admin  密码 k8sadmin
+  
+*注意project和namespace的概念区别
+ Project 是 Rancher 的组织单元，用于管理和控制多个集群和相关资源。
+ Namespace 是 Kubernetes 的概念，用于在单个集群中进行资源隔离和管理。
+ Project 可以包含多个集群和命名空间，提供集中管理和控制的功能。
+ Namespace 用于在单个集群中隔离和管理不同的资源，并提供资源隔离和访问控制的功能。
+
+
+
+
+
+
+==========jeecg 服务编排 begin=============
+*基本思路：
+  1、用jeecg的docker-componse-base.yml进行所有应用镜像构建
+       它会根据配置的资源目录进行构建docker镜像
+  2、将上述构建的镜像push到自己的阿里镜像仓库
+  3、将k8s集群里的docker镜像源修改成自己的阿里镜像仓库
+  4、编写k8s相关yaml文件进行服务管理
+
+*具体步骤：
+ 1、进jeecg-boot根目录，构建dev+SpringCloud环境下的jar包
+ 2、进jeecg-boot/jeecg-server-cloud分别执行docker-compose -f .\docker-compose-base.yml up -d和docker-compose up -d 构建运行测试镜像
+ 3、执行批处理文件push-images.bat，具体内容如下
+ 4、编写k8s相关yaml文件，具体内容如下：
+
+
+**********后端 push-images.bat begin****************
+setlocal EnableDelayedExpansion
+set mysqlVersion=7.0
+set gatewayVersion=7.0
+set systemVersion=7.0
+set nacosVersion=7.0
+set demoVersion=7.0
+
+(
+docker login --username=845257580@qq.com registry.cn-hangzhou.aliyuncs.com || exit /b
+
+docker tag jeecg-server-cloud-jeecg-boot-mysql registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-mysql:!mysqlVersion! || exit /b
+docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-mysql:!mysqlVersion! || exit /b
+
+docker tag jeecg-server-cloud-jeecg-boot-gateway registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-gateway:!gatewayVersion! || exit /b
+docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-gateway:!gatewayVersion! || exit /b
+
+docker tag jeecg-server-cloud-jeecg-boot-system registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-system:!systemVersion! || exit /b
+docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-system:!systemVersion! || exit /b
+
+docker tag jeecg-server-cloud-jeecg-boot-nacos registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-nacos:!nacosVersion! || exit /b
+docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-nacos:!nacosVersion! || exit /b
+
+docker tag jeecg-server-cloud-jeecg-boot-demo registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-demo:!demoVersion! || exit /b
+docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-demo:!demoVersion! || exit /b
+)
+
+endlocal
+
+**********后端 push-images.bat    end****************
+
+
+**********前端 push-images.bat    begin****************
+setlocal EnableDelayedExpansion
+set uiVersion=4.0
+
+(
+docker login --username=845257580@qq.com registry.cn-hangzhou.aliyuncs.com || exit /b
+
+docker tag jeecgboot-ui registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-ui:!uiVersion! || exit /b
+docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-ui:!uiVersion! || exit /b
+
+)
+
+endlocal
+
+**********前端 push-images.bat    end****************
+
+
+
+*编写pushImages.bat （写入以下内容），然后双击运行或者cmd里运行
+ cmd /k "docker login --username=845257580@qq.com registry.cn-hangzhou.aliyuncs.com && docker tag jeecg-server-cloud-jeecg-boot-mysql registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-mysql:1.0 && docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-mysql:1.0"
+
+?怎么在上传镜像到阿里云的命令里设置该仓库类型为公开
+ chatGPT给的建议是加参数--disable-legacy-registry=false，如docker push registry.cn-hangzhou.aliyuncs.com/namespace-cny/jeecg-mysql:!mysqlVersion! --disable-legacy-registry=false 
+ 注意：测试无效可能是因为开了梯子，导致了网络访问出问题。
+
+？kubectl apply -f xxx.yml执行后（镜像未变动，但pod配置有变动），涉及的pod并未重启
+
+？在jeecg的application.yml等配置文件中，有用到环境变量和host域名的，在pod的spec下都可以进行相关的配置（env和hostAliases）
+
+？redis部署后，理论在集群节点中任意一个节点都能访问，但是发现在system和gateway的pod里192.168.8.30:6379不能正常访问。 
+   ！后来将system和gateway里应用的yml里的redis配置都改成192.168.8.31就都可以访问了 （注：要先启动system初始化路由再启动gateway）
+  
+==========jeecg 服务编排 end  =============
+
+========192.168.1.28 begin========
+TYPE="Ethernet"
+PROXY_METHOD="none"
+BROWSER_ONLY="no"
+BOOTPROTO="none"
+DEFROUTE="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_FAILURE_FATAL="no"
+IPV6_ADDR_GEN_MODE="stable-privacy"
+NAME="eth0"
+UUID="6749d7c2-a0cc-4fb9-a39f-eba1be7245fc"
+DEVICE="eth0"
+ONBOOT="yes"
+
+
+
+192.168.8.29    cdh-1
+192.168.8.24    cdh-2
+192.168.8.25    cdh-3
+192.168.8.26    cdh-4
+192.168.8.27    cdh-5
+192.168.8.28    cdh-6
+192.168.8.30    cdh-7
+192.168.8.31    cdh-8
+192.168.8.32    cdh-9
+124.71.27.239   cdh1
+122.9.49.145    cdh2
+122.9.126.41    cdh3
+122.9.122.146   cdh4
+122.9.53.112    cdh5
+116.63.74.203   cdh6
+
+*集群节点：
+192.168.8.28    cdh-6
+192.168.8.30    cdh-7
+192.168.8.31    cdh-8
+ 使用kubeadm init创建集群后得到的响应（包含主节点token）如下：
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.8.28:6443 --token hwk5nc.fcip9c4al5uwc3x6 \
+    --discovery-token-ca-cert-hash sha256:7a7ff9adee3dd020c158e1ed3b94533c3ad32a96b7f53b40e075a8c02232803c
+
+========192.168.1.28 end========
+
+？我要禁用swap分区并重启linux，会不会有影响
+
+# 重新加载配置
+[root@master ~]# sysctl -p
+******
+[root@cdh-7 ~]# sysctl -p
+vm.swappiness = 0
+[root@cdh-7 ~]#
+******
+[root@cdh-7 ~]# lsmod | grep br_netfilter
+br_netfilter           22256  0
+bridge                151336  1 br_netfilter
+[root@cdh-7 ~]#
+
+
+ETHTOOL_OPTS="autoneg on"
+IPADDR="192.168.8.28"
+PREFIX="24"
+GATEWAY="192.168.8.1"
+IPV6_PRIVACY="no"
+DNS1="192.168.1.13"
+
+
   
