@@ -35,9 +35,9 @@
  docker rm d23bdf5b1b1b 删除容器，d23bdf5b1b1b为docker ps查询到的id
  docker container exec -it f0b1c8ab3633 /bin/bash进入到doc容器中去，f0b1c8ab3633为指定容器的id。
  docker-compose up -d  这个命令使用非常类似于docker命令的使用，但是需要注意的是大部分的compose命令都需要到docker-compose.yml文件所在的目录下才能执行。
-
+		         docker-compse up可以完成按照依赖关系启动所有服务，然后使用docker-compose down轻松将其拆解。帮助我们更轻松地部署复杂的应用程序;
 *docker-compose详见简书《关于docker-Compose基本使用》，下载的时候可以切换下版本
- 
+ 详见blogs《docker、docker compose、k8s的区别 》
 
 *linux里的sudo的命令相当于以root权限进行操作，应该是相当于windows的以管理员身份运行
 
@@ -70,7 +70,8 @@ sudo systemctl restart docker
 *应用通过docker容器安装后，应用本身的配置如何配置？（直接到安装目录修改或利用挂载）（如：通过Docker安装的Nginx如何配置nginx.conf）
   *Docker通过容器运行Nginx-----安装的目录 在容器中/容器id/etc/nginx，默认情况下安装在 容器的etc目录
   *Docker 安装的软件如何修改配置文件的？（一般用挂载方式进行）
-    *方式一：通过命令docker run --name mynginx -d -p 80:80  -v /data/nginx/conf/nginx.conf:/etc/nginx/nginx.conf  -v /data/nginx/logs:/var/log/nginx -d docker.io/nginx  容器挂载外部配置文件 –v
+    *方式一：通过命令docker run --name mynginx -d -p 80:80  -v /data/nginx/conf/nginx.conf:/etc/nginx/nginx.conf  -v /data/nginx/logs:/var/log/nginx -d docker.io/nginx  
+                 注意：/data/nginx/conf/nginx.conf为宿主机目录文件，/etc/nginx/nginx.conf为容器目录文件
     *方式二：通过命令docker container exec -it f0b1c8ab3633 /bin/bash  进入到容器进行配置文件修改。（exit 退出，即退出到宿主机目录）
 
 *特别注意：不要进入docker应用容器里去修改应用配置文件  ，因为容器里没有vi等工具，安装的话会增加容器的体积。一般采用挂载方式。
@@ -90,11 +91,79 @@ sudo systemctl restart docker
  方式二：详见 https://blog.csdn.net/qq_19734597/article/details/90633108
   vim /usr/lib/systemd/system/docker.service  
 
+*当镜像启动时STATUS不正常时，可用 docker logs 【containerId】查看
+
 *docker打包镜像到远程服务器（不建议生产环境使用，因为2375不加密验证，外网不安全）
  详见csdn《使用docker-maven-plugin插件将项目编译为docker镜像到远程linux服务器》
+
+*docker打包镜像到自己的镜像仓库
+ 详见csdn《【Docker】将本地镜像推送到远程库/私有库》
+ 阿里官方文档：https://cr.console.aliyun.com/repository/cn-hangzhou/namespace-cny/respostory-cny/details
+ 注意：阿里云的仓库，如respostory-cny对应的是容器的名称，比如你上传一个jeecg-server-cloud-jeecg-boot-mysql的镜像，那么这个镜像名就等同于阿里云docker仓库名（即respostory-cny就要改为jeecg-server-cloud-jeecg-boot-mysql）。相当于一个仓库对应一个镜像
 
 *docker镜像一般不用上述方式直接上传到linux服务器，而是上传到公司的docker镜像私服
  Harbor和Registry都是Docker的镜像仓库，但是Harbor作为更多企业的选择，是因为相比较于Regisrty来说，它具有很多的优势。
 
 
 *redis安装详见csdn《最详细的docker中安装并配置redis》
+
+*DockerDesktop
+ DockerDesktop就是在windows上使用docker，本质是上windows是不支持docker，所以要装给虚拟机然后和windows关联。
+ 安装教程：https://www.php.cn/docker/485559.html
+ 安装过程中出现WSL问题，请通过以下链接方法解决：
+ https://learn.microsoft.com/zh-cn/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package
+ 好像要弄个windows和linux相关联的东西，最后安装exe在C:\Program Files\WindowsApps\CanonicalGroupLimited.Ubuntu18.04onWindows_1804.2020.826.0_neutral_~_79rhkp1fndgsc
+
+？docker-compose.yml和Dockerfile配置详解
+  详见csdn《Dockerfile 详解》、csdn《Docker学习4 - docker-compose》、blogs《docker-compose配置文件详解》
+dockerDesktop原本的resources配置：C:\Users\Administrator\AppData\Local\Docker\wsl
+
+
+
+
+
+*用DockDesktop在windows上启动docker容器，挂载时没办法找到宿主linux虚拟机，很麻烦
+ 可以在windows下cmd 执行wsl可以进入linux虚拟机
+
+？docker查看本地镜像从哪个源下载的命令  docker inspect <IMAGE ID>
+ 可以使用 docker inspect 命令来查看本地镜像的详细信息，其中包括镜像的来源信息。具体来说，您可以查看镜像的 RepoTags 属性，其中包含了该镜像的完整名称和标签，以及 RepoDigests 属性，其中包含了该镜像所关联的摘要信息。如果镜像是从远程镜像仓库下载的，则 RepoDigests 属性中会包含远程镜像仓库的地址。
+
+？docker镜像可以打包后直接上传到服务器吗？ 还是一定要上传到镜像源仓库
+
+*注意Dockerfile文件中的运行jar命令（如下）添加了-Djava.security.egd参数是用于加速启动
+ CMD sleep 10;java -Dfile.encoding=utf-8 -Djava.security.egd=file:/dev/./urandom -jar jeecg-system-cloud-start-3.4.0.jar
+
+*注意Dockerfile文件中的运行命令（如下），其中docker-entrypoint-initdb.d是默认mysql的sql脚本初始化目录，拷贝进这个目录的sql文件会在容器启动后按名称顺序进行执行
+ COPY ./tables_xxl_job.sql /docker-entrypoint-initdb.d
+
+？怎么使用以下docker-compose命令push到远程仓库
+   docker-compose push [options] [SERVICE...]
+
+****************************
+
+
+{
+  "debug": false,
+  "experimental": false,
+  "features": {
+    "buildkit": true
+  },
+  "insecure-registries": [],
+  "registry-mirrors": [
+    "https://registry.cn-hangzhou.aliyuncs.com"
+  ]
+}
+
+{
+  "debug": false,
+  "experimental": false,
+  "features": {
+    "buildkit": true
+  },
+  "insecure-registries": [],
+  "registry-mirrors": [
+    "https://registry.docker-cn.com",
+    "http://hub-mirror.c.163.com",
+    "https://docker.mirrors.ustc.edu.cn"
+  ]
+}
