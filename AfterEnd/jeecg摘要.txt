@@ -371,5 +371,6 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
     
 ？消息总线
 
-？
+？jeecg微服务启动访问system项目出现“Vue2路由菜单表....”问题提示，可用官方方案解决：http://doc.jeecg.com/3075165
+ 
 ============================================= jeecg spring cloud end ========================================================
