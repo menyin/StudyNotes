@@ -69,7 +69,7 @@ Then you can join any number of worker nodes by running the following on each as
 kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
     --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
 
-
+*注意以上添加集群节点的命令的token如果失效，则需要在master节点重新生成一个替换即可（重新生成token命令：kubeadm token create）
 
 ************************************** k8s end *************************************************
 ***********具体详情资料详见网盘，黑马课程《容器集群管理系统k8s从入门到精通》**********
@@ -95,6 +95,8 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
      #使用master初始化k8s集群时生成的带token的命令进行节点添加（要用node2的root账号）：
          kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
          --discovery-token-ca-cert-hash sha256:c35c53b6acffbddf28fa7d3b53f7043c352b100d2dff6e783bf0d2642cb83b52
+        注意：以上token可以通过kubeadm token list查看，如果没有token可以通过kubeadm token create创建
+                   以上命令再加上--control-plane参数可以将节点添加为master节点
    ？那么如何删除掉之前部署运行的nginx容器呢（因为master、node1都有部署成功，node2由于ip网络原因未成功）
       删除nginx的pod、service等，重新部署运行后，用kubectl get pods,service查看pod/nginx的状态，发现一直是ContainerCreating //等后面再想办法解决。
      ！运行kubectl get pod -n kube-system查看k8s集群相关组件，发现flannel网络插件的状态是Init:ImagePullBackOff，说明没有安装成功，难怪上面的nginx部署不了（处于ContainerCreating状态）
@@ -216,6 +218,7 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 *认证方式:
  k8s支持3种认证方式，可以同时配置，客户端只要通过其中一种认证，就可以相应的通信。  
 
+*k8s集群配置文件默认在/.kube/config，通过此配置信息，Jenkins等持续集成应用可以连接到k8s集群
 
 ？dockerfile和arges
 
@@ -283,10 +286,19 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
  Project 可以包含多个集群和命名空间，提供集中管理和控制的功能。
  Namespace 用于在单个集群中隔离和管理不同的资源，并提供资源隔离和访问控制的功能。
 
+*修改rancher的web样式，以规避监控
+docker cp rancherContainerId:/usr/share/rancher/ui/assets /path/to/my-style/assets    复制原有的静态资源
+docker cp rancherContainerId:/usr/share/rancher/ui-dashboard /path/to/my-style/ui-dashboard
 
+docker stop rancherContainerId
+docker run -d --privileged -p 80:80 -p 443:443 -v /opt/data/rancher_data:/var/lib/rancher  -v /path/to/my-style/assets:/usr/share/rancher/ui/assets  -v /path/to/my-style/ui-dashboard:/usr/share/rancher/ui-dashboard  --restart=always --name rancher-2.5.15 rancher/rancher:v2.5.15
 
+？在ingress创建过程中，创建了（serviceName: nginx-service，servicePort: 80）和（serviceName: tomcat-service，servicePort: 8080）两个映射
+   此处两个服务指定了不同的端口号，是为了避免两个个服务的pod实际部署到同一台主机节点上时端口冲突，但是如果要都使用80，是否可用反亲和性或者污点等功能处理？
+  
+？在rancher中界面创建ingress好像只能指定一个域名，然后通过不同路径区分？ 如果要通过子域名区分是不是只能通过rancher的yml配置？
 
-
+   
 
 ==========jeecg 服务编排 begin=============
 *基本思路：
@@ -301,6 +313,9 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
  2、进jeecg-boot/jeecg-server-cloud分别执行docker-compose -f .\docker-compose-base.yml up -d和docker-compose up -d 构建运行测试镜像
  3、执行批处理文件push-images.bat，具体内容如下
  4、编写k8s相关yaml文件，具体内容如下：
+ 注：k8s相关资源配置详见jeecg-boot-k8s.yml
+
+
 
 
 **********后端 push-images.bat begin****************
@@ -368,6 +383,30 @@ endlocal
    ！后来将system和gateway里应用的yml里的redis配置都改成192.168.8.31就都可以访问了 （注：要先启动system初始化路由再启动gateway）
   
 ==========jeecg 服务编排 end  =============
+
+==========jeecg 服务Rancher编排 begin=============
+*基本思路：
+ 0、自定义rancher主题（防偷窥）、将原有的k8s集群再扩展，否则资源可能不够用
+ 1、通过Rancher部署mysql、redis、es、kafka、jeecg-system集群
+ 2、通过Ranche将jeecg其它涉及中间件和服务部署为单机，并保证高可用
+ 3、对1中相关集群进行高可用，及并发性能测试。 es进行简历或公司数据处理搜索
+
+*思考问题：
+ ？mysql集群使用什么方案（主要测试应该是分库分表）、，是否要测试canal中间件
+    RadonDB MySQL Kubernetes是一种基于Kubernetes的分布式MySQL解决方案
+
+*具体步骤：
+   0、扩展k8s集群192.168.8.24/25/28/29/30/31 其中28master，另外27位Rancher服务
+   1、mysql基于原本的PV-PVC-HostPath部署两个分库、redis基于redis-cluster部署、es和kafka再学习部署、jeecg-system集群做hpa部署
+   2、其它中间件及服务随便部署
+
+? 通过rancher ui或rancher dashboard ui创建deployment时，会根据【网络模式】创建对应的service。
+  如【网络模式】= NodePort时则会创建对应的NodePort类型Service，而且还会创建一个CLusterIP类型的Service。所以它自动帮创建了2个service用于暴露服务。注意：用rancherui会比rancher dashboard创建更容易
+
+？发现通过kubeadm创建的k8s集群，再导入到rancher中，则在rancher中找不到可以添加新的主机节点的按钮。 
+  ！此时可以通过kubeadm join进行添加
+
+==========jeecg 服务Rancher编排 begin=============
 
 ========192.168.1.28 begin========
 TYPE="Ethernet"
@@ -450,5 +489,65 @@ GATEWAY="192.168.8.1"
 IPV6_PRIVACY="no"
 DNS1="192.168.1.13"
 
+
+================== rancher begin =======================
+*如果要多集群管理，Rancher版本要2.5+
+
+*在dockerhub里搜索Rancher时一些版本名称比较长的，通常是一些不稳定之类的版本
+
+*查看docker根目录，使用命令docker info可以看到Docker Root
+
+*用Rancher直接可以部署k8s集群，但是好像没有高可用性。 要实现高可用，要安装rancher一些组件
+
+*新版的k8s已经不支持docker了，而是containerD，实际上也是docker，只是换了个名字而已，只是不支持dockershim
+
+*rancher版本2.5.2-linux-amd64
+ k8s版本v1.19.15-rancher1-1
+ 默认网络驱动Canal（集成了flannel和calico）
+
+*运行rancher容器时，要把数据挂载出来
+
+？master都挂了 woker节点可以自动升级为master？
+
+
+*Rancher中文文档：https://docs.rancher.cn/
+
+*kube_config_rancher-cluster.yml ：集群的 kubeconfig 文件，它包含了访问集群的全部权限。如果 Rancher 出现故障，无法运行，您可以使用这个文件连接通过 Rancher 部署的 Kubernetes 集群（RKE 集群）。
+
+*您可以在单个节点或高可用的 Kubernetes 集群上安装 Rancher。由于单节点安装只适用于开发和测试环境，而且单节点和高可用集群之间无法进行数据迁移，所以我们建议您从一开始就使用高可用的 Kubernetes 集群来部署 Rancher Server，而且您需要分开部署运行 Rancher Server 的集群和运行自己业务的下游集群。
+
+*上游集群：指的是部署rancher server的集群，实现rancher的高可用和etcd数据持久化。对于这个集群建议每个节点都有所有角色，这样比较安全
+ 下游集群：指定就是我们业务应用的集群，受rancher控制。对于业务应用的集群，建议为每个节点使用单独的角色，这可以保证工作节点上的工作负载不会干扰 Kubernetes Master 或集群数据。
+
+*RKE等相关名词解释详见https://docs.rancher.cn/docs/rancher2/overview/glossary/_index  【名词解释】
+
+*针对 Rancher 2.4 的高可用部署，也将提供另外一种通过 K3s 集群安装 Rancher HA 的方法，从而大大简化部署 Rancher 高可用的流程。
+
+*流水线：使用 Rancher，您可以与 GitHub 等版本控制系统集成，以设置持续集成（CI）流水线。
+ 配置 Rancher 和 GitHub 等版本控制系统后，Rancher 将部署运行 Jenkins 的容器以自动化执行流水线：
+	构建镜像
+	验证镜像
+	部署镜像到集群
+	执行单元测试
+	执行回归测试
+
+*Rancher v2.3.0 可以使用 Windows Worker 节点，Windows Server 的节点必须使用 Docker 企业版。这是 Kubernetes 的限制。
+ Windows 节点只能用于工作节点。详情请参阅配置自定义 Windows 集群。
+
+*硬件要求：
+  具有worker角色的节点的硬件要求主要取决于您的工作负载。运行 Kubernetes 节点组件的最小值是 1 个 CPU（核心）和 1GB 内存。
+  关于 CPU 和内存，建议将不同平面的 Kubernetes 集群组件（etcd、controlplane 和 worker）托管在不同的节点上，以便它们可以彼此分开扩展。
+
+
+*配置 RKE 集群模板时，管理员具有以下权限：
+    决定用户可以修改的和不可修改的集群选项。
+    指定的用户是否可以与其他用户或和用户组共享 RKE 集群模板。
+    为不同的用户组创建 RKE 集群模板。
+*集群和模板之间存在多对一的关系，用户可以使用一个模板创建多个集群，而每个集群有且只有一个对应的模板。确认使用的模板后，无法修改。
+ 例如，“集群 A”是用户使用“模板 a”创建的，那么在编辑集群时，用户不能将集群 A”对应的“模板 a”，修  改为其他模板。管理员可以通过编辑集群模板的方式更新集群模板，应用该模板创建的集群就会自动适配新模板的参数。
+
+？定期执行下游集群备份怎么做？Kubernetes 使用 etcd 来存储其所有数据--从配置、状态和元数据。在灾难恢复的情况下，备份这些数据是至关重要的。
+？rancher中文网的《 Kubernetes 的 101 种安全最佳实践》文章不能访问，网上找下
+ ================== rancher end =======================
 
   
