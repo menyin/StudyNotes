@@ -182,7 +182,19 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 
 *deployment也是pod控制器，支持两种pod更新策略:`重建更新`和`滚动更新`。滚动更新杀一小部分就启动一部分，更新过程可能存在2个版本pod
 
+*StatefulSet是一种有状态的服务，通常用于部署有主从关系的应用集群（如mysql集群），理解详见csdn《k8s之StatefulSet详解》、blogs《k8s-StatefulSet控制器-十四》、简书《K8s部署Zookeeper集群》、csdn《k8s部署kafka集群》
+ 大致原理：有状态的服务即所有的pod是有序的，其存储也是有序的。  通过域名名称保证pod重启后内部ip改变后仍然是有序的，并且固定域名名称的存储对应到对应的固定有序的pv和pvc上。
+ pod的固定域名格式：<pod-name>.<svc-name>.<namespace>.svc.cluster.local
+ pod的固定名称格式：statefulset创建出来的pod 名称以<StatefulSet name>-<order>开始编号。
+ volumeClaimTemplates用于动态生成pvc，pvc名称格式：<volumeClaimTemplates.name>-<pod_name>
+ ？为什么要用无头服务(即clusterIP=none)。！因为StatefulSet的pod要通过固定的域名访问以保证每个pod的名称固定，而实际pod内部的ip地址是可变的，如果用ip来访问则保证不了pod是有序有状态的
+ ？那么为什么ip不能固定呢。！因为pod被调度到哪个主机节点其实是不确定的，那么ip就也不能固定了。
+ ？kafka集群搭建时需要指定zk集群（如：zookeeper.connect=node1.itcast.cn:2181,node2.itcast.cn:2181,node3.itcast.cn:2181），但是zk集群如果伸缩，那么zookeeper.connect怎么跟着动态变化。
+ Strimzi  https://blog.csdn.net/weixin_43632687/article/details/128330629
+ ？类似zk集群，如果派发到同一主机节点，那么zk暴露的端口号会不会冲突
 
+*PodDisruptionBudget（PDB）：PDB的工作原理是根据标签选择器选择要受其控制的Pod副本集，并根据指定的最小可用副本数来限制可以同时终止的Pod数量。如果终止Pod的操作将导致可用副本数低于PDB中指定的最小值，Kubernetes会拒绝终止操作，以确保足够的副本保持运行。 相当于一种保护措施，当同时终止的Pod数据少于或大于指定值，则k8s会拒绝报错。
+  
 *在k8s的ConfigMap创建配置中，"|+" 是 YAML 语法中的一个特殊标记，表示接下来的文本块将保留原始缩进和换行符。在这种情况下，它用于保留 redis.conf 配置文件中的原始格式。
   data.redis.conf: |+ 表示 redis.conf 的值将是一个多行字符串，并且会保留字符串中的缩进。这样做是为了确保在生成的 ConfigMap 中，redis.conf 的内容与原始文件中的内容保持一致。
   在这个例子中，redis.conf 的值是 requirepass 123456，并且保留了该行的缩进（通常为两个空格或四个空格）。
@@ -213,7 +225,9 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
   *pv和pvc存储类型和普通的nfs区别关系
     nfs就是一种目录共享的服务，对应“客户端pod”需要配置nfs类型的存储。 而CIFS、ClusterFS等也是目录共享服务，此时客户端如果用这些就要做不同类型的配置。
     为了让“客户端pod”开发者不用了解那么多的配置，PV和PVC就屏蔽了这些类型的目录共享服务。PV和PVC作为一种资源而存在，“客户端pod”只需要统一的配置即可。
+    注:当pv1和pvc1绑定了，则kubectl get pv 命令执行后可以看见pv1的claim列值是pvc1，即代表了她与pvc1绑定。 相反的kubectl get pvc执行后可以看见pvc1的volume列值是pv1。
   *configmap类型的存储支持动态更新，但是更新需要一定的时间。 
+ 
 
 *认证方式:
  k8s支持3种认证方式，可以同时配置，客户端只要通过其中一种认证，就可以相应的通信。  
@@ -234,6 +248,9 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 ？kubectl get pods ... 和kubectl get pod ...的区别。 运行了kubectl get pods和kubectl get pods 似乎没有什么区别
 
 ？Deployment和ReplicaSet的区别
+
+？kubectl run -it --image busybox busybox --rm /bin/sh
+   该命令的作用是在 Kubernetes 集群中创建一个基于 BusyBox 镜像的临时 Pod，并启动一个交互式的终端会话。
 
 ？docker集群的高可用
 
@@ -298,7 +315,13 @@ docker run -d --privileged -p 80:80 -p 443:443 -v /opt/data/rancher_data:/var/li
   
 ？在rancher中界面创建ingress好像只能指定一个域名，然后通过不同路径区分？ 如果要通过子域名区分是不是只能通过rancher的yml配置？
 
-   
+*k8s部署zookeeper详见简书《K8s部署Zookeeper集群》   https://www.jianshu.com/p/f0b0fc3d192f   参考文档https://www.cnblogs.com/yxh168/p/14251188.html
+ 关注点：原本手工部署时每个zk都需要指定myid和在 zoo.cfg里配置所有zk节点的信息（详见淘淘doc7），那么在k8s里是怎么去配置这些信息呢？详见上述简书收藏，注意“ZOO_SERVER_ID” 对应myid
+
+rancher创建k8s集群时设置私有镜像仓库
+仓库地址：registry.cn-hangzhou.aliyuncs.com
+用户名：845257580@qq.com
+密码：g....
 
 ==========jeecg 服务编排 begin=============
 *基本思路：
@@ -489,8 +512,10 @@ GATEWAY="192.168.8.1"
 IPV6_PRIVACY="no"
 DNS1="192.168.1.13"
 
-
+注意：你创建集群时，选择的角色如果只有 Control Plane, Etcd 的话，会一直等待 worker 节点加入才会开始创建集群
 ================== rancher begin =======================
+*rancher部署时，基础环境安装参考传智k8s教程资料文档（到k8s集群初始化部分之前即可）
+
 *如果要多集群管理，Rancher版本要2.5+
 
 *在dockerhub里搜索Rancher时一些版本名称比较长的，通常是一些不稳定之类的版本
@@ -546,8 +571,87 @@ DNS1="192.168.1.13"
 *集群和模板之间存在多对一的关系，用户可以使用一个模板创建多个集群，而每个集群有且只有一个对应的模板。确认使用的模板后，无法修改。
  例如，“集群 A”是用户使用“模板 a”创建的，那么在编辑集群时，用户不能将集群 A”对应的“模板 a”，修  改为其他模板。管理员可以通过编辑集群模板的方式更新集群模板，应用该模板创建的集群就会自动适配新模板的参数。
 
+*rancher中k8s集群的节点列表可以看到etcd和Control(即master)节点上有“node-role.kubernetes.io/etcd=true:NoExecute”和“node-role.kubernetes.io/controlplane=true:NoSchedule”污点标记
+
+*rancher中k8s集群的节点新增control节点时，会更新其它的work节点，此时work节点的状态并不是active
+
+*rancher部署k8s集群时最好提前规划好etcd、control、work节点的分布。否则后续更改角色，特别是多角色删减容易出问题，因为各种角色存储的状态信息在增删时都会有所同步。
+官方建议每种角色都分配在不同的节点上。  为了充分利用资源，可以将etcd和control分配到同一个节点上，因为这两个节点是不派发pod的，属于“运维节点”
+
+*rancher创建的k8s集群出错不可用时，不能进入集群部署应用。此时可以通过rancher里的集群“恢复”进行备份恢复（创建集群会自动备份，有需要可以自己备份）。
+ 可能也会导致部署的应用不能正常访问
+
+*k8s基础环境搭建时会启动一些docker容器，如kube-apiserver、kube-controller-manager、kube-scheduler、kube-proxy、pause、etcd、coredns以及（kubeadm、kubelet和kubectl）
+ 在k8s集群节点出问题时，停止删除掉上述容器之外的rancher-agent镜像删除既可
+
 ？定期执行下游集群备份怎么做？Kubernetes 使用 etcd 来存储其所有数据--从配置、状态和元数据。在灾难恢复的情况下，备份这些数据是至关重要的。
 ？rancher中文网的《 Kubernetes 的 101 种安全最佳实践》文章不能访问，网上找下
+
+?rancher创建k8s集群时，设置了私有镜像仓库，会导致出现节点创建各种失败（通过到节点主机上执行dockers logs进行查看错误日志）
+ 这个问题搞了好久，最终才发现是设置了阿里云私有镜像仓库
+
+？rancher上的命令行是在环境下（主机？目录？）
+
+？用rancher启动一个普通测试的nginx工作负载，一直访问不到9090
+  对于nginx镜像，默认端口是80，所以容器默认端口要80，我直接设置容器端口和外部端口是9090。 
+  所以一个镜像监控什么端口，容器就设置什么端口，一般不变，除非启动容器时设置相关的端口参数进行变更
+
+？rancher创建k8s集群后并且部署了应用（如nginx），要扩展k8s集群主机节点，但是找不到添加入口。
+   可以编辑k8s集群（随便改下名称），然后完成后就可以看到添加节点按钮了。
+
+
+？rancher上怎么让一个拥有control和worker和etcd角色的主机节点变成只有work角色？
+  在 Rancher 管理界面中，没有直接提供编辑节点角色的功能。在 Rancher 管理界面中，没有直接提供编辑节点角色的功能。可以按以下操作：
+  1、确保您有一个备份节点的数据的计划，以防需要还原到之前的状态。
+  2、从 Rancher 管理界面中移除该节点，即将其从集群中删除。
+  3、在该节点上，重置 Kubernetes 组件的配置。这将涉及删除现有的 Kubernetes 组件，并重新初始化该节点以仅担任 Worker 角色。
+       您可以使用适当的工具（如 kubeadm）来执行此操作。确保在进行这一步之前，已备份所需的数据和配置。
+       sudo systemctl stop kubelet
+       sudo systemctl stop docker
+       #删除 Kubernetes 组件的数据和配置文件。请确保在执行之前备份重要的数据。
+       sudo rm -rf /etc/kubernetes   
+       sudo rm -rf /var/lib/kubelet   如果删不掉，可用df -HT | grep '/var/lib/kubelet/pods'查看挂载信息，然后umount $(df -HT | grep '/var/lib/kubelet/pods' | awk '{print $7}') 就可以删除了
+       sudo rm -rf /var/lib/etcd
+       #删除容器运行时的相关容器
+       sudo docker rm -f $(sudo docker ps -aq)
+       #清除容器网络配置。
+       sudo ip link del cni0
+       sudo ip link del flannel.1
+       
+  4、在 Rancher 管理界面中重新添加该节点，并将其作为 Worker 节点加入到集群中。这样，该节点将以单个 Worker 角色重新加入集群。
+    特别注意：涉及k8s集群节点操作尽量走一步看一步，每个操作都要等整个集群状态正常后（active），再进行其它操作。 如添加注册节点也不要同时进行，一个个添加。
+
  ================== rancher end =======================
 
-  
+  To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.8.28:6443 --token 4vulew.kkongvbxsvokyl1a \
+    --discovery-token-ca-cert-hash sha256:bc7f7c2bb5aeaea5c30fd181c00ba3c3e3fc7a950f95028c25f8bf2d9b5d7751
+
+=========将k8s及docker等版本更换为别的版本 begin===============
+*如以下具体版本
+Rancher Version: 2.5.17
+Kubernetes Version: 1.20.15
+Docker version: 3:20.10.9-3.el7   yum安装docker时3:是epoch不需要加
+pause:3.2
+etcd:3.4.13-0
+coredns:1.7.0
+
+
+*在安装pause和etcd和coredns时，不知道和k8s相兼容版本怎么办？ 可以用kubeadm config images list
+
+
+
+=========将k8s及docker等版本更换为别的版本   end===============
+
+

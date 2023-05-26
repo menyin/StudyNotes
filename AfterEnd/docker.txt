@@ -36,6 +36,10 @@
  docker container exec -it f0b1c8ab3633 /bin/bash进入到doc容器中去，f0b1c8ab3633为指定容器的id。
  docker-compose up -d  这个命令使用非常类似于docker命令的使用，但是需要注意的是大部分的compose命令都需要到docker-compose.yml文件所在的目录下才能执行。
 		         docker-compse up可以完成按照依赖关系启动所有服务，然后使用docker-compose down轻松将其拆解。帮助我们更轻松地部署复杂的应用程序;
+
+ docker container stop $(docker container ls -aq)   # 停止所有容器
+ docker container rm $(docker container ls -aq)     # 删除所有容器
+
 *docker-compose详见简书《关于docker-Compose基本使用》，下载的时候可以切换下版本
  详见blogs《docker、docker compose、k8s的区别 》
 
