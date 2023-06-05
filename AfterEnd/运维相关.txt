@@ -73,8 +73,25 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
 
 ************************************** k8s end *************************************************
 ***********具体详情资料详见网盘，黑马课程《容器集群管理系统k8s从入门到精通》**********
+***********深入学习，见《完整版Kubernetes（K8S）全套入门+微服务实战项目》**********
 *k8s可以看做是一个资源调度操作的服务。在多台服务器中安装，然后进行统一管理。 
  这些服务器分为master节点和work节点，master负责调度，work负责实际资源的使用。 
+
+*deploment、replicaset、statefullset、service、ingress这几个是重点，也是经常用到的
+ 开发人员更多的是用各种控制器
+
+*helm是k8s的包管理工具，类似java的maven，前端的npm等
+ helm三个核心概念：
+     chart：它包含了创建一个应用所需要的deploment、service等资源信息。是一种资源
+     config：chart创建相关的配置信息
+     release：相当于chart的一个实例
+
+*每个k8s节点主机都会包含kubelet，kube-proxy，docker三个组件
+ 所有操作都会通过apiserver（相当于入口，resful接口），如命令行或rancher都是调用apiserver
+
+*推荐安装方式二进制方式，其次命令行安装
+
+
 
 *k8s资源管理方式：
    命令式对象管理：直接使用命令去操作kubernetes资源
@@ -182,19 +199,30 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 
 *deployment也是pod控制器，支持两种pod更新策略:`重建更新`和`滚动更新`。滚动更新杀一小部分就启动一部分，更新过程可能存在2个版本pod
 
-*StatefulSet是一种有状态的服务，通常用于部署有主从关系的应用集群（如mysql集群），理解详见csdn《k8s之StatefulSet详解》、blogs《k8s-StatefulSet控制器-十四》、简书《K8s部署Zookeeper集群》、csdn《k8s部署kafka集群》
+*服务分类：
+      有状态：会对本地环境产生依赖性（如：会存储数据到本地的redis应用，重启一个redis时它会从本地的持久化数据进行恢复数据）。如果是无状态服务会重建pod，则重建后的pod会面临IP已变、存储丢失、顺序错乱三个问题。
+                 IP已变：重建的IP变化了，则意味着要访问它就不能用它的IP，而是要用服务名等其它方式。 实践中一般用域名
+                 存储丢失：如一个集群的主pod数据挂载到一个固定地方，那么主pod重启后怎么保证他依然挂载到之前相同的地方
+                 顺序错乱：对于访问或者数据存储，pod是有顺序性的，如redis集群有主从之分，pod1代表主节点，pod2，pod3代表从节点。那么就要保证这个顺序性，让pod重启后还是映射到相同域名和数据存储卷
+      无状态：不会对本地环境产生依赖性（如：nginx集群、普通java微服务应用）。
+                  
+*StatefulSet是一种有状态的服务，通常用于部署有主从关系的应用集群（如mysql集群），理解详见csdn《k8s之StatefulSet详解》、blogs《k8s-StatefulSet控制器-十四》、（先看简书《k8s部署zookeeper集群》再看csdn《k8s部署kafka集群》，也可直接看腾讯云《k8s部署kafka集群「建议收藏」》https://cloud.tencent.com/developer/article/2091950 ）
  大致原理：有状态的服务即所有的pod是有序的，其存储也是有序的。  通过域名名称保证pod重启后内部ip改变后仍然是有序的，并且固定域名名称的存储对应到对应的固定有序的pv和pvc上。
  pod的固定域名格式：<pod-name>.<svc-name>.<namespace>.svc.cluster.local
  pod的固定名称格式：statefulset创建出来的pod 名称以<StatefulSet name>-<order>开始编号。
  volumeClaimTemplates用于动态生成pvc，pvc名称格式：<volumeClaimTemplates.name>-<pod_name>
+        请注意：PVC一定会自动创建，而创建 PV 是否自动创建取决于集群中是否有可用的动态存储类。如果没有动态存储类（即storageClasss），您需要手动创建 PV，并将其与 PVC 关联，以使其可用于 StatefulSet 中的 Pod。
  ？为什么要用无头服务(即clusterIP=none)。！因为StatefulSet的pod要通过固定的域名访问以保证每个pod的名称固定，而实际pod内部的ip地址是可变的，如果用ip来访问则保证不了pod是有序有状态的
  ？那么为什么ip不能固定呢。！因为pod被调度到哪个主机节点其实是不确定的，那么ip就也不能固定了。
  ？kafka集群搭建时需要指定zk集群（如：zookeeper.connect=node1.itcast.cn:2181,node2.itcast.cn:2181,node3.itcast.cn:2181），但是zk集群如果伸缩，那么zookeeper.connect怎么跟着动态变化。
  Strimzi  https://blog.csdn.net/weixin_43632687/article/details/128330629
  ？类似zk集群，如果派发到同一主机节点，那么zk暴露的端口号会不会冲突
 
+
 *PodDisruptionBudget（PDB）：PDB的工作原理是根据标签选择器选择要受其控制的Pod副本集，并根据指定的最小可用副本数来限制可以同时终止的Pod数量。如果终止Pod的操作将导致可用副本数低于PDB中指定的最小值，Kubernetes会拒绝终止操作，以确保足够的副本保持运行。 相当于一种保护措施，当同时终止的Pod数据少于或大于指定值，则k8s会拒绝报错。
-  
+
+*注意yml中的spec属性的意思是期望资源的状态，也就是最终状态可能不一致。  
+
 *在k8s的ConfigMap创建配置中，"|+" 是 YAML 语法中的一个特殊标记，表示接下来的文本块将保留原始缩进和换行符。在这种情况下，它用于保留 redis.conf 配置文件中的原始格式。
   data.redis.conf: |+ 表示 redis.conf 的值将是一个多行字符串，并且会保留字符串中的缩进。这样做是为了确保在生成的 ConfigMap 中，redis.conf 的内容与原始文件中的内容保持一致。
   在这个例子中，redis.conf 的值是 requirepass 123456，并且保留了该行的缩进（通常为两个空格或四个空格）。
@@ -323,6 +351,9 @@ rancher创建k8s集群时设置私有镜像仓库
 用户名：845257580@qq.com
 密码：g....
 
+*rancher上用RKE创建k8s集群时有一个是否启用【Nginx Ingress】选项，如果启动则会在全部可部署负载应用的主机（一般是worker节点）上装上Ingress相关的nginx并占用80端口，如果不想这样可以禁用。
+
+
 ==========jeecg 服务编排 begin=============
 *基本思路：
   1、用jeecg的docker-componse-base.yml进行所有应用镜像构建
@@ -428,6 +459,8 @@ endlocal
 
 ？发现通过kubeadm创建的k8s集群，再导入到rancher中，则在rancher中找不到可以添加新的主机节点的按钮。 
   ！此时可以通过kubeadm join进行添加
+
+？假如k8s主机有3台，但是一个微服务集群有4个，那么如何去部署？
 
 ==========jeecg 服务Rancher编排 begin=============
 
@@ -584,6 +617,13 @@ DNS1="192.168.1.13"
 *k8s基础环境搭建时会启动一些docker容器，如kube-apiserver、kube-controller-manager、kube-scheduler、kube-proxy、pause、etcd、coredns以及（kubeadm、kubelet和kubectl）
  在k8s集群节点出问题时，停止删除掉上述容器之外的rancher-agent镜像删除既可
 
+*rancher界面顶部有【命令行】，用于执行kubectl相关集群命令，原理：它不是连接到指定master主机而是将输入的kubectl命令发送至多个master主机中执行并将返回的结果显示出来
+ rancher RKE部署的k8s集群
+
+*rancher里怎么用helm部署应用：要到具体项目的命名空间中去，然后点击【应用商店】-【启动】
+ 除了helm以外，还可以添加其它的应用
+ 
+
 ？定期执行下游集群备份怎么做？Kubernetes 使用 etcd 来存储其所有数据--从配置、状态和元数据。在灾难恢复的情况下，备份这些数据是至关重要的。
 ？rancher中文网的《 Kubernetes 的 101 种安全最佳实践》文章不能访问，网上找下
 
@@ -651,7 +691,30 @@ coredns:1.7.0
 *在安装pause和etcd和coredns时，不知道和k8s相兼容版本怎么办？ 可以用kubeadm config images list
 
 
+docker run -d --privileged -p 80:80 -p 443:443 -v /opt/data/rancher_data:/var/lib/rancher --restart=always --name rancher-2.5.17 rancher/rancher:v2.5.17
 
+yum install --setopt=obsoletes=0 kubeadm-1.20.15 kubelet-1.20.15 kubectl-1.20.15 -y
+
+images=(
+    kube-apiserver:v1.20.15
+    kube-controller-manager:v1.20.15
+    kube-scheduler:v1.20.15
+    kube-proxy:v1.20.15
+    pause:3.2
+    etcd:3.4.13-0
+    coredns:1.7.0
+)
+for imageName in ${images[@]} ; do
+	docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/$imageName
+	docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/$imageName 		k8s.gcr.io/$imageName
+	docker rmi registry.cn-hangzhou.aliyuncs.com/google_containers/$imageName
+done
 =========将k8s及docker等版本更换为别的版本   end===============
 
+？linux的crontab命令使用
 
+*当主机节点被docker容器应用占用时，用netstat -anp | grep 80查看到的pid和应用名是这样的“10709/docker-proxy”
+
+cdh-1 80被占用
+cdh-7 80可用
+cdh-8 80要用
