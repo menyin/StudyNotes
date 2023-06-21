@@ -46,6 +46,11 @@
 
 
 ************************************** k8s beign *************************************************
+*一些k8s环境安装所需镜像地址：
+ registry.aliyuncs.com/google_containers/nginx-ingress-controller:0.30.0
+ registry. aliyuncs. com/doogie_containers/kude-proxy
+ registry.aliyuncs.com/google containers/kube-apiserver registry.aliyuncs.com google_containers kube-scheduler
+ registry.aliyuncs.com/google_containers/kube-controller-manager registry.aliyuncs.com/google containers/coredns registry.aliyuncs.com google_containers etcd
 
 Pod调度
 ​ 在默认情况下，一个Pod在哪个Node节点上运行，是由Scheduler组件采用相应的算法计算出来的，这个过程是不受人工控制的。但是在实际使用中，这并不满足的需求，因为很多情况下，我们想控制某些Pod到达某些节点上，那么应该怎么做呢？这就要求了解kubernetes对Pod的调度规则，kubernetes提供了四大类调度方式：
@@ -77,6 +82,10 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
 *k8s可以看做是一个资源调度操作的服务。在多台服务器中安装，然后进行统一管理。 
  这些服务器分为master节点和work节点，master负责调度，work负责实际资源的使用。 
 
+*windows也可以安装kubectl.exe来连接管理k8s集群，详见：
+https://kubernetes.io/zh-cn/docs/tasks/tools/install-kubectl-windows/
+https://www.syrr.cn/news/66775.html?action=onClick
+
 *deploment、replicaset、statefullset、service、ingress这几个是重点，也是经常用到的
  开发人员更多的是用各种控制器
 
@@ -85,6 +94,74 @@ kubeadm join 192.168.1.200:6443 --token nq38zt.hmtzx4m4zl49blll \
      chart：它包含了创建一个应用所需要的deploment、service等资源信息。是一种资源
      config：chart创建相关的配置信息
      release：相当于chart的一个实例
+ 注意：helm命令要求kubectl能用，rancher的RKE创建的k8s集群的主机用kubectl时会出问题，可在rancher上找kubeconfig文件内容复制到~/.kube/config文件里即可（（注意添加权限 chmod 600 /root/.kube/config））
+ 仓库添加：有些教程的阿里云等仓库地址有误，可参考csdn《国内helm快速安装和添加常用charts仓库》
+ 常用命令：
+     helm repo list 查询已添加的仓库
+     helm repo add bitnami https://charts.bitnami.com/bitnami    为helm添加仓库 
+     helm  search repo redis 查询应用仓库（此处是redis）
+     helm search repo bitnami/kafka --versions  可以查看chart版本和kafka版本号对应关系
+     helm show chart bitnami/kafka --version 3.4.1  可以查看kafka3.4.1版本对应chart版本
+     helm show values test-repo/tomcat 查询应用chart的使用手册
+ 特别注意：在rancher中RancherUI的【catalog应用商店】 对应 ClusterExplorer仪表盘的【Apps & Marketplace应用市场】（Apps & Marketplace在左上角比较隐秘），很别扭，
+                而且两者的已添加chart仓库（或者应用商店）的列表居然不一致，导致查找kafka应用时，搜出的结果不一样。  
+                在应用商店搜索出来kafka应用bitnami/schema-registry和bitnami/kafka  前者可以正常安装，但是后者却怎么也安装不了
+ 特别注意：要升级在Rancher的应用商店里已安装的APP时，只能点击升级按钮，并不能添加一些升级命令携带的参数，如升级redis时，需传递密码参数，但是却无法添加，所以就会报错。
+                helm upgrade --history-max=5 --install=true --namespace=redisc --timeout=10m0s --values=/home/shell/helm/values-redis-cluster-8.6.2.yaml --version=8.6.2 --wait=true redisc0 /home/shell/helm/redis-cluster-8.6.2.tgz 
+                解决方案：helm命令行参数可以通过--set password=sdew  进行设置，也可以再values.yaml进行配置。两者可能最后都是变成命令行参数，而--set优先级更高
+
+*redis集群搭建：
+   bitnamicharts/redis  只可一主多从，从节点可配置
+   bitnamicharts/redis-cluster 可多主多从，都可配置。 主要要看readme.md文档。 发现要配置password、cluster.update.addNodes、cluster.update.currentNumberOfNodes、cluster.nodes（似乎还要设置cluster.init=false）
+   实践心得：
+        *rancher界面反馈的一些资源的状态并不是很可靠，比如应用市场扩容redis集群时，已经从6节点扩容到8节点，但是rancher已安装APP里查看redis集群还是6。到pods资源界面发现都成功了。 用kubectl查看也是8个正常状态
+         因此当rancher报错或者状态不正常时，用kubectl describe|logs等命令再次确认好，因为rancher反馈的资源状态会比较慢或者不全。
+        *rancher新旧管理界面分别有应用商店和应用市场两个类似但不完全一致的概念，初始状态下两个模块里的应用仓库列表不一样。 两者操作界面不一样，一般使用新界面的应用市场安装应用。
+        *rancher应用市场装应用实际也是执行helm命令，而没法传递命令行参数（用--set ），实际上values.yaml的配置最后也是变成helm执行的参数运行，所以可在values.yaml里直接加。但不同应用参数需要看readme.md等文档
+        *rancher或helm里查看应用是不是同一个应用，第一看应用所在仓库，第二看应用chart版本
+ 注意：
+     *helm查找到的chart包只是开发者们整理的一系列yaml配置，以便我们按模板启动k8s容器。相同应用可能有多个chart，具体用哪个仓库的chart就要去了解。 
+      如kafka有三个chart：wurstmeister/kafka、confluentinc/cp-kafka 和 bitnami/kafka。 其中confluentinc/cp-kafka是比较完备的方案
+     *在rancher中添加应用商店类似于helm添加仓库，但应该说它比helm仓库要多一层“包装”。 如要查找bitnami/kafka，则需要添加应用商店，URL为https://charts.bitnami.com/bitnam
+      如果上述URL添加出问题或启动应用出问题，可以换https://github.com/bitnami/charts.git，并且分支改成main而不是master，具体到github对应仓库查看版本（应该是要用github仓库才行）
+
+
+？查找redis的chart有两个，应该用哪个？bitnami/redis-cluster和bitnami/redis有什么区别？
+   bitnami/redis-cluster是集群，支持分片，高可用等
+   bitnami/redis只是单机，可以设置从节点做冗余备份，即主从节点。
+
+*Rancher UI中的应用商店和Cluster Explorer中的Chart仓库是两个不同的概念，它们提供了不同的功能和用途。
+ *应用商店（App Store）：
+   Rancher UI中的应用商店提供了一种简化的方式来浏览、部署和管理预定义的应用程序。应用商店通常包含经过验证和打包的应用程序图表，可以轻松地通过界面进行部署。您可以在应用商店中选择所需的应用程序，配置相关参数，并将其部署到您的集群中。Rancher提供了一些默认的应用商店，您还可以根据需要添加自定义的应用商店。
+ *Chart仓库（Chart Repository）：
+  Cluster Explorer中的Chart仓库是基于Helm的概念，用于管理和共享Helm Chart。Chart仓库是存储Helm Chart的位置，它可以是本地或远程的存储库。您可以添加多个Chart仓库，然后通过Cluster Explorer浏览、搜索和安装可用的  Chart。Chart仓库中的Chart通常由社区或第三方提供，您可以通过Chart仓库获得更多的Chart选项。
+ *总结来说，应用商店提供了一种更加集成和简化的方式来浏览和部署预定义的应用程序，而Chart仓库则更加注重于Helm Chart的管理和共享，使您能够访问更广泛的Chart选项。您可以根据具体需求选择使用应用商店或Chart仓库来部署和管理应用程序。
+
+*为什么会出现以下报错的情况，RuncherUI里的Catalog和Cluster Explorer里的Apps & Marketplace不是一样的概念吗？
+  A chart repository is a Helm repository or Rancher's git based application catalog. It provides the list of available charts in the cluster.
+  因为Catalog 和 Apps & Marketplace 在 Rancher 中是不同的概念：
+  Catalog：Catalog 是 Rancher 的内置功能，它是基于 Git 的应用程序目录，用于存储和管理应用程序模板（charts）。Catalog 中包含了一系列预定义的应用程序模板，可以通过 Rancher UI 或命令行来使用。用户可以从 Catalog 中选择适用的应用程序模板进行部署。
+  Apps & Marketplace：Apps & Marketplace 是 Rancher Cluster Explorer 中的功能。它是基于 Rancher 的 Chart 仓库，提供了可用 charts 的列表。用户可以在 Apps & Marketplace 中查找并安装不同的 charts，包括 Helm charts 和 Rancher App templates。这些 charts 可以来自于 Rancher 的内置 Chart 仓库，也可以是用户自定义的 Chart 仓库。
+  所以，虽然两者都提供了应用程序模板（charts）的功能，但是 Catalog 是 Rancher 特定的功能，而 Apps & Marketplace 则是 Cluster Explorer 中的一个界面，可以展示不同的 Chart 仓库中的 charts。
+  个人感觉建议使用Apps & Marketplace 
+
+
+
+？注意不管是Catalog或 安装集群类的应用，有时候会安装不起来 pending状态，报以下类似错误。大多数是PVC和PV的问题
+  StatefulSet is not ready: redisc/redisc-redis-cluster. 0 out of 6 expected pods are ready
+
+
+Regenerate response
+
+
+
+
+
+
+
+
+*confluentinc/cp-kafka大致原理详见腾讯云开发者社区《Schema Registry在Kafka中的实践》 https://cloud.tencent.com/developer/article/2192136
+ 大概就是增加了消息体的schema规约注册维护
 
 *每个k8s节点主机都会包含kubelet，kube-proxy，docker三个组件
  所有操作都会通过apiserver（相当于入口，resful接口），如命令行或rancher都是调用apiserver
@@ -202,16 +279,18 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 *服务分类：
       有状态：会对本地环境产生依赖性（如：会存储数据到本地的redis应用，重启一个redis时它会从本地的持久化数据进行恢复数据）。如果是无状态服务会重建pod，则重建后的pod会面临IP已变、存储丢失、顺序错乱三个问题。
                  IP已变：重建的IP变化了，则意味着要访问它就不能用它的IP，而是要用服务名等其它方式。 实践中一般用域名
-                 存储丢失：如一个集群的主pod数据挂载到一个固定地方，那么主pod重启后怎么保证他依然挂载到之前相同的地方
+                 存储丢失：如一个集群的主pod数据挂载到一个固定地方，那么主pod重启后怎么保证他依然挂载到之前相同的地方。PVC指定SC，SC动态创建PV并与PVC关联绑定。
                  顺序错乱：对于访问或者数据存储，pod是有顺序性的，如redis集群有主从之分，pod1代表主节点，pod2，pod3代表从节点。那么就要保证这个顺序性，让pod重启后还是映射到相同域名和数据存储卷
       无状态：不会对本地环境产生依赖性（如：nginx集群、普通java微服务应用）。
                   
 *StatefulSet是一种有状态的服务，通常用于部署有主从关系的应用集群（如mysql集群），理解详见csdn《k8s之StatefulSet详解》、blogs《k8s-StatefulSet控制器-十四》、（先看简书《k8s部署zookeeper集群》再看csdn《k8s部署kafka集群》，也可直接看腾讯云《k8s部署kafka集群「建议收藏」》https://cloud.tencent.com/developer/article/2091950 ）
  大致原理：有状态的服务即所有的pod是有序的，其存储也是有序的。  通过域名名称保证pod重启后内部ip改变后仍然是有序的，并且固定域名名称的存储对应到对应的固定有序的pv和pvc上。
- pod的固定域名格式：<pod-name>.<svc-name>.<namespace>.svc.cluster.local
+ pod的固定域名格式：<pod-name>.<svc-name>.<namespace>.svc.cluster.local  注意这只能是内网访问。 
  pod的固定名称格式：statefulset创建出来的pod 名称以<StatefulSet name>-<order>开始编号。
  volumeClaimTemplates用于动态生成pvc，pvc名称格式：<volumeClaimTemplates.name>-<pod_name>
         请注意：PVC一定会自动创建，而创建 PV 是否自动创建取决于集群中是否有可用的动态存储类。如果没有动态存储类（即storageClasss），您需要手动创建 PV，并将其与 PVC 关联，以使其可用于 StatefulSet 中的 Pod。
+                    storageClasss要绑定一个制备器Provisioner，它就是一个PV的制造机，不同的PV有不同的制备器Provisioner。在Rancher ClusterExplorer中可以查找nfs的制备器来安装。
+                   注意逻辑：StatefulSet动态生成PVC需要SC，SC需要动态制备PV的制备器Provisioner，自定义的NFS制备器Provisioner以Deploment形式启动，启动时要求先在NFS所在主机上安装启动NFS服务并配置挂载目录权限（详见黑马k8文档）
  ？为什么要用无头服务(即clusterIP=none)。！因为StatefulSet的pod要通过固定的域名访问以保证每个pod的名称固定，而实际pod内部的ip地址是可变的，如果用ip来访问则保证不了pod是有序有状态的
  ？那么为什么ip不能固定呢。！因为pod被调度到哪个主机节点其实是不确定的，那么ip就也不能固定了。
  ？kafka集群搭建时需要指定zk集群（如：zookeeper.connect=node1.itcast.cn:2181,node2.itcast.cn:2181,node3.itcast.cn:2181），但是zk集群如果伸缩，那么zookeeper.connect怎么跟着动态变化。
@@ -220,6 +299,41 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
 
 
 *PodDisruptionBudget（PDB）：PDB的工作原理是根据标签选择器选择要受其控制的Pod副本集，并根据指定的最小可用副本数来限制可以同时终止的Pod数量。如果终止Pod的操作将导致可用副本数低于PDB中指定的最小值，Kubernetes会拒绝终止操作，以确保足够的副本保持运行。 相当于一种保护措施，当同时终止的Pod数据少于或大于指定值，则k8s会拒绝报错。
+
+*上述HeadLiness的service形成的<pod-name>.<svc-name>.<namespace>.svc.cluster.local 格式域名适用于内网访问。
+ 而如果要外网访问（ 实际经过测试，压根就不行。），结合ingress构造的域名则访问URL如下（其中example.com是ingress资源yaml配置的host，而pod0为HeadLiness类型service对应的多个pod的其中之一）：
+ http://example.com/pod0  
+ http://example.com/pod0.my-service.my-namespace.svc.cluster.local  
+ ？？场景：k8s集群在192.168.8.xx，本地电脑在192.168.1.27。k8s集群上用helm部署了redis集群（有状态的，3主3从）
+       问题：本地电脑上的代码怎么连接到redis集群？  jedis客户端连接其中一台如果产生重定向，会返回目标redis节点pod的内部地址而不是外部地址，这时候jedis再拿这个内部地址是请求不到redis节点pod的
+       思路：看用Loadbalance类型的service是否能解决这个需求。
+
+*有个k8s集群和java应用属于同一个局域网，但是Java应用没有部署在k8s集群里面。那么Java应用能通过ClusterIP类型的Service暴露的内部ip访问到k8s里面的pod吗？!是可以的
+ 同上述场景，那么Java应用能通过HeadLiness的service形成的<pod-name>.<svc-name>.<namespace>.svc.cluster.local 格式域名访问到k8s集群里的pod吗？!不可以
+ ********* 最后解决方案：k8s本地联调工具KtConnect   详见简书《k8s本地联调工具kt-connect》或 https://alibaba.github.io/kt-connect/#/zh-cn/guide/quickstart *********
+
+ ？如果出现以上报错的话，有可能是kt-connect路由BUG，可能本地电脑的路由与新加的通往API Server的路由有冲突，增加参数--excludeIps 10.0.8.101/32即可，如果网段冲突比较多，可以扩大网段范围，例如--excludeIps    10.0.8.0/24 参考 issue-302 。
+    Failed to setup port forward local:28344 -> pod kt-connect-shadow-gseak:53 error="error upgrading connection: error sending request: Post " https://10.0.8.101:8443/api/v1/namespaces/feature-N/pods/kt-connect-shadow-gseak/portforward ": dial tcp 10.0.8.101:8443: connectex: A socket operation was attempted to an unreachable host."，
+
+
+作者：欢醉
+链接：https://www.jianshu.com/p/82c84289fb6d
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+redis2-redis-cluster-0.redis2-redis-cluster-headless.redisc.svc.cluster.local
+tomcat-deployment-7db86c59b7-vbc7s.tomcat-service.test.svc.cluster.local
+tomcat-deployment-7db86c59b7-vbc7s.tomcat-service.test.svc.cluster.local
+
+*NodePort类型Service资源中，spec.ports.port、spec.ports.nodePort两者似乎没什么区别？
+  spec.ports.port：它是 Service 对外公开的端口号，用于接收来自其他服务或外部客户端的流量。这个端口是 Service 在集群内部使用的端口，用于提供服务，并在 Service 的规范中定义。
+  spec.ports.nodePort：它是将 Service 的端口映射到集群节点上的端口。当 Service 类型为 NodePort 或 LoadBalancer 时，Kubernetes 集群中每个节点都会监听指定的 nodePort。它提供了一种在集群外部访问 Service 的方式。
+ 所以，它们的区别在于：
+ port 是 Service 内部使用的端口，用于 Service 和后端 Pod 之间的通信。
+ nodePort 是用于从集群外部访问 Service 的端口，将外部流量转发到 Service 的端口上。
+ 总的来说，spec.ports.port 是在集群内部使用的端口，而 spec.ports.nodePort 是在集群外部访问的端口。
+
+
 
 *注意yml中的spec属性的意思是期望资源的状态，也就是最终状态可能不一致。  
 
@@ -261,7 +375,8 @@ redis-fb6bfcfdd-28qm2   2m           10Mi
  k8s支持3种认证方式，可以同时配置，客户端只要通过其中一种认证，就可以相应的通信。  
 
 *k8s集群配置文件默认在/.kube/config，通过此配置信息，Jenkins等持续集成应用可以连接到k8s集群
-
+ 当rancher创建的k8s集群的master主机上的kubectl无法正常使用时，可以到rancher具体集群上复制kubeconfig文件内容保存到主机的~/.kube/config （注意添加权限 chmod 600 /root/.kube/config）
+ 
 ？dockerfile和arges
 
 ？k8s集群工作节点添加已经会了，那么如何集群中的工作节点或主节点？
@@ -340,7 +455,10 @@ docker run -d --privileged -p 80:80 -p 443:443 -v /opt/data/rancher_data:/var/li
 
 ？在ingress创建过程中，创建了（serviceName: nginx-service，servicePort: 80）和（serviceName: tomcat-service，servicePort: 8080）两个映射
    此处两个服务指定了不同的端口号，是为了避免两个个服务的pod实际部署到同一台主机节点上时端口冲突，但是如果要都使用80，是否可用反亲和性或者污点等功能处理？
-  
+ 
+*注意ingress资源使用时要注意：如果nginx-ingress-controller安装时会产生一个nginx应用（即ingress-nginx），如果默认端口不是80，则到时候创建ingress资源后，访问的域名后面要加端口号，如：tomcat.itheima.com:32240
+ 
+
 ？在rancher中界面创建ingress好像只能指定一个域名，然后通过不同路径区分？ 如果要通过子域名区分是不是只能通过rancher的yml配置？
 
 *k8s部署zookeeper详见简书《K8s部署Zookeeper集群》   https://www.jianshu.com/p/f0b0fc3d192f   参考文档https://www.cnblogs.com/yxh168/p/14251188.html
@@ -619,6 +737,7 @@ DNS1="192.168.1.13"
 
 *rancher界面顶部有【命令行】，用于执行kubectl相关集群命令，原理：它不是连接到指定master主机而是将输入的kubectl命令发送至多个master主机中执行并将返回的结果显示出来
  rancher RKE部署的k8s集群
+ 注意：在 Rancher 的命令行界面中helm基本上是不可用的，只能到应用商店中去操作。 或者在rancher所在的主机上安装helm工具，在主机上执行命令。
 
 *rancher里怎么用helm部署应用：要到具体项目的命名空间中去，然后点击【应用商店】-【启动】
  除了helm以外，还可以添加其它的应用
@@ -718,3 +837,14 @@ done
 cdh-1 80被占用
 cdh-7 80可用
 cdh-8 80要用
+？一般类似kafka等集群部署后怎么去访问
+？创建k8s集群时ingress没有初始化是否会影响kafka集群的暴露
+
+？rancher里用helm安装kafka，操作配置界面上为什么更改不了kafka版本？
+  在Rancher中使用Helm安装Kafka时，操作配置界面上可能无法更改Kafka版本是因为该Helm Chart固定了Kafka版本，并在配置界面上禁用了版本更改选项。这是由于Helm Chart的作者在创建Chart时选择了特定的Kafka版本，并将其固定在Chart的配置中。  可以自定义helm或者直接用helm命令工具（？在rancher上的命令行界面能否操作？）
+  
+ ？在redis或kafka等集群下，通常都是一个Headliness类型service对应多个应用pod，而service负责暴露应用给k8s集群内部其它应用连接，但却无法暴露到k8s集群外部或外网。 
+    那么实际上开发者在开发电脑上做本地程序时，是如何连接到这些集群的具体pod节点，因为通常连接客户端自己做重定向或负载均衡。
+
+
+https://github.com/helm/charts/tree/master/stable/kafka-manager
