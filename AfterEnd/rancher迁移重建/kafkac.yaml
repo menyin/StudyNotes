@@ -1,0 +1,73 @@
+cp-control-center:
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-enterprise-control-center
+  imagePullSecrets: null
+  imageTag: 5.2.0
+  resources: {}
+cp-kafka:
+  brokers: 3
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-kafka
+  imagePullSecrets: null
+  imageTag: 5.3.0
+  persistence:
+    disksPerBroker: 1
+    enabled: true
+    size: 5Gi
+    storageClass: managed-nfs-storage
+  resources: {}
+  replicas: 3
+cp-kafka-connect:
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-kafka-connect
+  imagePullSecrets: null
+  imageTag: 5.3.0
+  resources: {}
+cp-kafka-rest:
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-kafka-rest
+  imagePullSecrets: null
+  imageTag: 5.3.0
+  resources: {}
+cp-ksql-server:
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-ksql-server
+  imagePullSecrets: null
+  imageTag: 5.3.0
+  ksql:
+    headless: false
+cp-schema-registry:
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-schema-registry
+  imagePullSecrets: null
+  imageTag: 5.3.0
+  resources: {}
+cp-zookeeper:
+  enabled: true
+  heapOptions: '-Xms512M -Xmx512M'
+  image: ranchercharts/confluentinc-cp-zookeeper
+  imagePullSecrets: null
+  imageTag: 5.3.0
+  persistence:
+    dataDirSize: 10Gi
+    dataLogDirSize: 10Gi
+    enabled: true
+    dataDirStorageClass: managed-nfs-storage
+    dataLogDirStorageClass: managed-nfs-storage
+  resources: {}
+  servers: 3
+global:
+  enterprise: false
+kafka-topics-ui:
+  enabled: true
+  image:
+    pullPolicy: IfNotPresent
+    repository: ranchercharts/landoop-kafka-topics-ui
+    tag: latest
+  replicas: 1
