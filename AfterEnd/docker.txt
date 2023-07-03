@@ -143,6 +143,11 @@ dockerDesktop原本的resources配置：C:\Users\Administrator\AppData\Local\Docker\ws
 ？怎么使用以下docker-compose命令push到远程仓库
    docker-compose push [options] [SERVICE...]
 
+？docker容器统一的日志文件在哪里
+   原生的目录：/var/lib/docker/containers/ID/ID-json.log
+   软连接目录：/var/log/docker/containers/ID/ID-json.log
+
+
 ****************************
 
 
