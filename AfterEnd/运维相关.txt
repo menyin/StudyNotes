@@ -52,6 +52,14 @@
  registry.aliyuncs.com/google containers/kube-apiserver registry.aliyuncs.com google_containers kube-scheduler
  registry.aliyuncs.com/google_containers/kube-controller-manager registry.aliyuncs.com/google containers/coredns registry.aliyuncs.com google_containers etcd
 
+*kubectl常用命令：
+ kubectl config view查看k8s集群配置
+ kubectl logs podID -n nsName 查看pod运行日志，用于查找定位问题
+ kubectl get ns 查看所有名称空间
+ kubectl get pod -n nsName 查看指定名称空间下的pod
+ kubectl get all -n nsName 查看指定名称空间下的所有资源
+ kubectl describe resou 查看指定资源的状态信息
+
 Pod调度
 ​ 在默认情况下，一个Pod在哪个Node节点上运行，是由Scheduler组件采用相应的算法计算出来的，这个过程是不受人工控制的。但是在实际使用中，这并不满足的需求，因为很多情况下，我们想控制某些Pod到达某些节点上，那么应该怎么做呢？这就要求了解kubernetes对Pod的调度规则，kubernetes提供了四大类调度方式：
 
@@ -765,14 +773,15 @@ DNS1="192.168.1.13"
   2、从 Rancher 管理界面中移除该节点，即将其从集群中删除。
   3、在该节点上，重置 Kubernetes 组件的配置。这将涉及删除现有的 Kubernetes 组件，并重新初始化该节点以仅担任 Worker 角色。
        您可以使用适当的工具（如 kubeadm）来执行此操作。确保在进行这一步之前，已备份所需的数据和配置。
+       #删除容器运行时的相关容器
+       sudo docker rm -f $(sudo docker ps -aq)
        sudo systemctl stop kubelet
-       sudo systemctl stop docker
+       sudo systemctl stop docker  如果停止不了可以再执行sudo systemctl stop docker.socket和sudo systemctl stop docker.service，让其完全停止
        #删除 Kubernetes 组件的数据和配置文件。请确保在执行之前备份重要的数据。
        sudo rm -rf /etc/kubernetes   
        sudo rm -rf /var/lib/kubelet   如果删不掉，可用df -HT | grep '/var/lib/kubelet/pods'查看挂载信息，然后umount $(df -HT | grep '/var/lib/kubelet/pods' | awk '{print $7}') 就可以删除了
        sudo rm -rf /var/lib/etcd
-       #删除容器运行时的相关容器
-       sudo docker rm -f $(sudo docker ps -aq)
+       
        #清除容器网络配置。
        sudo ip link del cni0
        sudo ip link del flannel.1
@@ -811,6 +820,7 @@ coredns:1.7.0
 
 
 docker run -d --privileged -p 80:80 -p 443:443 -v /opt/data/rancher_data:/var/lib/rancher --restart=always --name rancher-2.5.17 rancher/rancher:v2.5.17
+docker run -d --privileged -p 80:80 -p 443:443 -v /opt/data/rancher_data:/var/lib/rancher --restart=always --name rancher-2.5.17 rancher/rancher:v2.5.17 --entrypoint /usr/bin/entrypoint.sh
 
 yum install --setopt=obsoletes=0 kubeadm-1.20.15 kubelet-1.20.15 kubectl-1.20.15 -y
 
@@ -846,5 +856,6 @@ cdh-8 80要用
  ？在redis或kafka等集群下，通常都是一个Headliness类型service对应多个应用pod，而service负责暴露应用给k8s集群内部其它应用连接，但却无法暴露到k8s集群外部或外网。 
     那么实际上开发者在开发电脑上做本地程序时，是如何连接到这些集群的具体pod节点，因为通常连接客户端自己做重定向或负载均衡。
 
+？遇到启动rancher时，docker logs rancherId查看时报“exec /usr/bin/entrypoint.sh: no such file or directory”相关错误
 
 https://github.com/helm/charts/tree/master/stable/kafka-manager
