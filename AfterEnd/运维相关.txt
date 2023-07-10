@@ -13,6 +13,8 @@
 ？家庭宽带申请的公网ip和企业宽带公网ip有什么区别
   https://m.163.com/dy/article/HF54ASC10538U2BB.html
 
+？详见csdn《不同云厂商云主机实现内网互通解决方案》
+
 *梯子：
  一元机场 https://xn--4gq62f52gdss.com/#/register?code=NaPksl5S  账号：845257580@qq.com
  Omega https://mymonocloud.com/   注册账号：845257580@qq.com，登录账号fanyinyumeng
