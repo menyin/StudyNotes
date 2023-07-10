@@ -70,3 +70,12 @@
 *注意nginx.conf配置反向代理后有时候没有生效，是因为浏览器可能有缓存，可以清除缓存或者换个浏览器
  如：https 配置后，又增加转发geteway，会出现没有生效。 
        此时整体过程是：请求转发到https配置处理，再到gatewayserver，再进行谓词过滤转发
+
+
+*在nginx上配置跨域时，一般根据网上资料进行如下设置：
+ Access-Control-Allow-Origin: * // 允许所有域进行跨域请求
+ Access-Control-Allow-Methods: GET, POST, PUT, DELETE // 允许的请求方法，另外可以设置OPTIONS，如果简单可以设置为*
+ Access-Control-Allow-Headers: Content-Type // 允许的头部信息，如果简单可设置为*
+ 以上设置如果不行，有可能是请求中带有cookie，对于有cookie的web要设置跨域还要设置 Access-Control-Allow-Credentials: true
+ 特别注意：Access-Control-Allow-Credentials值为true时，Access-Control-Allow-Origin必须有明确的值，不能是通配符（*)
+
