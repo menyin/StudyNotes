@@ -55,6 +55,26 @@
 
  "match"是全文检索（如搜索“小华”，则可能拆成“小”和“华”分别进行搜索），而"match_phrase"是完全匹配，不会拆词。
 
+*在Kibana上常用查询语句：
+GET /_cat/indices?v  //查询所有索引信息
+
+POST kibana_sample_data_flights/_count  //查询kibana_sample_data_flights索引的总文档数
+
+GET kibana_sample_data_flights/_mapping //查询kibana_sample_data_flights索引的文档结构
+
+POST kibana_sample_data_flights/_search //查询kibana_sample_data_flights索引的文档
+
+GET kibana_sample_data_flights/_search  //带参数查询kibana_sample_data_flights索引的文档
+{
+	"aggs":{
+		"DestCountry_group":{
+			"terms":{
+				"field":"DestCountry"
+			}
+		}
+	},
+    "size":0
+}
 
  
 *ES查询可以做普通的条件查询、范围查询、排序、分页、聚合查询等
@@ -145,16 +165,55 @@ schema                mapping
   主分片不行（副本可以），如果索引创建要调整分片数一般实践是先备份当前索引数据，然后创建新的索引并调节分片数，然后导入备份数据。
   具体实践：通过ES相关的restfulAPI进行数据备份、reindex等操作。最后可以通过查看新旧索引的文档数是否一致来判断迁移是否完成
 
+ELK
+  *ElasticSearch 搜索引擎
+  *Logstash 做数据清洗、转换、收集（资源耗费大），使用时主要是对config文件下的logstash**.conf文件进行操作，在其中完成数据的收集、解析和输出的操作。
+  *Kibana 提供DevTools、可视化、安全/监控、？企业搜索（此部分待学习）等功能
+  *Filebeat 轻量级数据收集组件，解决了Logstash资源耗费大的问题，使用时也Logstash类似需要进行相应的输入输出配置
 
-*Kibana
+*注意：ES是比较消耗资源的，所以并不建议放在k8s里面。 当然如果有单独的k8s主机节点可以部署ES也是可以的。 
+
+********* Kibana begin *******
+ *学习资料：bilibli《【强推】非常炫酷的Kibana 可视化，半小时你也可以搞...》
+ *官方文档 https://www.elastic.co/guide/cn/kibana/current/introduction.html
+ *ELK架构的演变可看csdn《ELK介绍》
+  ELK总体介绍详见csdn《Logstash：Logstash 入门教程 （一）》
+ *相关概念：
+   Index Patterns：索引模式，即相关应用（如图表）从哪些索引查询获取数据，例如：logs-* 是从匹配该模式的索引中查询获取数据。  在Visualize Library中的组件控件就可以设置它数据来源的索引模式（即从哪些索引查询数据）
+                           注意：创建索引模式时可以与时间字段想关联，关联后则在【Discover】里选择改索引模式，会有一个时间筛选工具可供使用
+   KQL：Kibana中提供的查询语法，只支持简单查询。并没有类似ES的lunces的分词搜索功能
+ *功能模块：
+   Discover 汉化后名称为“数据探索”，可以进行一些查询并将结果保存（类似mysql视图）  ？但是在哪里用呢
+   Dashboard 可以创建管理Dashboard实例，即一个数据展示的仪表盘，里面可以创建或引入不同的数据图表控件，组成一个大的看板。
+   Visualize Library 可以创建管理组件控件实例，包含了许多类型的数据图表组件控件的库
+   注意：当你点击左侧Dashboard菜单时，一般默认进入创建/搜索页面，但有时候会直接进入到上次编辑的Dashboard实例页面中，此时可以多点击几次左侧的Dashboard菜单就可以进入创建/搜索页面
+
  使用Kibana的devTools会比elasticsearch-head更好用，有自动完成等功能
- 主要功能划分：DevTools、可视化、安全/监控
+ 主要功能划分：DevTools、可视化、安全/监控、？企业搜索（此部分待学习）
  整体使用逻辑：左侧主菜单包含了Kibana所有应用的形式。 在【Discover】菜单里可以导入数据（比如weblog），然后根据这些数据你可以创建Dashboard、Canvas、Map等不同的应用形式。
                       如要创建数据的Dashboard时，还有多种不同的Dashboard界面可供选择创建。
  云上示例环境：提供了一个线上Kibana，有试用期。详见 https://my-deployment-7ef547.kb.ap-east-1.aws.elastic-cloud.com:9243/    、 
+
+
+*创建好的图表能保持成库，然后在应用（如dashboard）里引入
+
+*整个应用（如一个dashboard）可以以不同形式分享（在顶部的【Share】菜单），里面有一个Short URL的选项可以分享成iframe
+
+*使用中文地图：
+  vim /etc/kibana/kibana.yml  编辑配置
+  map.tilemap.url: 'http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}' 添加配置项
+
+？如果ES作为一个类似数据库一样的存储，Kibana似乎没有必要用ES，目前看到的图表也只是基于字段进行数据的图表显示，而没有用到ES的搜索功能
+  是不是在图表里用到KQL可以实现一些ES的搜索引擎功能
                                                                             
 Username
 elastic
 Password
 bTgxi9uMF2tjZz0wrDsnGF6b
 
+********* Kibana end *******
+
+*阿里云部署计划：
+ 再买一两台一年机器组成VPC
+ ES放在单独的机器上
+ kafka、web应用放k8s里
