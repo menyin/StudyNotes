@@ -46,10 +46,26 @@
 
 ****** 改造成鱼泡网项目 begin *******
 *需要做测试：
- 1、测试部署路径更改
+ 1、测试部署路径更改   使用vue-config.js里的publicPath处理，详见csdn《Vue的index.html与其他静态文件分离部署》
  2、测试后端拦截登录控制改造
  3、测试扒的页面嵌入jeecg页面会不会样式错乱  左侧菜单是否需要改造
  4、测试左侧
+
+<router-link :to="{ path: 'register', query: { plan: 'private' }}">Register</router-link>
+去掉页面加载动画 public/index.html中#loader-wrapper注释掉
+【选中首页的时候不显示背景颜色，只应用于左侧菜单】这个功能去掉（全局搜索即可看代码）
+*相关改造：
+  *permission.js中去掉NProgress.start() 进度条
+  *request.js中去掉请求错误（如无权限跳转登录页），err函数
+  *user.js中GetPermissionList方法中将用户权限菜单数据变为静态的staticPermissions变量
+  *SysPermissionController.java#getUserPermissionByToken中去掉“添加首页路由”部分代码
+  *去掉getAction的头部设置
+  *改造主界面BasicLayout.vue、TabLayout.vue、SideMenu.vue、GlobalFooter.vue、Login.vue、LoginAccount.vue，很多样式在TabLayout.vue里
+  *util.js#generateIndexRouter的【"path": "*", "redirect": "/job/list", "hidden": true】为找到匹配路由重定向为默认页，即首页路由
+  *在原本的list页面，去掉固定的mixins混入JeecgListMixin, mixinDevice去掉
+  *GlobalLayout.vue将<side-menu标签相关隐藏判断去掉，让左侧菜单一直显示
+  *右侧菜单改造：有些后台页面再右侧菜单栏无对应菜单，此时实现不能作隐藏路由，而是也配置菜单然后通过样式隐藏 
+
 
 ****** 改造成鱼泡网项目    end *******
 
