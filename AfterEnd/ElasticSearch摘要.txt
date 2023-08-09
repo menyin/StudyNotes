@@ -81,6 +81,72 @@ GET kibana_sample_data_flights/_search  //带参数查询kibana_sample_data_flig
  还可以定义我们数据记录json的属性的类型，有的类型可以被分词有的类型不行，使得查询改属性时候去确定是否分词。
  如果将我们数据记录json的tel属性的类型定义为index:false，即不能索引，则说明不能通过tel进行查询。
 
+
+******** ES的mapping配置相关 begin ********
+*ES的mapping配置相关：
+  类型配置：
+  keyword：不会被分词产生倒排索引，用于结构化内容，如id、电子邮件地址、主机名、状态码、邮政编码或标签。
+  text：会被分词产生倒排索引，用于需要进行分词搜索的字段。 该类型字段不能作为排序、聚合
+  integer：byte、short、、long、float、double、unsigned_long、half_float、scaled_float等数值类型类似。内部使用long存储浮点数，并且存储一个缩放系数。
+  date：ES内部存储的是json，而JSON没有日期类型，所以日期类型数据再ES内部存储的是日期格式化的字符串或毫秒数或秒数，
+            可以指定格式format参数，如"format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"，则当ES底层将毫秒数转为字符串时会依次匹配这三种格式（用||分开）
+  boolean：布尔字段接受JSON的true和false值，但也可以接受被解释为true或false的字符串，如false, “false”, “” (空字符串)都会被认为是false，而true, “true”都会被认为是true
+  object：不需要和上述类型一样显式地将字段类型设置为object，配置mapping网上查下就知道。  其内部存储实际是扁平化存储，类似"user.address.city":  "泉州"
+  nested：和object都是用于存储对象，object在查询嵌套对象时会有一些问题（因为是扁平化存储）。nested正常存储，所以要进行一些限制设置来防止性能问题。
+  注意：能否对mapping设置进行修改呢？
+           1、已有字段有数据就不支持字段定义修改。如果一定要修改就必须重建索引（Reindex）
+           2、新增字段（没有数据），分几种情况：
+                Dynamic设置为true时，如果有新增字段的文档写入，Mapping会更新，相应的对新增字段定义类型。
+                Dynamic设置为false，Mapping不会被更新，并且新增字段的数据无法被索引，但是，信息会出现在_source中。
+                Dynamic设置为Strict，文档会写入失败！
+           
+？子类型是什么 
+？mapping中的store配置是什么
+
+ *索引配置
+   在字段配置上，控制倒排索引记录的内容。记录的内容越多，所占用的存储空间就越大。类似Mysql的B+树叶子节点记录了数据的id主键。
+   有几种类型docs（记录doc id）、freqs（记录doc id +（term出现频率）term frequencies）、positions （默认）、offsets.......
+ *Null Value配置
+  在keyword类型字段上配置，用于当字段值为null时，有一个替代值（如“N”）使得在搜索时可以被搜索得到。
+ *数组
+  ES中不提供专门的数组类型。任何字段都可以包含多个相同字段的数据
+ *_source的disabled原理及配置详见下述部分
+
+*************** _source和store相关配置的理解  begin ***************
+
+*_source和store原理详见blogs《elasticsearch中mapping的_source和store的笔记 》、csdn《【Elasticsearch】Elasticsearch 理解mapping中的store属性》《elasticsearch mapping之store》
+
+*_source和store相关配置的理解：
+  1、_source是对整个索引级别的配置(默认enable)，store是对字段级别的配置（默认false）
+  2、当一个文档（title、date、content）保存到ES时，首先根据分词器将各个字段拆分成词汇（如title拆分为title0、title1...），生成倒排索引。
+  3、当索引创建时_source设置enabled=true时，在2步骤存储文档生成倒排索引时也会保存文档全部字段原始值（这些原始值是根据client类解析的“_source JSON”）。当然_source设置enabled=false则不存“_source JSON”
+  4、当字段上store设置true，在2步骤存储文档生成倒排索引时还会在将该字段另外存储一份到“独立存储”，并且“独立存储”在检索时是性能比_source JSON高的。
+  5、在搜索时：
+            正常搜索时，则会通过倒排索引找到文档Id，然后根据id找到“_source JSON”里所有原始字段值并返回给客户端
+            传 "_source": ["title"]参数搜索时，则从“_source JSON”取出title字段值返回。
+            传"stored_fields": ["title"]参数搜索时，则会从“独立存储”取出title字段值返回。
+  6、为什么要用“store独立存储”再存储一次，增加了存储和检索时的IO，有什么好处？ 因为在某些场景下需要提高性能。 以下是最佳实践。
+            场景：当文档中content字段值内容比较多，我们只想让content生成倒排索引，而并不像存储它的原始值（检索结果用不到）。 而title和date字段的原始值又必须作为检索结果返回给客户端。
+            解决：首先，我们可以整个索引级别设置_source的enable=false，则ES便不会将文档所有字段原始值存在“_source JSON”。
+                     其次，我们设置title、date、content字段的store依次为true，true，false。 那么content字段没有存储，title和date字段均会存入“独立存储”
+                     最后，我们检索时不能用正常搜索（有结果但拿不到title和date字段值），而要传递"stored_fields": ["title","date"]参数进行搜索，ES就会在“独立存储”里查找这两个字段值并返回。
+                     注意：传递 "_source": ["title"]参数搜索则直接报错
+  7、_source和store相关性能优化点：
+            不管存储或搜索文档，都需要涉及到存储和IO及网络传输，所以我们上述第6点的最佳实践是在存储时进行处理。
+            当我们存储文档时，如果只需要部分字段可以设置索引"_source":{"includes":["title","date"]}或"_source":{"excludes":["content"]},这样文档就只存储原始文档的title和date字段
+            当我们搜索文档时，如果只需要部分字段也可以通过 "_source": {"includes": ["title"]}或"_source": {"excludes": ["content"]}进行筛选。减少读写量和网络传输。
+
+
+*使用org.springframework.data.elasticsearch时，怎么配置索引的_source的enable=false？用什么注解？
+ 简单的索引配置用@Document(.....)，如果要用完全的索引配置跨域使用@Setting(settingPath = "your_index_settings.json")
+
+*************** _source和store相关配置的理解  end ***************
+
+
+
+
+******** ES的mapping配置相关 end ********
+
 *ES各种概念和关系型数据库类比
 数据库                 ES                        
 database             index                         
@@ -217,3 +283,9 @@ bTgxi9uMF2tjZz0wrDsnGF6b
  再买一两台一年机器组成VPC
  ES放在单独的机器上
  kafka、web应用放k8s里
+
+
+*图片URL通常是一个字符串，为了确保数据的准确性和一致性，建议在索引映射中定义合适的数据类型，并确保URL的格式正确。同时，对于图片URL可能会有一些特殊字符，例如斜杠、冒号等，建议在存储之前进行适当的编码或转义，以避免在搜索和查询过程中出现问题。
+
+*使用spring-boot-starter-data-elasticsearch进行文档保存时，根据@Document(indexName = "company")注解的实体进行创建mapping
+ 如果保存时字段没有值，在ES查询时候连属性名都不会显示出来
