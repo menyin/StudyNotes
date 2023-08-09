@@ -234,6 +234,96 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
  2.Canal中间件
  3.Kakfa中间件
 
+**** Canal begin ******
+*相关文档：
+ *总体部署逻辑看http://imyhq.com/search/12900.html
+ *简单demo详见csdn《java实现通过canal和mysql同步》
+ *用Canal同步MySQL到ES方案  https://www.alibabacloud.com/help/zh/elasticsearch/latest/use-canal-to-synchronize-mysql-data-to-alibaba-cloud-elasticsearch
+
+*拓扑：
+       角色：Mysql数据库、Canal服务端（下载canal.deployer-xxx.tar.gz包启动）、Canal客户端（可以是canal.adapter-xxx.tar适配器或者引入Canal依赖的java应用等）
+       过程：Canal服务端监控mysql数据库binlog，Canal客户端连接Canal服务接收数据进行处理（可以存储或者其它公用）
+
+*如果捕获数据频繁量大，而且处理任务时间较长，则需要搭建kafka做缓存，然后消费（如存ES）。 
+ 如果普通数据量而且处理任务时间短，其实可以直接处理（如存ES）。 
+
+
+**** Canal end    ******
+
+
+**** FlinkCDC begin ******
+*流式和离线概念：
+ 比如mysql数据同步到es过程中（如A表中a记录变化过程为a1->a2-a3）：
+  流式：mysql数据一旦变化就会将这种变化同步到es中，那么这a2和a3的变化都会同步到es
+  离线：由于离线一般都是定时去取，这时就有可能只取到最终变化结果a3，而a2并未被同步到es过
+
+*示例代码详见csdn《flinkCdc的mysql配置及java测试代码》
+
+*FlinkCDC在java代码中有个startupOptions配置，是配置怎么开始读取，是全量读取还是从最新的开始读取
+ initial配置，就是默认的全量方式。 怎么做到全量：它先做一次全量快照（历史数据，它的op类型是r，即读取的），然后再切换到binlog最新的位置，这是如果有新数据进来就会被接收（op类型可能就是c，即新增）
+  
+？CheckPointing是什么配置 ！配置多久去检查一次，并留下相应记录点。 当任务执行失败并重启时会根据这个检查记录点重新运行，相当于“断点续传”
+
+？Flink CDC为什么可以不用依赖kafka直接处理数据
+  如果用Canal监控Mysql的binlog，为了不因为处理逻辑复杂或者处理时间较长导致消费binlog受影响，一般都先存kafka，然后另外去消费kafka上的数据。 
+  但是Flink CDC为什么可以不用依赖kafka直接处理数据呢？ 从内部实现上讲,Flink CDC Connectors内置了一套 Debezium 和 Kafka 组件，这样对于开发者就节省了一步，提高
+
+*用FlinkCDC同步MySQL到ES
+ 具体文档可看github项目 https://github.com/ververica/flink-cdc-connectors
+ 两种方式同步ES示例详见：https://gitee.com/qianxkun/lakudouzi-components.git
+ 有两种方式：
+   Table/SQL API方式：
+       需要额外安装Flink集群、下载flink-sql-connector-xxx源码并自己编译  jars放到FLINK_HOME/lib/.    比较麻烦
+       经测试： 表字段类型是 json , flink 不支持；改为 string 解决
+       注意：此demo测试失败
+   DataStream API方式：  
+       只需要引入相关的依赖到java项目即可。同步ES示例代码详见csdn《Spring Boot+Flink CDC —— MySQL 同步 Elasticsearch (DataStream方式)》
+       注意：此demo测试成功
+
+
+  ？似乎要依赖flink和flinkSQL，但是flinkSQL要下载源码mvn编译（容易报错）
+
+*FlinkCDC1.x和FlinkCDC2.x的区别
+ FlinkCDC1.x 只支持单并发，需对读取的库或表加锁，可能导致数据库hang住（Mysql所有的ddl，dml操作都会处于wait read lock阶段）或锁住表的读，DBA一般不给权限。 这种操作尽量在夜深人静时做。 
+ FlinkCDC2.x 支持全量读取阶段分布式（即并发，但增量还是单并发）和checkpoint、全量和增量读取过程不锁表仍然保持数据一致性。
+ 原理详见csdn《FlinkCDC原理详解+复制即用使用教程》
+
+
+*同步公司数据到ES
+          {
+          "_cid":"ac84bd6598528",
+          "type":"3",
+          "_cname":"<a href=\"https://www.597.com/com-ac84bd6598528/\" target=\"_blank\"  class=\"text-link\"><strong>厦门市思明区荞海餐饮店</strong></a><br><span><a class=\"btn btn-mini\" target=\"_blank\" href=\"/companyinfo/companyinfo.html?type=3&act=view&c_id=ac84bd6598528\">查看详情</a></span><br><span>执照状态:<font color=\"green\">已认证</font>(?)</span><br><span>绑定时间:23-04-02 23:32</span>",
+          "_source":"私有库",
+          "_modTime":"23-04-03 08:31",
+          "_regTime":"23-04-02 23:19/<br>23-04-04 13:39",
+          "vipStyle":"normalStyle",
+          "_nextType":"D类/可跟进",
+          "_username":"<a href=\"/companyinfo/companyinfo.html?type=3&act=view&c_id=ac84bd6598528&uid=e7d6827519178#followList\" class=\"text-link\" target=\"_blank\"><strong>AUTO1395010360921</strong></a><br/>",
+          "comCityId":"厦门市",
+          "operation":"",
+          "pageIndex":17,
+          "_followTime":"23-04-03 10:08/<br>23-04-17 10:07",
+          "adminUsername":"曾思雅",
+          "companyTypeStr":"新客户",
+          "companyViewData":Object{...},
+          "_expireFollowTime":"23-07-01 23:32",
+          "companyTongjiData":Object{...},
+          "companyJobslistData":Object{...},
+          "companyLicenceinfoData":Object{...}
+          }
+  
+？注意测试数据导入ES时，这几个字段数据要核定下_expireModTime comSite createTime note
+
+？mapping配置改进：Null Value、companyTongjiData加入
+**** FlinkCDC end    ******
+
+*JSON类型字段常用sql
+ 更新：UPDATE company SET json = JSON_SET(json, '$.name', '刀郎') WHERE  '$._cid'='71fc036598800';
+          UPDATE company SET json = JSON_SET(json, '$.user.name',  '刀郎') WHERE  '$._cid'='71fc036598800';
+ 查询：SELECT json-> '$.adminUsername' FROM company  WHERE json-> '$._cid'='71fc036598800';
+
+
 
 *ShardingSphere相关核心概念：
  *真实表：如果订单表分为t_order_0、t_order_1、....这些表就叫真实表
