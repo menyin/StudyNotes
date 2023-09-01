@@ -25,6 +25,10 @@ settings -> plugins -> 设置-> Manage Repositories 中添加 https://plugins.z
  Build是项目构建方面工具
  VCS是版本管理方面的工具
 
+*Maven Helper插件，详细教程网上查找
+ 当我们不同依赖发生冲突可以通过该插件查找冲突插件所在的依赖，从而排除它。如：打FlinkCDC应用jar包放到flink环境下运行，报错slf4j-log4j12-1.7.15.jar冲突错误。因为flink本身有自带该依赖。 
+ 所以可以通过MavenHelper插件查找到FlinkCDC应用中依赖slf4j-log4j12-1.7.15.jar的依赖项，从而将其排除
+
 *intelliJ进行javaEE开发配置 详见博客园收藏《Intellij Idea 2017创建web项目及tomcat部署实战》
  注意：需要配置当前项目对于所属工作空间的url （在Run->Edit Configurations->Deployment->Deploy at the server startup里点加号配置）
        此配置相当于eclipse的添加发布的项目到tomcat里。
