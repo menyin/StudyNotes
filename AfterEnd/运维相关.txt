@@ -41,7 +41,7 @@
 
 *一般开发者不会以root用户登录或启动（确保安全，养成良好的习惯）
 
-
+*抓包工具相关设置 详见csdn《工具抓包Charles配置HTTPS步骤》
 
 *黑马推荐大数据学习时，可用亚马逊aws免费云服务器
  详见http://sh.itheima.com/areanew/shenzhen/cloud/20190801/192005.html
