@@ -258,6 +258,7 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
   离线：由于离线一般都是定时去取，这时就有可能只取到最终变化结果a3，而a2并未被同步到es过
 
 *示例代码详见csdn《flinkCdc的mysql配置及java测试代码》
+*使用Flink standalone模式安装部署，不用搭建相关集群。详见csdn《windows上简单部署flink》《windows上配置flink》《大数据实时处理框架之Flink win10快速部署》
 
 *FlinkCDC在java代码中有个startupOptions配置，是配置怎么开始读取，是全量读取还是从最新的开始读取
  initial配置，就是默认的全量方式。 怎么做到全量：它先做一次全量快照（历史数据，它的op类型是r，即读取的），然后再切换到binlog最新的位置，这是如果有新数据进来就会被接收（op类型可能就是c，即新增）
@@ -316,6 +317,55 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 ？注意测试数据导入ES时，这几个字段数据要核定下_expireModTime comSite createTime note
 
 ？mapping配置改进：Null Value、companyTongjiData加入
+
+*检查点：
+ FlinkCDC处理数据时，通过检查点配置来间隔地保存当前任务执行状态，当执行失败或重启则可以恢复到之前的状态
+ 具体原理及配置详见csdn《Flink容错机制（一）》
+ 详见gupaovip的flinkcdc-mysql2es实践。注意enableExternalizedCheckpoints配置
+ ？如何实现“手动重启后断点续传”
+--checkpoint.storagePath=file:///G:/flinkCDCCheckpoint
+--checkpoint.storagePath=file:///path/to/checkpoints
+
+-s --checkpointDir file:///G:/flinkCDCCheckpoint
+-s --checkpointDir file:///path/to/checkpoints
+
+
+*重启策略：
+ 是在FlinkCDC处理数据失败时如何重启应用的策略，如固定策略（固定失败后多长时间重启，尝试重启的次数）
+ 如env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 10000));//任务失败后10000ms重启，最多重启3次
+
+
+========================================================
+flink run -d -m 127.0.0.1:8081 -Denv.java.opts="-Dfile.encoding=UTF-8"  -c com.cny.App G:\GitProjects\gupaovip\flinkcdc-mysql2es\flinkcdc-mysql2es-datastream\target\flinkcdc-mysql2es-datastream-0.0.1-SNAPSHOT.jar
+
+
+再次启动命令：
+flink run -input %FLINK_HOME%\README.txt --output %FLINK_HOME%\wordcount.txt -t yarn-per-job -d -Dyarn.application.queue=root.users.flink -Djobmanager.memory.process.size=1024mb -Dtaskmanager.memory.process.size=1024mb -Dtaskmanager.numberOfTaskSlots=1 -Denv.java.opts="-Dfile.encoding=UTF-8" -c “org.apache.flink.examples.java.wordcount.WordCount” “%FLINK_HOME%\examples\batch\WordCount.jar”
+
+-d -Dtaskmanager.numberOfTaskSlots=1
+
+下载flink-1.17.1包到win10上并以standalone模式运行，包里的flink-1.17.1\examples\batch\WordCount.jar和flink-1.17.1\examples\streaming\WordCount.jar有什么区别？ 怎么运行测试它们？
+
+flink run -m standalone-jobmanager:8081 examples/batch/WordCount.jar --input <input_file> --output <output_file>
+
+flink run %FLINK_HOME%\examples\batch\WordCount.jar -input %FLINK_HOME%\README.txt --output %FLINK_HOME%\wordcount.txt
+
+flink run -m standalone-jobmanager:8081 examples/batch/WordCount.jar -input %FLINK_HOME%\README.txt --output %FLINK_HOME%\wordcount.txt
+flink run -m standalone-jobmanager:8081 %FLINK_HOME%\examples\batch\WordCount.jar -input %FLINK_HOME%\README.txt --output %FLINK_HOME%\wordcount.txt
+
+
+运行%FLINK_HOME%\examples\batch\WordCount.jar一段时间后，在Flink Web UI 上显示任务失败，得到错误信息如下，为什么？怎么解决？
+
+flink run -m localhost:8081 -ytm 2024 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1\examples\batch\WordCount.jar -input G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1\README.txt --output G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1\wordcount.txt
+
+flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1\examples\streaming\WordCount.jar -input G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1\README.txt --output G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1\wordcount.txt -ytm 2024
+===============================================================
+
+
+*实践总结：
+  *在Flink1.9.0及以下版本才有windows版本（有相关命令的.bat文件）。csdn的《windows上简单部署flink》并不可行，因为.bat文件应该是1.9.0版本的，并不适用与1.17.1版本。
+  *如果在windows上运行在Flink1.9.0独立集群模式，然后跑Flink1.14.4开发flinkcdc-mysql2es项目jar，此时项目中的slf4j会和Flink1.9.0自身的日志框架冲突，前者用的是logback，后者用的是Log4j
+
 **** FlinkCDC end    ******
 
 *JSON类型字段常用sql
