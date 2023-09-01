@@ -37,7 +37,7 @@
             'name': 'Tom'
         }
     }
- }x
+ }
 *条件查询语言Query DSL，和jeecg的条件构造器生成的查询json差不多一个概念
  "_source":["title"]     规定返回文档只有title属性
 
@@ -54,6 +54,7 @@
 	}
 
  "match"是全文检索（如搜索“小华”，则可能拆成“小”和“华”分别进行搜索），而"match_phrase"是完全匹配，不会拆词。
+  multi_match可以查询多个字段，并且指定各个字段查询时的权重
 
 *在Kibana上常用查询语句：
 GET /_cat/indices?v  //查询所有索引信息
@@ -80,6 +81,84 @@ GET kibana_sample_data_flights/_search  //带参数查询kibana_sample_data_flig
 *ES查询可以做普通的条件查询、范围查询、排序、分页、聚合查询等
  还可以定义我们数据记录json的属性的类型，有的类型可以被分词有的类型不行，使得查询改属性时候去确定是否分词。
  如果将我们数据记录json的tel属性的类型定义为index:false，即不能索引，则说明不能通过tel进行查询。
+ 注意：可以分词的字段类型，是不能排序或分组等聚合查询，如Text类型。   如果对于一个字段想要既能分词又能分组查询可以有以下方案：
+          1、多冗余一个非分词类型的字段（如：Keyword类型）。
+          2、mapping时设置fielddata:true，按照第一个分词进行字典序排序。这种方式也不是很准确，因为只是按照第一个分词进行排序，后续的分词不会参与排序。不推荐！
+          3、将一个text field建立两次索引（即multifields），一个分词，用来进行搜索；一个不分词，用来进行排序。即mapping形如下：
+             {
+               "mappings": {
+                 "properties": {
+                   "title": {
+                     "type": "text",
+                     "fields": {  //此定义是让它建立两次不同类型的索引
+                       "keyword": { 
+                         "type": "keyword"
+                       }
+                     }
+                   },
+                 }
+               }
+             }
+
+
+？为什么查询全部时显示的总记录数只有10000？ 如 /company/_search
+   因为默认超过10000条时只检索10000条，如果要检索全部可传递参数"track_total_hits": true
+
+*analyzer即分析器，无论是内置的还是自定义的，只是一个包含character filters（字符过滤器）、 tokenizers（分词器）、token filters（令牌过滤器）三个细分模块的包。
+*分词测试
+ *直接指定 Analyzer 进行测试
+    GET _analyze
+    {
+      "analyzer": "standard", //分析器
+      "text" : "Mastering Elasticsearch , elasticsearch in Action" //测试文本
+    }
+ *指定索引的字段进行测试
+    POST books/_analyze
+    {
+     "field": "title",
+     "text": "Mastering Elasticesearch"
+    }
+ *自定义分词进行测试
+    POST /_analyze
+      {
+        "tokenizer": "standard", 
+        "filter": ["lowercase"],
+        "text": "Mastering Elasticesearch"
+      }
+
+*什么情况下会导致我们搜索不到结果？
+ 1、如存储的内容是“a-b-c”，建立倒排索引时按照mapping配置的分词规则分成“a”、“b”、“c”，这时搜索“a-b-c”或“a-b”就找不到。 所以建立索引时的规则会影响后续搜索效果
+
+*进行mapping更新后都需要重建索引，重建索引方式有哪些？
+
+******************** 深入学习搜索 begin********************
+*详见该文档【深入搜索】部分， https://www.elastic.co/guide/cn/elasticsearch/guide/current/_finding_exact_values.html 
+  结构化搜索：在结构化搜索中，您可以根据字段的精确匹配或范围查询来搜索数据。通常使用诸如 term、range 等查询类。
+  全文搜索：在全文搜索中，您可以使用分词器将文本字段分割成单词，并使用诸如 match、match_phrase 等查询类型进行模糊匹配。
+  多字段搜索
+  近似匹配
+  部分匹配
+  控制相关度
+
+*学习过程中注意关注各种查询时的评分机制。
+ 内置原则：搜索条件嵌套层级中，同级的评分基本一致（当然设置boost等其它参数可更改），子级的条件语句评分比父级小。示例可看【深入搜索-多字段搜索-多字符串查询】
+
+*term 和 terms 是 包含（contains） 操作，而非 等值（equals） （判断）
+ term 和 terms区别是前者包含单个值，后者包含多个值。
+
+*minimum_should_match用于指定查询词拆分成的分词和倒排索引文档的匹配度。可具体数字或百分比
+
+*boost 指定来控制任何查询语句的相对的权重， boost 的默认值为 1 ，大于 1 会提升一个语句的相对权重
+
+*通常，多数字符串字段都是 not_analyzed 精确值字段，比如标签（tag）或枚举（enum），而且更多的全文字段会使用默认的 standard 分析器或 english 或其他某种语言的分析器。
+
+*最佳字段（best_fields ）：当should多个条件字段查询时评分大体是多个查询各自评分在进行叠加，这样评分“有失公允”，当我们希望以某个评分高查询字段的为主评分，其它字段查询评分为辅，则该字段就是“最佳字段”，它改变了最终评分的方式。
+
+*全文搜索被称作是 召回率（Recall） 与 精确率（Precision） 的战场： 召回率 ——返回所有的相关文档； 精确率 ——不返回无关文档。目的是在结果的第一页中为用户呈现最为相关的文档。
+
+？ 索引模板（Index Template）
+？ 归一化的（normalized） 。和评分相关
+******************** 深入学习搜索 end**********************
 
 
 ******** ES的mapping配置相关 begin ********
@@ -231,6 +310,12 @@ schema                mapping
   主分片不行（副本可以），如果索引创建要调整分片数一般实践是先备份当前索引数据，然后创建新的索引并调节分片数，然后导入备份数据。
   具体实践：通过ES相关的restfulAPI进行数据备份、reindex等操作。最后可以通过查看新旧索引的文档数是否一致来判断迁移是否完成
 
+
+*一个analyzer即分析器，无论是内置的还是自定义的，只是一个包含character filters（字符过滤器）、 tokenizers（分词器）、token filters（令牌过滤器）三个细分模块的包。
+*分词器
+ 除了标准的standard分词器，其它分词器都要通过插件形式附加到ES
+ 使用：详见csdn《Elasticsearch ik分词器的ik_mart和ik_max_word模式》
+
 ELK
   *ElasticSearch 搜索引擎
   *Logstash 做数据清洗、转换、收集（资源耗费大），使用时主要是对config文件下的logstash**.conf文件进行操作，在其中完成数据的收集、解析和输出的操作。
@@ -258,12 +343,22 @@ ELK
  主要功能划分：DevTools、可视化、安全/监控、？企业搜索（此部分待学习）
  整体使用逻辑：左侧主菜单包含了Kibana所有应用的形式。 在【Discover】菜单里可以导入数据（比如weblog），然后根据这些数据你可以创建Dashboard、Canvas、Map等不同的应用形式。
                       如要创建数据的Dashboard时，还有多种不同的Dashboard界面可供选择创建。
- 云上示例环境：提供了一个线上Kibana，有试用期。详见 https://my-deployment-7ef547.kb.ap-east-1.aws.elastic-cloud.com:9243/    、 
+ 云上示例环境（Elastic Cloud）：提供了一个线上Kibana，有试用期。详见 https://my-deployment-7ef547.kb.ap-east-1.aws.elastic-cloud.com:9243/    、 
 
 
 *创建好的图表能保持成库，然后在应用（如dashboard）里引入
 
 *整个应用（如一个dashboard）可以以不同形式分享（在顶部的【Share】菜单），里面有一个Short URL的选项可以分享成iframe
+
+*企业搜索：ES提供的集成的企业搜索的基本雏形应用，包含App Search、Workplace Search、Site Search。这三部分应用可以单独部署并集成到Kibana。集成到Kibana详见简书《Elastic 企业搜索 Workplace Search》
+                
+  App Search：创建这样一个应用，即可以有一个web后台，你可以将测试数据导入并且做一些搜索功能的快速调整，如在后台就可以实时调整字段类型、字段权重、增加同义词、增加curations（即置定功能）等
+                      另外还能生成前端UI界面的js代码，我们可以根据自己需求去修改。 因为生成的前端代码是React的，不熟悉可以研究它的请求接口，用vue重新开发一套
+                      注意：测试数据并不能像Kibana的“索引模式”那样从现有ES的索引库中导入，只能通过“Upload JOSN”和“Use the API”两种方式导入，从而建立engine实例。
+	        详见腾讯课堂《Elastic App Search入门》 https://cloud.tencent.com/edu/learning/course-3141-56268、csdn《Enterprise：Elastic App Search 入门 - Ruby》
+  Workplace Search：俗称搜索工作坊。  可以集成jira、github等不同数据源（文件系统、工单系统等）以便进行企业进行资源搜索。
+  Site Search：爬虫功能，给定url、深度等条件，然后根据这些条件去进行搜索
+ 
 
 *使用中文地图：
   vim /etc/kibana/kibana.yml  编辑配置
@@ -303,3 +398,52 @@ bTgxi9uMF2tjZz0wrDsnGF6b
            由于设置了index=false，字段的数据不会被索引，因此无法通过该字段进行查询、排序或聚合操作。
            适合存储不需要进行全文搜索或其他类型查询的文本数据，用于展示、描述等用途。
            总的来说，type=Keyword适合存储精确值并支持聚合、排序，而type=Text并且index=false适合存储不需要被索引和分词的长文本数据。在设计索引时，根据实际需求选择合适的字段类型和设置，以达到更好的性能和功能。
+
+*查询时传递参数"track_total_hits": true有什么用
+  Elasticsearch 的 track_total_hits 参数是指追踪查询结果的总命中数。默认情况下，当查询结果总命中数大于 10,000 时，Elasticsearch 将停止精确地计算命中数，以避免对集群造成过大的压力。
+  对于查询结果，如果设置了 track_total_hits 为 true，则 Elasticsearch 将返回精确的命中数，但可能会对性能产生影响。如果设置为 false，则 Elasticsearch 可能会返回近似的命中数，但可以提高查询性能。
+
+？字段权重height、
+
+*Elastic App Search 没有直接提供 keyword、boolean、object 等类型，而是使用了类似的预定义字段类型来处理这些数据：
+   对于 keyword 类型，你可以使用 text 字段类型，因为 text 字段默认不会进行分词，所以可以作为精确匹配的替代。
+   对于 boolean 类型，你可以使用 text 字段并使用 true 或 false 作为字段值。
+   对于 object 类型，你可以将其视为嵌套对象，并在索引 schema 中定义一个子字段作为该对象的字段类型。
+   虽然 Elastic App Search 的预定义字段类型相对较少，但你仍然可以通过使用这些字段类型以及适当的设置，来满足大部分的搜索和检索需求。
+   如果你需要更复杂的数据类型或索引设置，可能需要直接使用 Elasticsearch 来构建和管理索引。
+  注意：生成的前端项目是React项目，如果涉及需要个性化修改，简单的样式修改比较简单，但是如果涉及整体布局和交互方式等更改需要React比较熟悉的前端进行改进。
+           比如：所有字段的筛选项都是单选并且是选完一个其它选项都隐藏，交互体验并不是很好。 需要进行改进。
+           实际上如果对于React不熟悉的话可以直接研究生成项目的接口，通过适配对应接口来做一个Vue项目，实际难度并不难。
+
+****************参考 Elastic App Search 用原生来创建自己的搜索引擎 begin***************************
+*思考：企业应用中通常要实现自己的搜索引擎，而企业搜索引擎有哪些关注点呢？
+          *同义词（Synonyms菜单）定义多个搜索词为同义词，可以使得搜索结果是一致的。
+             同义词设置后不一定能搜索到，比如“马户”和“驴”配置同义词，但是可能分词库里没有马户，那么也是不能被搜索到。详见csdn《Elasticsearch 使用同义词 二》
+             设置同义词，有多种方式，详见简书《Elasticsearch同义词配置》
+             注意：更新同义词配置后，同义词的配置变更不会直接影响已经存在的索引数据，需要重建索引才能使新的配置生效。
+          *置顶（Curation菜单） 在特定搜索产生的搜索结果列表中，可以将某个结果项置顶（也可以隐藏，相当于屏蔽）。
+             Function Score Query（推荐），适用于指定搜索条件搜索出的结果产品列表，广告商产品要置顶，相当于“广告商加分”。ElasticAppSearch也是用这个技术。详见csdn《Elasticsearch 查询之Function Score Query》
+             Pinneed query 用于在搜索结果的顶部固定显示一组特定的文档，而不受搜索条件影响，这些文档通常与用户的偏好相关。如果广告商的产品只是符合既定的搜索条件，那么Pinned query并不适合。
+             script 默认使用painless脚本语言。适用于需要进行自定义的计算、评分、过滤或排序的搜索场景。可以通过脚本编写自己的逻辑来处理搜索过程中的各种操作。 会有性能问题
+          *字段权重（Relevance tuning菜单） 在多个字段中搜索时，在业务上有些字段“更重要”，此时就可以增加它的权重（weights，另外和boosts区分开）。
+          *自定义扩展词：比如文本“丨您的文本”正常被拆分词为“丨”、“您”、“的”、“文本”。添加扩展词“丨您”则拆分词为“丨您”、“的”、“文本”。再
+          *自定义扩展停止词：比如文本“您的文本”正常被拆分词为“您”、“的”、“文本”。添加扩展停止词“的”则拆分词为“您”、“文本”。
+          *分词器
+          ？Function Score Query（定制ranker）。Elastic App Search的置顶功能是使用Elasticsearch的function_score query实现的
+
+
+****************参考 Elastic App Search 用原生来创建自己的搜索引擎    end***************************
+
+*ES相关类似搜索引擎产品：
+  *OpenSearch是ES+Kibana结合并面向社区的开源分支，是亚马逊针对elastic公司关闭ES开源后而开的一个ES分支，持续支持开源协议。  （和阿里的OpenSearch不是一个产品）
+  *sphinx和ES差不多，但是比ES难用，功能和扩展不够丰富简便。 
+  *manticoresearch是一个类数据库搜索引擎
+
+*OpenSearch：
+  2021 年初，开发 Elasticsearch 和 Kibana 的公司 Elastic 宣布更改许可证，新版本将不再使用 Apache 2.0 而是使用 Elastic License 和 Server Side Public License，此举旨在禁止云服务商如 AWS 
+  使用它的软件作为一种服务提供给客户。但许可的更改也意味着 Elasticsearch 和 Kibana 不再是开源软件了。亚马逊随后宣布创建 ElasticSearch 开源分支 OpenSearch。
+  两年后，OpenSearch某种意义上成功了：下载量突破 1 亿，496 名贡献值递交 8760 次 pull requests，Adobe 决定在 Adobe Commerce 套件中用 OpenSearch 取代 Elasticsearch，进入 DB-Engines 数据库流行度排名前五十。
+  对比显示，OpenSearch 和 Elasticsearch 在基本功能和性能上没什么差异，Elasticsearch 有更多的功能，但需要客户额外付费，而某些类似功能 Elasticsearch 收费 OpenSearch 则免费提供。
+
+
+
