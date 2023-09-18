@@ -157,6 +157,8 @@ uniapp支持的css样式长度单位为px rpx
  
 *文档http://csfed.gitee.io/press
 
+*IM项目使用了 Vue.js 2.x 版本的语法，并结合了 vue-property-decorator 库，该库为 Vue.js 提供了 TypeScript 支持。此外，还使用了 Vuex 管理应用状态，Vue Router 进行页面路由。
+
 *******************************IM 交接材料 end******************************************
 
 **jeecg-uniapp项目里路由用this.$route在h5端可以但是到了手机端就不行了，实际上是要用官方的this.$Router，大小写区分
