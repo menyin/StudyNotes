@@ -960,9 +960,21 @@ PS：
  workstation是运行在操作系统里的，算是一个软件。一般用于个人PC进行虚拟机创建
  esxi是直接运行在物理机硬件上的，不需要先装一个操作系统（本身就算是一个带虚拟化的操作系统），一般用于服务器虚拟机的创建。
 
-*iDRAC里创建多少虚拟磁盘合适？
+*iDRAC
+ 详见bilibli教程
+  https://www.bilibili.com/video/BV1rf4y187N6/?spm_id_from=333.788&vd_source=5d74800eec4782c9be5ee53ff7c9a201
+  https://www.bilibili.com/video/BV1uk4y1M7vg/?spm_id_from=333.337.search-card.all.click&vd_source=5d74800eec4782c9be5ee53ff7c9a201
+ *两种连接方式：
+   方式一：前面板mic口接笔记本USB接口，浏览器输入默认ip 159.2540.3 
+   方式二：背面板网卡口接入到和笔记本同个局域网，然后浏览器输入ip（从开机启动界面获取）
+ *创建多少虚拟磁盘合适？
  一般来说，建议为每个虚拟机创建一个独立的虚拟磁盘，以获得更好的性能和可靠性。但是具体的数量需要根据实际情况进行权衡和决策。
  因为一个物理磁盘划分出多个虚拟磁盘后必然带来性能的消耗，磁盘读写速度也会削弱，所以如果对于磁盘性能要求不高可以多分几个。
  而多个虚拟机公用一个虚拟磁盘，也必然带来磁盘读写分配的区分计算等消耗，所以如果对于磁盘性能要求不高可以多个虚拟机公用一个虚拟磁盘
 
+
+*VMware ESXI下载教程 https://blog.csdn.net/Sinck7/article/details/132424956
+ 下载地址直接进  https://customerconnect.vmware.com/cn/downloads/#all_products
+  VMware网站账号密码 3331866906@qq.com   Gdlr54288,,
+  最后到下载页面，下载按钮disabled，应该是个人用户无权下载。
 ********************************戴尔服务器 end*****************************************
