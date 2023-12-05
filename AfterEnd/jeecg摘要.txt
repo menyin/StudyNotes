@@ -162,6 +162,18 @@
 
 *jeecg的token存储了username和password的加密信息，通过String username=JwtUtil.getUsername(token)可以获取用户名
 
+
+*第三方登录逻辑：
+  如微信扫码登录逻辑：
+     1、用户请求跳转到微信扫码二维码界面并扫码
+     2、微信接收到用户扫码同意请求后将用户信息通知到我们服务器接口（redirect_uri参数指定的api）
+     3、服务器接口接到用户信息（主要有username、avatar、uuid），分几种情况：
+         3.1、用户已注册过SysUser：到sys_third_account表查询sys_user_id再到sys_user表查询sysUser对象，生成token返回给用户
+         3.2、用户未注册过SysUser：到sys_third_account表查询sysThirdAccount对象，将uuid返回给前端，让用户补充手机号提交到服务器绑定接口（即/sys/thirdLogin/bindingThirdPhone）。
+                绑定接口逻辑：
+                      根据手机号查找sys_user表，如果有sysUser则将id写到sys_third_account表，两者相关联，即绑定。生成token返回给前端
+                      根据手机号查找sys_user表，如果无sysUser则创建一个初始密码为123456的sysUser用户，也是将id写到sys_third_account表，两者相关联，即绑定。生成token返回给前端
+
 *online表单 begin*
 *online表单相关请求Controller在org\jeecgframework\boot\hibernate-re\3.0.02\hibernate-re-3.0.02.jar 下面的 org.jeecg.modules.online.cgform.c.a;
 *online表单 end*
