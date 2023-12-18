@@ -1378,6 +1378,15 @@ ${user.home}/logs/...
 *mkdir /dir1/dir2/dir3 -p 级联创建目录
 
 *windows下的批处理，详见csdn《bat批处理文件的注释，和常用简单命令》
+
+*查看系统进程内存占用情况除了top命令还可以使用 ps aux --sort -rss
+
+*java应用设置开机启动，详见知乎《linux设置java项目开机自启动》 https://zhuanlan.zhihu.com/p/81527659?utm_source=wechat_session
+ 特别注意：出现sh脚本在执行时遇到了$'\r': command not found这样的错误错误时。即脚本内换行符在windows和linux之间格式问题，可按以下命令解决问题：
+               sudo yum install dos2unix
+               dos2unix /usr/local/tieda/tiedaAfter/tiedaAfterStart.sh
+  csdn有两种方式《【设置Java服务开机自启动】》，主要还是sh脚本文件的脚本在windows和linux之间格式问题
+
 ***************liux学习 end   ***************
 
 
