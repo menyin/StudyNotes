@@ -60,6 +60,9 @@
   查看nginx状态：systemctl status nginx
   刷新配置文件：nginx -s reload    但用此命令发现无效直接执行nginx -s stop 再执行nginx重启即可
 
+*开机启动 参考csdn《总结Nginx的安装、配置与设置开机自启》 第二种方式。   
+ 特别注意：淘淘教程在nginx编译时设置pid-path=/var/run/nginx/run/nginx.pid，但是在linux重启后/var/run/nginx目录就会清空。此时可以将此目录设置到别处重新编译
+
 
 *nginx 配置https
  1、淘淘商城教程安装编译nginx，创建makeFile文件时候，外加--with-http_ssl_module \ 
