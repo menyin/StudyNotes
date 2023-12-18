@@ -694,3 +694,6 @@ flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1
           create user 'root'@'%' identified with mysql_native_password by '管理员密码';
           grant all privileges on *.* to 'root'@'%' with grant option;
           flush privileges;
+
+*mysql5.7安装：详见csdn《Linux安装部署MySQL5.7（企业常用版）超详细》
+ 注意：安装mysql后初始化之前，要设置lower_case_table_names=1，否则初始化后按网上教程如何设置都无效
