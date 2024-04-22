@@ -1,4 +1,9 @@
-﻿******计划8月19~11月19用3个月完成eecg总体框架学习：前端，后端，数据结构******
+﻿*jeecg更新新增了相关内容：
+ chatGPT聊天集成
+ 租户整合
+ Vue3版本支持Uniapp代码生成（好像只是简单生成，意义不大）
+
+******计划8月19~11月19用3个月完成eecg总体框架学习：前端，后端，数据结构******
 
 ************************前端 begin******************************
 ？注意vue extend和minix的区别，前者有点像继承，数据和方法是所有组件共享的。 后者有点像字节码混入，数据和方法不共享但却是可以动态注入到特定组件中。
@@ -36,6 +41,10 @@
        editorObj.$set(editorObj.init,'height',600);
        editorObj.reload();
       特别注意：后来发现直接在tieda-front项目里更改jEditor组件的配置即可，online表单也是用项目本身配置的组件，不用通过上述方式去更改editor的配置
+       that.$refs.cms_article_data[0].form.setFieldsValue({"content":'123456'});//设置子表的字段值，that是主表对象
+       that.$refs.cms_article_data[0].form.getFieldValue("content");///获取子表的字段值，that是主表对象
+       that.settingColumns=['create_time', 'category_id', 'title'...];//可用jeecg本身自带的自定义列功能处理
+
 
 
 *tinymce富文本编辑器文档 http://tinymce.ax-z.cn/quick-start.php
@@ -68,6 +77,29 @@
 
 
 ****** 改造成鱼泡网项目    end *******
+
+
+？将Vue-cli创建的项目的组件打包成js文件，然后通过myLib.js方式引入html使用方案。
+   使用命令打包：vue-cli-service build --target lib --name myLibrary './src/entry-file.js'
+   entry-file.js文件内容：
+            import JDictSelectTag from './components/dict/JDictSelectTag';
+            export {JDictSelectTag}  //可以导出多个
+   在html引用：
+           <j-dict-select-tag v-model="formData.sex" title="性别" dict-code="sex" placeholder="请选择性别"/>
+
+           var testBox = new Vue({el: '#testBox', 
+			components: {'j-dict-select-tag': myLibrary.JDictSelectTag},
+			data:{formData:{sex:1}}
+		});
+
+  问题：打包后代码没有将this.propName转换为this.$attrs.propName，打包后代码通过this.propName访问不到数据，但是console可以通过this.$attrs.propName
+           解决：在使用过程中因为在html页面中使用vue.js的组价严格遵循烤肉串模式（包括标签名和属性传递），否则组件渲染和属性赋值都会有问题。如：<j-dict-select-tag v-model="formData.sex" dict-code="sex"/>
+  问题：打包了j-dict-select-tag生成myLibrary.umd.js有3.3M，太大了。 应该是依赖的AntDesign库导致的。   如果依赖了该库，在html再引入AntDesign库会不会出现冲突（特别是版本不一致时）
+           解决：无法解决或很难解决
+  最终方案：jeecg组件有管理vue-ls、axios等，导致拆解不开。  最好的方式就是将jeecg组件抽出放入单独一个vue-cli项目，对组件的vue-ls、axios相关内容进行重构。//TODO
+         
+           
+
 
 ************************前端 end******************************
 
@@ -360,7 +392,7 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
      3、调用dynamicRouteService一系列链路方法更新MyInMemoryRouteDefinitionRepository（即RouteDefinitionRepository接口的实现）
      4、gateway内部会调用MyInMemoryRouteDefinitionRepository的getRouteDefinitions() 、save()、delete()来更新路由列表。
      5、在执行完4步后，一般要通过spring的applicationEventPublisher发布进程内消息。此时内部会监听此消息，并把路由列表刷新。
-     注意：RouteDefinitionRepository接口里用到了Flux和Mono，是Reactor编程相关知识。
+     注意：RouteDefinitionRepository接口里用到了Flux和Mono，是Reactor编程相关知识。Mono类类似ComplatableFuture类
   动态路由里的限流熔断过滤器基本原理：
      详见csdn《SpringCloud Gateway 通过redis实现限流》《SpringCloud RedisRateLimiter原理及演示过程》
      1、system后台【路由网关】新建路由时，路由里可以添加RequestRateLimiter过滤器。
@@ -373,7 +405,9 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
            RedisRateLimiter是分布式的实现，也可以自己找其它本地的实现
       3、根据上述配置，RequestRateLimiter会用lua脚本定期生成令牌，当用户请求时会去拿令牌（拿不到应该是直接拒绝抛异常）
            lua核心逻辑：local filled_tokens = math.min(capacity, last_tokens+(delta*rate)) //即取令牌桶容量和添加令牌后的令牌数中最小的值。保证令牌桶不会满。
-
+      注意：Gateway项目已经有sentinel限流了，为什么还要RedisRateLimite？
+               sentinel主要是基于资源、url等粒度进行限流，是倾向于具体资源的限流。当然sentinel也可以进行自定义限流
+               RedisRateLimite则可以根据ip、用户或自定义规则等进行总体入口的限流。 是倾向于总体入口的限流。
 
   ？动态路由配置的处理逻辑：
      初始化：JeecgGatewayApplication启动时通过CommandLineRunner#run调用dynamicRouteLoader.refresh(null);
