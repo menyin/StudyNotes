@@ -64,11 +64,13 @@
  特别注意：淘淘教程在nginx编译时设置pid-path=/var/run/nginx/run/nginx.pid，但是在linux重启后/var/run/nginx目录就会清空。此时可以将此目录设置到别处重新编译
 
 
-*nginx 配置https
+*nginx 配置https（总体过程参考csdn《从0开始搭建网站的HTTPS认证服务(阿里云+Nginx)》）
  1、淘淘商城教程安装编译nginx，创建makeFile文件时候，外加--with-http_ssl_module \ 
  2、安装网上教程《微信小程序后端接口nginx代理配置https》配置nginx.conf
  3、在阿里云下载nginx对应的证书文件，放到nginx.conf配置的路径下
  4、刷新配置，或重启
+ 注意：要开发443端口，如果阿里云则到服务器实例的安全组里开放
+          nginx在编译时要外加--with-http_ssl_module 参数
 
 *注意nginx.conf配置反向代理后有时候没有生效，是因为浏览器可能有缓存，可以清除缓存或者换个浏览器
  如：https 配置后，又增加转发geteway，会出现没有生效。 
