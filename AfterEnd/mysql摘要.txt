@@ -140,7 +140,7 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 
 *分库分表带来的问题：
  联表分页查询（join查询） 搜索引擎双写。将一些要查询的字段放入搜索引擎。
- 多库分布式事务
+ 多库分布式事务（如果用shardingsphere做分库分表，可以整合seata等其它一些分布式事务组件）
  分布式全局id
  增加开发成本
 ？Sharedingsphere如何解决上述问题
@@ -487,6 +487,15 @@ flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1
  ETL
  停机用存储过程等方案
 
+*Shardingsphere的分布式事务
+  ShardingTransaction：自带的事务方案，类型包括LOCAL、XA、BASE。
+      LOCAL：事务是指在同一个数据库实例内的事务操作，不涉及跨库的分布式事务。
+      XA：XA事务是一种经典的分布式事务协议，通过两阶段提交（2PC）来实现跨库的分布式事务。性能消耗大
+      BASE：BASE事务是指基于最终一致性的分布式事务处理，相对于XA事务而言，放宽了一致性的要求，但保证了分布式系统的可用性和性能。适用于对一致性要求相对较低，但需要可用性和性能的场景。
+ 	   shardingsphere支持Seata整合，Seata是属于Base类型，是一种基于sql补偿机制。性能比XA好  原理详见《Apache ShardingSphere整合Seata AT分布式事务》
+                 Shardingsphere+seata整合实例：csdn 《shardingsphere5.0.0整合分布式柔性事务seata1.4.2示例步骤》
+
+
 =======================分库分表 end==============================
 
 ============================ mysql begin ============================
@@ -581,7 +590,7 @@ flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1
                    如没有主见和唯一索引，则InnoDB会自动生成一个rowid作为隐藏的聚集索引。
        二级索引
           定义：将数据存储与索引分开存储，索引结构的叶子节点存储的是关联数据的主键（应该说是聚集索引存储的数据），可以有多个。  
-       回表查询：一条数据从二级索引查找到主键再去聚集索引查找具体行数据的过程叫回表查询。
+          回表查询：一条数据从二级索引查找到主键再去聚集索引查找具体行数据的过程叫回表查询。
                  如：select * from t_user where name = 'jack';--此sql会先查询name的二级索引再查询聚集索引
     平常说的索引分类：
        单列索引：B+tree上的节点的数据是对应单列值
@@ -628,8 +637,18 @@ flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1
          
 
 *SQL优化
+ 索引优化总结关键词：最左前缀法则、规避索引失效、规避回表查询、减少字段索引长度(减少页合并分裂)、顺序插入
+ 锁优化总结关键词：降低锁颗粒度、避免锁升级。比如采用时间戳并在代码层面使用乐观锁判断、比如给常用查询的条件字段加索引从而避免“行锁升级表锁”
 
 *锁
+ *mysql的行锁是基于索引的，理解如下
+  例：student表有字段id,name,age ,此时客户端1开启事务执行update student set name='jack' where name='jac';   客户端2开启事务执行update student set name='rose' where id='123';   
+  会发现客户端1事务未提交，则客户端2执行会被阻塞，说明客户端1已经将student表锁了，即表锁。  因为name没有索引，就会导致客户端1的sql语句将“原本应该”的行锁升级成表锁。
+  当为name字段添加索引后，重新执行上述步骤，客户端2并未被阻塞，即客户端1加了行锁，而两个端操作了不同的行数据
+
+ *间隙锁：在两条行记录之间加锁，防止插入，导致幻读问题。
+  例：student表有字段id,name,phone，id为主键索引，name普通索引（有重复名称），phone唯一索引。 如果执行sql语句update student set name='bob' where name='bobo'; 则会加行锁和间隙锁，即临键锁。 
+       原理：name字段非唯一索引，则在B+tree的叶子节点是一个有序的name的队列，如“ashily,bobo,bobo,cale,jack”,则ashily和cale之间的所有间隙和行都必须加锁，才能保障上述sql执行时这个区间不会被其它人插入一个bobo
 
 *MySQL管理
 
