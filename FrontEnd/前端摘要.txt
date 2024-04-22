@@ -27,6 +27,21 @@
  https://blog.csdn.net/kingzone_2008/article/details/9083327
 
 
+
+*Figma是一个全平台可以使用的软件，类似于Sketch功能；但他可以在Mac，Windows PC，目前iPad也可以使用Linux计算机甚至Chromebook。只要你能打开网页，理论上基本上就可以使用这个工具，而不受系统的限制。
+ 总结：*tailwind是一套css的规范，可以做各种定制，bootstrap类的框架是一个按钮用一个“btn”类样式来规定。 tailwind是一套样式规范则是规定了text-large等类来快捷书写元素样式。 
+          *daisyui、hyperui、figcomponents这些框架作用和bootstrap作用是一样的，只是它们用的规范是tailwind
+          *Figma是和imgcook差不多，可以作为设计软件可以导出前端html代码（基于tailwind规范），但是Figma是集设计和导出代码一身，更强大
+ 相关资源：
+  关键字tailwind
+  https://daisyui.com/
+  https://www.hyperui.dev/
+  https://www.figcomponents.com/
+          
+ 详见https://zhuanlan.zhihu.com/p/681052022
+ 网页版软件（中文好用） https://js.design/4ChS5-
+ PC版软件（英文不好用） https://www.figma.com/downloads/
+
 *前端文档制作框架https://www.vuepress.cn/
 
 *突破百度、豆瓣等网站文档下载限制，使用“油猴脚本”
