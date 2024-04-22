@@ -133,6 +133,7 @@ uniapp支持的css样式长度单位为px rpx
 *uniapp可以用Vue.prototype.myname定义全局变量，但是只能在vue组件方法里使用，无法直接在vue模板里使用。 
  如果要直接在模板里使用，可以用Vue.mixin(data() { return{...}}）进行混入全局变量和方法
 
+*注意：有时候用uview带的表单验证时出现某些表单项无法验证，可能是用v-if导致元素在最初加载时并不存在，改为v-show即可。  有可能<u-form-item>这类标签并不支持v-show，可套个<view>再使用v-show
 
 *******************************IM 交接材料 begin******************************************
 *源码及相关材料在码云  CSFED 组织里
@@ -348,6 +349,7 @@ versionCode
 *uview有一些全局样式，但是官方使用文档并没有说明要额外引入，只引入了@import "uview-ui/index.scss";
  如想要使用布局相关样式就要引入@import "uview-ui/libs/css/flex.scss";  否则没法使用相关布局类样式
 
+*uView包体积过大造成微信上线失败，可以在Hbuilder里设置打包压缩代码
 
 ****************************uView end*******************************************
 
@@ -400,7 +402,7 @@ versionCode
  *高卓调试本地mock服务时，使用账号  com_dc525c3: { appKey: '9877e7b70f30866c74e409a5ea60373d', token: 'ec02187110fb5a460fdedb00e57e3d28' },不行
                                            使用账号per_be1c9c4717298: {appKey: "9877e7b70f30866c74e409a5ea60373d",token: "050f3b01930acf66d11b0b211ce3bfac"},可以
  *打包部署，先打包后部署，运行G:\th597-talent-net-im\th597-talent-net-im\build\dev.js  再运行G:\th597-talent-net-im\th597-talent-net-im\build\deploy.ts
-
+  注意是执行build:dev
 
 
 
