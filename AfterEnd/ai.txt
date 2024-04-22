@@ -1,0 +1,624 @@
+*openai登录账号密码  xysppq6qf@bnm2327.com     gd...
+*google账号  845257580@qq.com  gd...
+*Microsoft账号  3331866906@qq.com  Cf...     845257580@qq.com账号是儿童账号，不方便
+
+*ai相关概念：
+ prompt：给ai的命令或提示（即输入的相关文本），这个非常重要！ 很多gpt相关的项目就是通过Prompt让ChatGPT做角色扮演，然后完成专项的任务。
+               有一个关键词叫“prompt engineering”
+               **提示工程（Prompt Engineering）**是一种人工智能（AI）技术，通过设计和改进AI的提示（prompt）来提高AI的表现。在这个领域，我们关注如何构建高度有效且可控的AI系统，使其能够准确、可靠地执行特定任务。
+               ChatGPT有相应的一些prompt插件来帮助我们完善prompt，如prompt perfect（使用时只需要输入文字前添加“ferfect”即可）
+*ai经营学院（考虑报名学习）https://axtonliu.ai/p/autoai
+  目前AI精英学院提供的AI课程有以下内容：
+「AI 实战派」课程以Prompt Engineering为主线，涵盖了从GPT和Prompt Engineering的基础知识到高级应用。
+「AI 自动化」课程聚焦于AI与无代码自动化技术的配合，帮助学员打造高效的自动化工作流。
+请点击以下链接查看课程大纲和试看视频：
+「AI 实战派」课程：https://axtonliu.ai/p/ai
+「AI 自动化」课程：https://axtonliu.ai/p/autoai
+如果您需要更详细的内容，请进入课程介绍页面观看更多信息。
+
+*订阅axton的newsletter
+
+*B站up主Axton有很多前沿工具视频，如网页剪藏功能的笔记工具（如Notion Web Clipper、DEVONthink、Evernote等）
+ up主常用工具DEVONthink、MarginNote Pro、XMind Zen、Workflowy、SONY DPT RP1（阅读设备）
+
+
+*传智ai课程 https://ai.itheima.com/#navkcdg
+
+*chatGPT相关概念：
+  目前默认的模型是InstructGPT模型，是一个比较遵循用户意图的模型，是GPT3模型的基础上发展起来的兄弟模型。
+  常见的模型可以看uni-ai相关的模型说明，如gpt-4、gpt-4-0314、gpt-4-32k等：https://doc.dcloud.net.cn/uniCloud/uni-ai.html#get-llm-manager
+  目前GPT4是最强的模型，之前Axton说的达芬奇模型（DaVinci）是GPT3模型中最高端的版本。 
+  AGI：目前的ai属于狭义人工智能，只能完成特定领域的任务。 而AGI是通用人工智能。 现在相关产品有AutoGPT（github排行第一，？待研究，记得下载stable而非master版本）、微软的Jarvis（可以安装到高配电脑上）、微软HuggingGPT
+
+*chatGPT插件：可以和chatGPT交互。chatGPT像是一个封闭的机器人很强，但是没有对外的一些能力，插件可以给它加上眼睛、耳朵这些能力。 ？有待研究
+ ？后续研究chatGPT插件开发，以符合企业信息化相关需求。
+
+*chatGPT使用场景：
+  *ai求职信助手是用chatGPT写的一个web应用，输入文本如下：
+  “使用 OpenAI AP1和 Streamit 库创建一个简单的 Web 应用程序，允许用户输入他们的个人资料和工作描述，然后为该用户生成求职信，用户可以选择输出摘要的数字，语气，并且可以将生成求职信保存到本地。将以上完整代码和配置写给我”
+    “请注意，在运行此代码之前，需要替换“YOUR_API_KEY”为您的 OpenAIAP1密钥 openai.api_kcy="YOUR_APLKEY"这一句不好，出于安全的原因，我不想把我的 APIKey写到源代码里。”
+  注意：Streamit是一个部署网站的平台
+
+实践：富文本生成机器人（openAI apikey：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）
+     “使用OpenAI API和springboot和vue2创建一个简单前后端分离的web应用程序，允许用户输入他们的行业和经营商品信息，然后为该用户生成富文本代码，并且用户可以点击复制该富文本代码到剪切板。 请将以上需求完成代码和配置写出来。”
+
+ *可以给定一个网站链接或信息，请评价他怎么样？
+
+
+*chatGPT和NotionAI的区别
+ chatGPT输入文本没有NotionAI，但是总结功能比NotionAI好。  chatGPT是纯ai，而NotionAI算是一个集成了ai的写作工具。  所以在写作方面辅助NotionAI会更方便，但是精度准度方面chatGPT。
+ chatGPT-plus $20/月，NotionAI $10/月， 但是chatGPT和NotionAI有时候对于一些未知的信息会瞎掰或者会自己臆想胡诌乱造。
+
+* 目前iPhone可以ChatGPT 与 Siri 结合进行语音对话（axton推荐的“捷径”），？研究下Android是否也有相应的功能。https://zhuanlan.zhihu.com/p/628534030
+
+*GPT3和GPT4有什么区别： 响应、准确度、可否解读图片、推理、token容量（32K）、翻译中文等方面GPT4都占优。 GPT4对系统消息更加注重未忽略，更加可靠
+ 系统消息和用户消息：在我们输入的内容中会被解析成系统消息和用户消息，系统消息通常用来传递角色场景等信息，而用户消息则是真正的用户意图信息。
+ 例：GPT4能画一张网页草图并且拍照给GPT4让它生成代码，他就能生成一个可运行的网页代码了。
+ 例：GPT4看一张搞笑图，并get到笑点。也就是说它的推理能力很强
+
+
+*openAI的api key怎么获取？
+ 注册chatGPT账号或openAI API账号不建议微软的账号容易被封
+ chatGPT Plus和openAI API是两个单独账户，前者是$20/月，只能访问GPT4等高级模型。后者是通过是绑定信用卡进行按量扣费。 可以分开两个账户防止被封相互影响
+ openAI API申请过程（详见bili）：
+        方式一：详见bili《OpenAI新手救星：一键升级ChatGPT Plus，一站式解决ChatGPT账户、会员、4.0API问题》
+        方式二：https://zhuanlan.zhihu.com/p/665473123?utm_id=0
+        第三方信用卡开卡：https://gpt.fomepay.com/#/pages/me/help/detail?Code=202404011412264983483688848554
+
+WildCard注册链接：https://bewildcard.com/i/LINBIN（邀请码：LINBIN）
+OpenAI API平台：https://platform.openai.com/
+Cloudflare：https://www.cloudflare.com/zh-cn/
+openai-proxy：https://gist.github.com/paicha/d26e48a0288df22c3fad12eb9547ef94
+  速率限制：TPM（每分钟token数）、RPM（每分钟请求次数）、RPD（每天请求次数）
+                 可以自定义设置每个月消费的金额。
+                 随着账户调用api量越来越大则账户等级会升高，api的并发数也会提高
+  第三方信用卡选择：
+           WildCard需要每年$11.99/年的年费但提供免费美国家庭网络环境 ，可以一键升级chatGPT Plus会员节省用户操作麻烦，还提供了国外邮箱和手机号。余额不足消费失败达 10 次注销
+           Fomepay无年费但选择时注意选美国的卡及支持哪些ai平台，无其它管理费但有2%-5%的充值手续费。 选择534786号段，适用于CHat GPT Plus 、Midjourmey等多种服务。有些账单地址是需要缴税的
+
+  注意：OpenAI API开通需绑定国际信用卡，由于OpenAI不对中国大陆和香港开放，所以国内和香港信用卡都不支持，不论是银联还是Visa、MasterCard，全部不支持。Fomepay信用卡网友亲测可以
+           因为OpenAI的对国内禁封策略，所以通过本地代码或浏览器插件访问会容易被禁封，所以要添加个转发服务器（到cloudflare平台）
+  注册信息：
+        WildCard账号：13960392037  Cf
+        海外邮箱：fanyinyumeng@gmail.com Cf      注意最好用chrome浏览器登录否则容易出问题
+        openAi API Key：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
+        cloudflare账号：845257580@qq.com
+   代理：访问OpenAI API时因为是国外域名，容易被封。 此时可以用代理。 Cloudflare是第三方dns服务
+           基本原理：通过自己或者第三方的dns解析服务器将自己的域名代理转发到https://api.openai.com，代码请求接口时将原本的https://api.openai.com替换成自己的域名
+           注意：本地因为有梯子影响，铁哒网页访问api.xmtieda.com可能会有问题，此时开启梯子并且在cloudflare的代理js判断openai.xmtieda.com即可解决
+                   注意：python代码里的base_url应该填写"https:/openai.xmtieda.com/v1"
+
+我们发现近期有很多 outlook/hotmail/live 等微软邮箱注册的 OpenAI 账户，在平时使用没有问题，但一旦升级到 GPT Plus 或绑定 API 就会在 24 小时内被封。
+我们猜测是微软给 OpenAI 提供了邮箱的注册国家信息，为了不必要的损失，请您尽量不要用微软的邮箱升级 Plus 或绑定 API 。
+
+*激发ai创意的网站：https://gpt3demo.com/   
+  GPT3Demo这个网站收集了各种ChatGPT和GPT-3应用案例，目前有600多个，包含了AI写作、AI搜索引擎、AI剪辑、AI编程及测试、AI设计等方方面面。
+ 类似的AI目录导航站还有：
+  Futurepedia：https://www.futurepedia.io
+  Futuretools：https://www.futuretools.io
+  Cre AI tives：https://www.creaitives.com
+  SaaS AI Tools：https://saasaitools.com
+  GetInference AI radar：https://airadar.getinference.com
+
+
+
+*ChatGPT-蛋壳部署  https://www.gptacg.com/how-to-use-gpt4-in-china/
+
+*ai工具集锦  https://feizhuke.com/#term-6606
+    尝试过的ai工具：
+          无界ai：https://www.wujieai.com/ai
+
+*Make自动化工具，可以将Notion、Twitter、ChatGPT串联起来。 让ChatGPT帮帮我们对大佬的推文质量进行评级筛选。
+ Zapier自动化工具，和Make一样可以通过Trigger和Action将海外一些应用串联起来，实现自动化。是无须代码的工具 。 国内的Jijianyun可以了解下？有待研究
+
+(1) 通用人工智能
+朱松纯|智能学科的源起、演进与趋势——北京大学智能学科的探索与实践
+https://mp.weixin.qq.com/s/5tsJ-MtSq0WUg6hWyqEv8g
+(2) 公众号:
+机器之心
+AI科技评论
+AI前线
+新智元
+人工智能学家
+(3) 入门书籍参考:
+《Python编程(从入门到实践)》
+《Python深度学习(基于TensorFlow)》
+《Python深度学习(基于Pytorch)》
+(4) 视频课程:
+【李宏毅——带你搞懂深度学习】（40课时完整）
+https://www.bilibili.com/video/av767359951/?vd_source=719aa7596cf8f5b8a8303d5eac19b04e
+
+
+*国内可用AI工具TOP10（按顺序）：
+ KimiChat：全球首款支持20万字大容量输入的模型， 类似ChatGPT，你可以将一本电子书或一个文档丢给它，让它去总结。在写小说，推演小说等方面能力惊人。目前还免费
+ Notion AI：内核是ChatGPT，功能差不多，会形成自己的知识库，对于后续你的提问，它会根据以往的知识库进行思考回答。   微软也有对标的应用叫Loop，和微软相关软件写作  https://www.notion.so/
+ 扣子：字节跳动的开放平台（对标GPTs），无须编程基础就能制作属于自己的机器人，如“占卜机器人”、“B站视频总结机器人”等。没有GPTs强大，但国内适配性更好。https://www.coze.cn/
+ 秘塔AI搜索：区别百度，搜索时，它会屏蔽广告并整理有用信息整理成答案
+ 通义万相：阿里云的文生图，虽然自由度没有Midjourney和Dalle3的高。但图片质量一点都不比它们差。但是创意还是略显僵硬
+ 度加：视频剪辑工具，对标Sora（有所差异），只能说是一个在线视频合成工具，并非和sora一样可以ai根据文字生成视频。
+ Magic Todo：智能任务分解工具，生成任务计划。还可以对一些语句进行情绪判定、者进行各种转化（如：激情点）、任务时间估算、任务整理、饮食建议等
+ Gamma：PPT制作工具
+ 通义听悟：阿里云的声音转文字工作，可用于制作会议记录
+ 佐糖：图片处理工具，抠图修图等
+
+
+*Copilot GPTs：它是微软chatGPT+Bing的整合   axton提到的BingChat已经更名为Copilot GPTs，chatGPT4等高级模型都可以免费不翻墙使用
+ 网址：https://copilot.microsoft.com     需要登录微软账号
+          注意：https://gptscopilot.ai/  里面包含了大多ai相关的厂商产品，似乎可以注册一个付费账户就可以测试使用所有。
+ 功能：copilot.microsoft.com网站有相关的应用入口（Copilot：文本对话、Designer：文生图、Vacation planner：休假计划、Cooking assistant：烹饪推荐、Fitness trainer：健身建议）
+          chatPDF：可以解读文档   https://sider.ai/chatpdf/E02NU2W0J2?fid=0       （edge插件【Sider: ChatGPT侧边栏 + GPTS, GPT-4 Turbo, 联网..】进入）
+ 和chatGPT的区别：chatGPT知识库截止时间好像是21年而且不能访问网络，但是CopilotGPTs是chatGPT+Bing搜索引擎的集合，它的信息应该会更丰富和新颖，并且可以上网。
+                            因为chatGPT更像是一个封闭的模型，知识库有时间和网络限制（2021年前），所以回答有些问题就会瞎掰乱造
+
+*chatGPT免费收费区别：收费版响应速度略微快一点点、错误率比较低、很久未问答则收费版状态保持。收费版有一种标准chatGPT模式，还有一种Turbo模式（速度极快）。  收费$20/月
+                                  收费版有更强的推理能力和一些附加插件能力。比如可以让它做一些场景推理分析
+ ChatGPT两个重要功能插件都自己做（需要付费）：
+      *上网Browsing
+      *代码解释器Code Interpreter（它其实是一个Python的运行环境），实际上不是代码解释，而是用Python代码运行环境来执行一些功能。分析歌曲、图像、pdf、数据文件等
+       比如它可以对上传的数据进行分析、挖掘、清洗等。注意不能上网
+       测试Code Interpreter时有个“LinkedIn_job_data”数据是招聘人才相关的数据
+  
+ ？Copilot Studio是什么
+ ？Microsoft 365是什么
+
+*Bard 谷歌的ai，对标chatGPT。 现已改名 Gemini。 有些功能只支持英文，有些不便
+ 网址：https://gemini.google.com/   需要谷歌账号845257580@qq.com  手机号182...
+
+*AI决策：可帮助企业主、经理和个人做出艰难的决定。 https://rationale.jina.ai/ 
+
+
+*Axton推荐浏览器插件：
+   Immersive Translate 沉浸式翻译，可以选择翻译的底层服务（如谷歌翻译），大文档翻译好像会有中断问题，可以用一个开源项目软件bilingual_book_maker，需要命令行
+   Bionic readeing帮助阅读英文文章，可以将英文或中文的某些首字母加粗，来方便阅读。
+   Video Notes from YouTube to Notion by Snipo 视频记录插件，能记录时间戳、视频截图、提取字幕
+   Readwise和Readwise reader 也是视频记录插件  花钱的，两个是绑定使用。 如果YouTube没有字幕就没办法提取字幕做笔记
+   BoB翻译工具是Mac上工具，windows好像不能用
+
+*Axton推荐聊天机器人：
+  POE：是集成多个聊天机器人的网站，需要付费，大厂之作，外国版知乎。包含chatGPT、Claude等。 （Claude与chatGPT不同，它理解“甄嬛体文字”更深入些，是openAI前员工创建，被认为是chatGPT最强竞争对手）
+  chatHub：是一个浏览器插件，可以一个问题问多种AI以作对比。非常好用，可以任意选多种AI进行对比
+
+*Claude2有100k的上下文，GPT4的32k也只开放给少数人使用，而GPT3.5最大也只有16k。  claude2对长文分析处理能力更加强大很多、可上传多个文件
+
+*Llama2 是 Meta AI 于 2023 年 8 月发布的大型语言模型 (LLM)，其参数规模达到 6500 亿，是当时参数规模最大的 LLM 之一。
+ Llama2可以用Ollama框架在本地运行，Ollama相当于node之类的软件环境框架，可以跑node应用
+ https://github.com/ollama/ollama
+
+*LLM：大语言模型（Large Language Model）
+
+
+*Axton推荐五大chatGPT神器
+ buzz：根据不同模型音频转文字工具。github开源项目https://github.com/chidiwilliams/buzz
+
+*Feedly 是一款Rss阅读器，可以结合ChatGPT+Make+Notion做自动化筛选内容，不过需要pro收费版。 用Inoreader可以免费版就行
+
+*AI作图
+ MidJourney 对标DALL-E2。  有网友开发了一个PromptHunter工具可以保存图片和提示词到notion。 MidJourney可以实现视角深远变化生成图片，相当于镜头变焦。 网友有制作一个动画：镜头由远及近的图像变化
+ Gen2可以文生成视频、文+图生成视频、视频生成视频。属于Runway公司
+ Firefly文生成视频、 属于Adobe公司
+ Bing 应该是使用DALL-E2，数码味比较重
+ 
+*AI音乐
+ music-fx：用英文写描述。 网址：https://aitestkitchen.withgoogle.com/tools/music-fx
+                demo提示：“Rock and roll instrumental, thrashing electric guitars, the bass guitar is transcendent, drums are driving the beat”
+
+Amper Music：
+Amper Music 是一个易于使用的人工智能音乐生成器，可以根据预先录制的样本创建音乐曲目。
+您可以调整音乐键、节奏、单个乐器等，适用于配乐和声音创作1.
+SoundBug（音虫）：
+SoundBug 是国产音乐制作软件，可以快速地为一段简单的旋律编配伴奏。
+您只需输入主旋律，然后选择 “AI 编曲”，即可生成相应的伴奏2.
+TuneFlow：
+TuneFlow 是一个智能音乐制作平台，可以根据您的旋律音频文件生成相应的伴奏。
+您可以选择喜欢的风格和节奏，生成完整的主旋律和伴奏3.
+
+*Windows Copilot：在操作系统内置了Copilot
+
+*2023年微软build大会有哪些看点：推出了 Azure OpenAI 企业级服务以及面向 Microsoft 365、Dynamics 365、Power Platform 等产品服务
+
+*Adobe也在PS等软件引入了相关的ai功能，如：可以再非常粗糙的草稿上用ai提示对草稿进行渲染绘画、可以对选区进行ai提示智能填充
+ Creative Cloud包含了ps等多个Adobe应用
+*DragGAN和PS的ai只能不同，它可以通过拖拽，实现图像变化，如图上任务的姿势变化。
+
+Beta features
+
+*openAI开放平台：https://platform.openai.com/
+ 用playground可以无代码做相关测试：https://platform.openai.com/playground
+ OpenAI Playground 中 Chat、Assistants、Compare 和 Completions 的区别：
+         Chat：
+	Chat 是一个交互式的环境，允许您与预训练的语言模型进行对话。
+	您可以输入多轮对话，模型会根据上下文生成回复。
+	适用于构建聊天机器人、虚拟助手等应用。
+         Assistants：
+	Assistants 是一个更高级的 API，用于构建具有复杂上下文管理和工具集成的虚拟助手。
+	您可以创建自定义助手，为其命名并添加工具（例如代码解释器）。
+	适用于需要详细上下文管理和复杂工具的应用。
+         Compare：
+	Compare 是一个用于比较不同模型性能的工具。
+	您可以输入不同模型的示例，然后比较它们的输出。
+	适用于评估不同模型的优劣。
+         Completions：
+	Completions 是一个用于生成文本补全的 API。
+	您可以输入提示，模型会生成完整的文本。
+	适用于生成单个文本段落或补全句子。
+	总之，Chat 和 Assistants 适用于构建对话式应用，而 Compare 和 Completions 则更侧重于生成文本。具体选择取决于您的应用需求和功能。
+
+
+
+*Mr.Ranedeer:中文叫驯鹿先生，是一个个性化的人工智能导师。主要功能包括使用 GPT-4 生成定制化提示，为用户提供个性化学习体验。Mr. Ranedeer 的目标是通过约束大型 AI 模型，使其成为某个专业领域的私人教练。
+ 基本使用过程：
+	1、访问 ChatGPT：首先，您需要访问 ChatGPT 网站。
+	2、选择 GPT-4 模型：在 ChatGPT 中，选择 GPT-4 或更高版本的模型。！！需要付费会员
+	3、复制配置文件：从 Mr. Ranedeer 的 GitHub 仓库中克隆或下载配置文件 Mr_Ranedeer.json。
+	4、粘贴配置文件：将 Mr_Ranedeer.json 文件的内容复制并粘贴到 ChatGPT 中。
+	5、配置 Mr. Ranedeer：ChatGPT 将引导您完成配置过程。您可以根据自己的需求选择学习深度、学习风格、沟通方式、语气风格和知识推理框架。
+	6、开始学习：一旦配置完成，您就可以开始与 Mr. Ranedeer 进行互动，定制个性化的学习计划。
+ 原理：个人理解就是让ChatGPT进行角色扮演，让ChatGPT扮演了Mr.Ranedeer角色，然后跟我们对话（包括执行一些该角色能执行的命令）。 就如axton做的一个虚拟机套娃测试。  
+
+？看看有没有视频翻译插件软件
+
+*AI威胁论
+  好像有部电影叫《Don't look up》
+  斯坦福大学发布了一个70亿参数的模型（羊驼），可以运行在类似手机这种小型设备上。 但有很快以安全和幻觉为理由下架了羊驼模型。  所谓幻觉就是指胡说八道
+
+*马斯克的脑机接口：通过将人脑和机器相接，获取脑部的一些信息，如脑袋里的图像重建（目前已经能基本实现比较清晰的图像了）
+
+*奥特曼对未来GPT的计划：
+  GPT4资费降低、更长的上下文窗口、微调API、
+  有状态的API（因GPT的token上下文长度限制会导致比较前面的对话“忘记了”，目前只有8k，32k的token还未完全开放）。眼睛里的画面会被提取到设备里进行人机交互，虚拟和现实打通界限
+
+*苹果WWDC 2023新品发布会（没有提到AI，但是一直提到机器学习）：
+ MR混合现实眼镜：带上可以看到虚拟的app场景，目光就是鼠标，手指动一动相当于点击操作。
+ 增强听写和自动更正的iPhone键盘：在听和写方面能够根据用户习惯等信息给出完整句子建议
+ M2 Ultra芯片：它包含有24个CPU、76个GPU、32核神经引擎、支持192G内存，可以处理大型的Transformer模型
+ ...
+
+*22年6月~23年5月有10万ChatGPT账号信息泄露，可以在ChatGPT账号设置里开启双因素认证
+
+*23年7月 ChatGPT禁用了Bing搜索功能（好像是有网友可以通过Bing搜索功能绕开资源付费墙，比如网文付费）。如果要ChatGPT能上网，只能用相关的ChatGPT插件，如WebPolit
+
+*Ada、Davinci、Babbage和gpt-3.5-turbo、gpt-3.5-turbo-16k、gpt-3.5-turbo-0125等是什么关系？
+ Ada、Davinci、Babbage是相对较小的语言模型（算基本语言模型），而gpt-3.5-turbo、gpt-3.5-turbo-16k、gpt-3.5-turbo-0125这些是较大的语言模型。
+ Ada是最小的语言模型，可以比较省token，Davinci是gpt默认语言模型
+
+*最佳 GPT-3 参数之一是 temperature setting。通过修改此设置，您可以针对同一提示获得不同的答案。但是，如果设置为零，即使您询问相同的提示一百次，GPT-3 也会生成相同的响应。
+
+*ChatGPT 3.5 API 接口的收费是按照 token 数量计费的，每 1000 个 token 收取 0.002 美元（约合人民币 0.13 元）12。
+
+
+*目前流行的开源大型语言模型（LLM）可供使用。这些模型在自然语言处理领域有着广泛的应用，包括翻译、问答、文本摘要、对话、文本分类、情感分析、代码生成等任务。
+ 以下是一些值得关注的开源LLM模型：
+	GPT-3（Generative Pretrained Transformer 3）：拥有约1750亿个参数，由OpenAI开发。它在生成文本、理解与问答、对话交互等方面表现出色1。
+	GPT-4：作为GPT-3的继任者，参数量可能更大，但目前尚未正式发布。
+	PaLM：由Google发布的模型，具有巨大的参数规模，用于生成文本、补全句子等任务。
+	ChatGPT：基于GPT-4的聊天机器人，用于自然、流畅的人机对话，模拟人类对话风格，适用于客户服务、虚拟助手、教育辅导等领域。
+	LLama：一个开源的中文大语言模型，基于GPT-4，用于生成文本、问答等任务。
+	BayLing：中科院开源的中英双语双向密集模型，性能媲美GPT-3.5，用于生成人类可读的文本2。
+	GLM：清华发布的中英双语双向密集模型，具有1300亿个参数，用于支持推理任务。
+	OpenSora：高效复现类Sora视频生成的完全开源方案。
+	这些模型在不同领域都有广泛的应用，你可以根据具体任务的需求选择合适的模型。请注意，这里列举的只是部分模型，还有其他优秀的开源LLM等待你的探索！🚀
+
+
+
+总结：
+    需要学习的有Pythone、Twitter/Fecebook等国外应用、AGI相关（AutoGPT等）、chatGPT开放平台、AI自动化工具（Make/Zapier）
+    axton的ai三件套法宝：ChatGPT、Notion、Make
+    目前ai方面应用有：ASK AI、类似Zapier的多应用连接自动化、
+    目前ai厂商的费用还是比较贵，很多应用需要用户配置自己的ai厂商的key
+    需要学习的是ai模型的基本原理（特别是参数）和相关工具、常用的模型、
+    重中之重是学习怎么使用prompt
+总结：
+   概念梳理：
+   gpt-3.5-turbo-16k这类都是具体大语言模型，GPT3、GPT4都是OpenAI的大语言模型归类，GPT plus是chatGPT的付费用户，OpenAI API提供给开发者的接口，而GPT plus和OpenAI API的账号可以是公用但计费却是分开的。
+   GPTs是指OpenAI提供给用户个性化调校定制自己的GPT的平台，它可以通过非代码方式让用户定制自己专有的GPT APP，并且可以发布供别人下载使用。另外它可以扩展自己的知识库
+   套壳应用：NextChat、LibreChat都属于基于指定大模型进行请求的GPT，如对接OpenAI API进行聊天应用。Dify是可以让我们有一个自己的GPTs
+   自动化：通过GPTs+国外Zapier或国内语聚进行相关流行app应用的操控
+
+*******需实践内容************
+*重点关注大语言模型：GPT、Claude、Gemini，捎带关注Mistral，自动化工具：Zapier、Make，AI平台关注下字节跳动的corze
+ 
+Python学习 ！
+Notion使用 ！
+ChatGPT的插件使用和开发，要求升级为ChatGPT Plus会员才能用 ！可直接略过，后面都是GPTs的年代
+AutoGPT下载安装实践  ！可直接略过，后面都是GPTs的年代
+chatGPT开放平台介入，包含GPT3和GPT4
+Make自动化工具，将Notion、Twitter、ChatGPT串联起来。怎么将Twitter的账号信息添加到Notion
+Mr.Ranedeer实践，和提示工程（Prompt Engineering）相关
+Ecoute：github上SevaSK/ecoute项目，在线面试时，能将面试官语音问的问题转为文字然后去GPT搜索，然后给出回答，这样面试者就可以“作弊”了。
+Google的Bard等应用了解
+测试Code Interpreter
+ChatGPTNextWeb（包含PC客户端和web，但是对话单模态）  、LibreChat（仿chatGPT Web，可接多种厂商大语言模型，多模态）
+用lama运行Genma大模型（需要显存硬件）
+
+aitestkitchen.withgoogle.com
+
+*AutoGPT项目：
+   源码github，理解文章：https://www.bilibili.com/read/cv23278759/
+
+*openai的api调用
+  需要付费账号，从2023年年初送18美元后来减为送5美元，到2024年3月21日全部不送了
+  文档：https://platform.openai.com/docs/overview  关注Documentation和API reference两个部分
+           cookbook.openai.com   论坛，有相关案例代码
+
+************ Python begin ******************
+*Conda是一个开源的软件包管理系统和环境管理系统，最初是为Python语言开发的，但现在已不限制语言，支持Python、R、Ruby、Lua、Scala、Java、JavaScript、C/C++、FORTRAN等多种语言。它可以在Windows、macOS和 Linux上运行，主要用于安装多个版本的软件包及其依赖关系，并在它们之间轻松切换。
+ 注意：不要安装Miniconda，它是一个轻量级的发行版，只包含了最基本的内容：Python 和 Conda。  安装Anaconda，完整版包含图形界面
+          pyCharm里创建项目时可以选择基于Conda创建项目，后续可以用conda切换python版本环境
+
+*pyCharm插件Translation  代码翻译
+
+
+*字面量：代码种，被写在代码种固定的值，称之为字面量
+
+*序列：是指元素连续并可以用下标索引的数据容器，List、Tuple都属于序列
+          凡是序列都可以进行切片操作，即从序列中截取出一部分数据形成新的序列返回，如：list1[1:2:1];#其中1为起始坐标，2为结束坐标（不包含结束坐标元素），1是指步长（跳过几个取）。
+          list1[:] 起止坐标不写则切片是从头到尾
+          list1[::2] 起止坐标不写则切片是从头到尾，步长为2
+          list1[::-1] 倒序取，注意[1,2,3,4,5,6][3:1:-1]中-1代表倒序取，但起始坐标还是按正序的坐标去填充（即3:1）
+*6种数据类型：
+ 数字
+ 字符串：有单双三引号3种方式定义。+号字符串拼接时不能是字符串类型和其它类型拼接（报错）、 % （str1,int2...）格式化方式拼接可以进行不同类型拼接、f'你是{name}'格式化方式拼接也可以进行不同类型拼接（不理会类型、不做精度控制）
+ 列表：即list，和js的数组差不多。和元组相差不多
+ 元组：和list区别在于：是不可变的、可存不同数据类型、因不可变所以内存未预留空间。 注意定义元组时如果内部只有一个元素则需要加个逗号，如(1,)
+ 集合：即set
+ 字典：即dict 和js的json差不多，即{name:'jack'，age:18}
+
+ 注意：变量是没有类型的，但是变量存储的数据是有类型的，相当于js的var
+          数据容器各种类型对比，主要从是否元素可重复、是否元素可更改、元素可用下标索引（可以使用for循环）、元素是否有序
+
+*数据容器常用的函数：
+ len(list1) 统计list1长度，注意list1.count('1')是统计元素'1'在list1里出现的个数
+ max(list1) 统计list1里最大元素
+ min(list1) 统计list1里最小元素
+
+*类型转换： int('122');   str(123);等
+
+*标识符：变量、类名... ，和Java等语言命名差不多。比如不能用关键字、首字母不能数字...
+
+*精度控制：%5.2f 
+
+*表达式，比如name=1或a*3都是表达式，可以得出具体结果的式子。它可以作为格式化中的替换占位变量
+
+*等待用户输入语句：input()、input('提示提示')。 注意接收到的永远是字符串，如需其它类型，请自行转换
+
+*if等判断控制语句都是通过缩进来决定层次关系
+
+*range()函数在Python中用于生成一个整数序列。3种使用方式：
+ range(num) 生成0~num的序列，不包含num
+ range(start,stop)，生成start~stop的序列，不包含stop
+ range(start,stop,step)，参数分别为起始坐标，终止坐标（不包含），步长
+
+*和js一样for循环的i的作用域也是可以达到for之外的
+
+*函数不写返回值，其实是返回类型为NoneType的None值
+ 函数内用global 声明的变量是全局变量
+
+
+
+*常用语法
+ *格式化字符串  print("Hello World%5.2f" % (12.3354));
+ *加字符串前面加f，是替换变量 print(f"Hello,{name},are you {age} years old?");
+
+*类型注解
+  python是解释型语言，不用规定变量类型，但是也可以通过“类型注解”标识变量类型。 类型注解只是为了方便开发者和IDEA更好记忆和提示
+  变量类型注解：
+       方式一：myList:list=[1,2,3];
+       方式二：myList=[1,2,3];#type:list        这种方式有点蹩脚
+  函数返回值类型注解：以下的int即函数返回值类型
+       myFunc()->int:
+	print(123);
+  union联合类型：
+    如下变量赋值时在list元素类型和dict的值类型可能有不同种类型，我们并不好做类型注解，那么怎么解决？ 
+       myList=[1,2,'jack'];
+       myDict={'name':'jack',age:18};
+    解决方案：使用Union类型
+       myList:list[Union(int,str)]=[1,2,'jack'];
+       myDict:dict[str,Union(int,str)]={'name':'jack',age:18};
+
+*抽象类抽象方法
+  类里定义了抽象方法，则类会变为抽象类
+   class Animal:
+       @abstractmethod  #这个@abstractmethod是标识抽象方法，供子类实现
+       def speak(self):
+            pass     #这个pass标识speak方法是空实现
+
+*注意：python是解释型语言，所以和js一样，一个对象的属性变量可以现写现用，如：person.name='jack'
+          闭包和js差不多，但是如果在函数内的全局变量（函数参数变量）要修改的话，要用nolocal关键字来修饰一下。 会有内存占用问题,但问题不大
+
+
+*目前Django 和 Flask 是 Python 中最流行的 Web 框架。
+   Django：
+	Django 是一个全功能的 Web 框架，适用于构建大型、复杂的应用程序。
+	它提供了自动化的管理后台、ORM（对象关系映射）支持、用户认证等功能。
+	Django 社区庞大，有丰富的插件和扩展。
+	如果你需要快速构建功能丰富的 Web 应用，Django 是一个不错的选择。
+   Flask：
+	Flask 是一个轻量级的 Web 框架，被称为“microframework”。
+	它更灵活，没有像 Django 那样的自动化功能，但可以根据需求选择插件。
+	Flask 适合小型项目、API 开发、原型制作等。
+	如果你喜欢简洁、灵活的框架，Flask 是一个很好的选择。
+       
+*装饰器模式：
+ 按照以下语法既可以通过 @mywrapper将originFunc函数包装
+ def mywrapper(func):
+     def inner():
+         pring('before ...');
+         func();
+     return inner
+ @mywrapper
+ def originFunc():
+       print(123);
+
+*pip安装
+ 清华镜像源：pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+
+*使用 Pipenv 来管理依赖包，类似于 Node.js 中的 package.json 文件
+
+*Django （python做web开发稍作了解即可，主流还是ai和大数据、爬虫）
+   *pyCharm中tools工具栏->run manage.py Task...     用这个可以简化manage.py命令的编写  
+   *Django中项目和应用概念：项目是项目，包含多个应用（比如一个后台项目包含前台应用和后台应用）
+   *Django的MTV结构（其实就是MVC）:
+         Model:MVC的Model
+         Template：MVC中的View
+         View：MVC中的Controller
+
+
+*PyFlink：是Python用于操作Flink的API
+ PySpark：是Python用于操作Spark的API
+
+*Python在数据科学和机器学习领域非常流行，因为它有许多强大的库和框架，如NumPy、Pandas、Scikit-learn和TensorFlow等。
+ Python有许多强大的库和框架，如BeautifulSoup、Scrapy和Requests，用于网络爬虫。
+ Python有许多流行的库，如Matplotlib、Seaborn和Bokeh，用于数据分析和数据可视化。
+
+？TensorFlow学习了解下
+
+
+************ Python end ******************
+
+************ Notion begin ******************
+*基本概念：
+  Page：每个页面下都可以有子页面，是一个树形结构显示在左侧菜单中。一个页面相当于超强富文本页面可以设置背景、头像、评论等等，右上角还有评论分享相关设置
+  Block：在编辑光标下可以插入不同的块，可以是文本、视频、地图等待。块中可以添加链接、@同事等。 注意：输入/可以出现提示，在输入块的英文名称即可自动弹出相对于的块
+             常用块名称有：table、img....  ??
+             技巧：“：+英文”添加表情，“@人名”@同事，“序号+空格”自动生成列表，“---”添加分割线，“#”一级标题，“句子后+/color”设置文字颜色（其它样式同理）
+  
+  Database：数据库表现形式为6种块或页面，分别是Table、Board看板、Gallery画廊、List清单、Calender日历、TimeLine时间线
+
+      注意：Page和Block都有链接的概念，分享链接即可让其他人定位到它
+      ？居然没有像word等软件的回退或前进按钮（ctrl+z）、表格方面沒有一些统计功能
+************ Notion end ******************
+
+
+************ Dify begin ******************
+*代码：https://github.com/langgenius/dify
+*文档：https://docs.dify.ai/v/zh-hans
+
+*Dify可以用云服务（https://cloud.dify.ai/），也可以下载代码自己部署
+
+？应用中的变量作用
+
+
+*GPTs、Coze这些都是和Dify差不多的平台
+
+*测试Dify或GPTs的时候可以用天行数据平台的公开api接口
+ tianapi.com
+ 秘钥：798f312adf8932f27db67a12e1924ea7
+
+*接口测试工具app.apifox.com
+
+*Dify添加外部工具和GPTs添加自定义Action一样的要添加接口的scheme
+
+*套取GPTs应用信息和防止GPTs应用的信息被套取
+ https://github.com/EmbraceAGI/Awesome-AI-GPTs?tab=readme-ov-file#gpts-%E6%94%BB%E5%87%BB%E5%92%8C%E5%AE%89%E9%98%B2
+ 以上链接中有防护prompt，可以将她添加到GPTS应用创建的prompt里【instruction】
+
+
+************ Dify end ******************
+
+************ prompt begin ******************
+
+*三引号、XML 标签、节标题等分隔符可以帮助划分要区别对待的文本节。
+ <Task>   <Result>
+
+
+一些ai学习平台：
+product hunt
+hugging face
+LinkedInt
+TwitterX
+
+*你可以直接使用 Dify 生态提供的第一方内置工具，或者轻松导入自定义的 API 工具（目前支持 OpenAPI / Swagger 和 OpenAI Plugin 规范）。
+
+*prompt包含以下元素：
+ Instruction：指令词，要执行的特定任务或指令。如解释、翻译、总结、生成、代码....
+ Content：背景，包含外部信息或额外上下文信息，用于引导模型更好的相应。如我是一个小学生、你是一个面试官...
+ Input Data：用户输入的内容或问题。如“将以下语句翻译为英文【在那桃花盛开的地方】”，这里的【在那桃花盛开的地方】就是Input Data。  使用技巧是用三引号或其它符号框起来以助于模型理解。
+ Output Indicator：输出格式。如请以json格式输出，20个字以内...
+
+*prompt技巧：
+ *语义明确：如“为openai写一首诗”-->“为openai写一首五言绝句的古诗”
+ *用分割符：“将下面语句翻译为英文"""用华丽的语句"""”，三引号括起来的内容是要翻译的内容。 当然也可以用其他分隔符
+ *指定输出格式：明确告诉GPT最后结果要用什么格式输出，如“列出国内最流行的ai框架，并用逗号分割”
+ *列出示例：可以给GPT举个例子，然后让GPT去学习理解，这有助于GPT理解用户输入内容和为用户输出结果。  注意：可以多举个例子让GPT去理解学习，特别是一些推理类型问题，可以多举个类比例子
+ *角色扮演：“你将扮演一个面试官”，“你担任一个面试官”，“你担任一个面试官，用户是一个初入职场的小白求职者”   注意角色设定是包含系统和用户的
+
+*以下两个prompt项目，一个中文一个英文，收集了好几种角色扮演
+ https://github.com/f/awesome-chatgpt-prompts
+ https://github.com/PlexPt/awesome-chatgpt-prompts-zh
+
+*通用prompt模板：
+ ###角色定义：
+  - 你是一个...
+
+ ###自我介绍：
+  - 首先，介绍并询问用户需要...
+
+ ###信息收集：
+  - 询问用户一下问题：
+        1、问题一
+        2、问题二
+        3、问题三
+         ...
+      - 注意：每次只能提一个问题，并等待用户回应。
+
+ ### 核心任务：
+  - 根据用户提供的信息，开始[核心任务]
+  - 可以提供一个大纲或者摘要供用户审查
+
+ ### 循环反馈：
+  - 完成每一个[任务单元，如章节或者任务]，询问用户是否满意或者需要哪些修改
+ 
+ ### 额外建议/资源：
+  - 提供一些建议 
+
+*为模型扩展能力
+ 上网：模型锁拥有的知识通常都在一个时间范围内。
+ 知识库：将企业内部的一些资料进行向量化，然后可以让模型分析总结出一些结果。然后用户问的问题就可以用模型分析总结的结果回答
+ 外部API：比如调用我们企业内部的一些验证
+
+
+
+*ReAct：Reson+Action 即推理+动作
+ Dify工作流的原理流程理解可以查看bili《【45分钟系统学习】ChatGPT Prompt提示词工程...》 ,其中提到的Azure OpenAI可以了解下，应该和Dify差不多
+
+*Dify工作流
+   节点直接的输入输出要注意类型。注意两个节点之间输入输出变量的类型要衔接对应
+   注意：代码执行节点输出json对象中，如果name属性值有null，到下游的模板转换节点时接收json会出问题报错（即使模板里没有输出该属性也会报错）。要替换为'N/A'，如{{ item.metadata.score | default('N/A') }}
+            代码执行节点输出json对象中，如果name属性值有\n，到下游的模板转换节点时接收json会出问题报错。要替换为'\n\n'，如{{ item.content | replace('\n', '\n\n') }}
+            原因：工作流中知识库或者其它扩展API节点返回给下游的变量如果有json并且包含值为null的属性，则不管是“模板转换节点”或者“代码执行（python3）”节点在接收该变量时会出现类型无法转换错误
+            解决办法：加一个“代码执行（JavaScript）”节点来对null值进行转换。因为知识库之类的节点输出的都是固定的Array[Object]对象，因此如果有null值无法给到“代码执行（python3）”节点处理。
+
+
+function main(data) {
+    var arg11=data.arg1;
+    arg11[0].metadata.score=0;
+    return {
+        result: arg11
+    }
+}
+
+
+*破解prompt和防止破解prompt
+ 此视频17"30  https://www.bilibili.com/video/BV1Lc411b7bS/?spm_id_from=333.337.search-card.all.click&vd_source=5d74800eec4782c9be5ee53ff7c9a201
+************ prompt end ******************
+
+************ GPT 微调 begin ******************
+*pands
+
+*openai提供的将csv格式的训练数据转为json格式的训练数据
+ openai tools fine tunes.prepare data -f <LOCAL FILE>
+ 注意：给点微调数据要大于10个
+
+*网友提供的训练数据集：
+  https://huggingface.co/datasets/ehartford/samantha-data
+  ChatGLM-Efficient-Tuning
+
+*token限制取决于您选择的型号。对于gpt-3.5-turbo-0125，最大上下文长度为 16,385，因此每个训练示例也限制为 16,385 个token。对于gpt-3.5-turbo-0613，每个训练示例仅限于 4,096 个token。比默认值长的示例将被截断为最大上下文长度，这会从训练示例末尾删除标记。为了确保整个训练示例适合上下文，请考虑检查消息内容中的总令牌计数是否低于限制。
+
+
+fine_tuned_model
+fine_tuned_model
+************ GPT 微调 end ******************
+
+
+
