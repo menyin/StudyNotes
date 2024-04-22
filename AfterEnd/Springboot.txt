@@ -355,6 +355,7 @@ StaticConfig
      比如报错“at com.sun.mail.smtp...”相关错误时，我们并不知道这个使用哪个组件报的错，但我们可在jeecg-boot项目全局搜索或者百度很容易定位到是“spring-boot-starter-mail”组件
      但是进入它的pom文件并不能定位到它所在的jar包位置，但是可以找到对应的yaml配置，找到spring.mail.username并且ctrl+单击就能进入所在包，从而找到它对应额配置类MailSenderAutoConfiguration
      拿着MailSenderAutoConfiguration到启动类进行排除即可
+   *可以条件注解去处理：@ConditionalOnProperty(prefix = "zzcloud.weblog",value = "enabled",matchIfMissing = true)
 
 ================================================
 
