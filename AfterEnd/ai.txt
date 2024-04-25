@@ -39,7 +39,7 @@
     “请注意，在运行此代码之前，需要替换“YOUR_API_KEY”为您的 OpenAIAP1密钥 openai.api_kcy="YOUR_APLKEY"这一句不好，出于安全的原因，我不想把我的 APIKey写到源代码里。”
   注意：Streamit是一个部署网站的平台
 
-实践：富文本生成机器人（openAI apikey：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）
+实践：富文本生成机器人（openAIapikey：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）
      “使用OpenAI API和springboot和vue2创建一个简单前后端分离的web应用程序，允许用户输入他们的行业和经营商品信息，然后为该用户生成富文本代码，并且用户可以点击复制该富文本代码到剪切板。 请将以上需求完成代码和配置写出来。”
 
  *可以给定一个网站链接或信息，请评价他怎么样？
