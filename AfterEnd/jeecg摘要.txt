@@ -132,6 +132,7 @@
  *【默认跳转地址】是指上一级菜单点击默认跳转的地址，因为上一级菜单底下有多个菜单。
  *【隐藏路由】大概就是该页面不会在左侧菜单列表展示出对应的菜单项。？？待测
  *【聚合路由】大概是说比如A菜单下面有A1，A2子菜单，但是在左侧总菜单只想让A菜单展示，点击A菜单后右侧展示A菜单下的A1，A2的一个聚合页面。这个聚合页面还是会有A1、A2菜单栏
+ *【路由缓存】当打开两个页面A、B，A页面表单填写了信息，然后切换页签到B页面，然后再切回来时A页面的表单信息就丢失了。  开启路由缓存能避免该问题
 
 *数据权限
  实现：代码上处理，在线编码。 
@@ -269,6 +270,87 @@
   所以后续等完整部署完之后再检查是否真正执行
 ************************后端 end******************************
 
+************************SaaS 多租户 begin******************************
+*JeecgBoot前端提供两套解决方案，一套VUE2和一套VUE3版本，目前vue2版本前端UI只支持到jeecgboot3.4.3版本，一定注意。
+
+*Vue3版本文档  https://ojrjjvdr7z.k.topthink.com/readme.html
+
+*总体业务逻辑：
+ *租户只是作为划分业务数据或系统数据的隔离屏障，比如用户已经和租户关联。
+  注意：在MybatisPlusSaasConfig里可以看出默认部门、职务等也是和租户关联，但是实际前端项目的添加表单中并无租户字段可选。其实不是bug，是默认是存储了当前登录用户的租户。
+           系统管理-角色管理中角色添加也没有租户字段可选，但是默认是存储了当前登录用户的租户。
+           租户开启时，sys_depart、sys_category、sys_data_source、sys_position是通过MybatisPlus拦截处理租户筛选查询逻辑，而sys_role、sys_user_role则是通过代码层面处理。
+ *租户只做数据隔离，并没有像角色那样可以分配菜单权限。 
+   问1：那么租户套餐分配菜单权限的逻辑又是怎么样的？ 用户->租户->租户套餐->菜单权限->最终显示  这五者是怎么样一个关联关系
+   答：租户下可以有多个套餐，每个租户套餐下有多个菜单权限，每个租户套餐可以有多个用户。   
+   问2：【我的租户-租户角色】并不能分配菜单权限，也不能分配用户。   而【我的租户-租户用户】也是一样不能分配用户。那么对于一个租户角色来说要分配菜单权限还是得到【系统管理】，有点别扭？
+   答：只能通过【系统管理-角色管理】去分配菜单权限，那就会有“问4”的问题
+   问3：有角色分配的菜单权限，也有租户套餐分配的菜单权限，还有部分分配的菜单权限，最后用户加载的菜单权限是什么？
+   答：最终是租户套餐和角色以及部门分配的菜单权限的并集。 个人感觉：应该是角色+部门分配的菜单权限并集再和租户套餐分配的权限菜单取交集（如果要实现可以到SysPermissionMapper.xml里修改sql）。
+   问4：tA租户套餐分配了【系统管理-角色管理】菜单权限，则tA下的uA用户则可以管理角色，此时uA登录进行角色的菜单权限分配（可以看到全部的菜单权限），那不是可以全部菜单权限分配？ 
+   答：居然可以分配，也就是说如果tA租户下的uA租户有【系统管理-角色管理】权限，则他就可以通过角色给uA分配所有菜单权限，并且这些菜单权限居然还没有经过tA租户套餐过滤，显然是bug？？？？
+        也就是说有两个问题：1、角色分配菜单权限是的菜单权限树数据并未经过tA租户套餐过滤的全数据。 2、界面右侧菜单列表其实也没有经过tA租户套餐过滤，是角色、部门、租户套餐分配菜单权限的并集。
+   注意：官方文档其实也有说明“系统目前有系统用户、系统角色菜单，这个是给超级管理员用的，不做租户隔离。”
+
+ *怎么去分配租户及相关菜单权限，搭建一整套租户体系？最佳实践
+   0、以招工网为例
+   1、首先新建租户tA、租户套餐tpA、用户uA（uA设置租户tA）
+   2、tpA分配非系统用户和系统角色的相关菜单权限
+   3、tpA邀请用户uA，则uA相关的菜单权限都通过tpA租户套餐来关联获取
+   4、新建角色：企业rC、求职者rP、CRM用户rCR
+   5、用户uA设置角色为企业rC，
+   总体逻辑：付费的相关菜单权限通过租户套餐来实现分配（无论企业或个人或CRM用户），基本免费菜单权限通过角色来实现分配。 用户类型也是通过角色来区分。
+                  系统用户和系统角色由超级管理员来管理，不在租户套餐或角色的菜单权限分配内。
+                  ？以上的菜单权限都是以菜单和按钮标识作为资源为前提的，如果要业务套餐如简历数等，那么扣点扣积分怎么实现（企业用户的套餐要有点数）
+   
+   
+  
+
+ 注意：租户模式开启时加载菜单权限时，会默认将临时角色（test）的相关权限添加进去。 所以如果发现某用户多出一些不属于自己角色的菜单权限，不要惊讶，可以去看看临时角色是否有这些菜单权限。
+
+*总体实现逻辑：
+   利用mybatisplus的多租户插件，在执行sql里注入tenant_id筛选逻辑（可以自定义租户字段、哪些表有租户隔离、注入时从哪里获取实际租户id）。
+
+
+*jeecg-boot3.6.3部署后，由于admin的相关权限数据没有添加，导致无论是否开启多租户都会有很多功能页面或数据无法访问（没有权限）
+ 解决：正常可以再菜单管理和角色管理里添加相应权限，但是一开始连角色管理都没有权限访问。 所以只能先在ShiroRealm#doGetAuthorizationInfo里硬编码线添加权限，如下。然后再去菜单管理和角色管理里添加相应权限
+        permissionSet.add("system:role:list");
+        permissionSet.add("system:user:queryUserRole");
+
+*jeecg-boot3.6.3部署后，部署前端项目ant-design-vue-jeecg3.4.3后发现，运行后发现admin账户无法获取到用户列表。
+ 根本原因有两个：
+       1、前后端缓存租户id的名称不一致，前端用的是TENANT_ID = 'TENANT_ID'，
+            后端请求参数用的是TenantConstant.TENANT_ID，即request.getParameter(TenantConstant.TENANT_ID);
+            后端请求头部用的是CommonConstant.TENANT_ID，即request.getHeader(CommonConstant.TENANT_ID);
+       2、MybatisPlusSaasConfig中，sys_role、sys_user_role、sys_announcement三张表不能用TENANT_TABLE.add添加，也就是它们不能和租户关联。否则在查询用户列表时会在sys_role表拦截注入tenant_id进行查询，导致无数据。  也就是租户是不和角色表关联，而与用户表关联。
+  注意：在jeecg-boot3.6.3+ant-design-vue-jeecg3.4.3存在一些租户问题bug，如前端获取角色字典时，用/sys/role/queryall，但如果sys_role并未用tenant_id做隔离，则会出现查询不到
+
+*从TenantLineHandler#ignoreInsert 规定了是否忽略对租户字段的处理，即是否注入tenant_id
+ 默认实现是：当租户相关的业务表插入数据时，如果已经业务sql已经带了租户字段赋值，则不需要注入tenant_id。否则要注入
+ 【租户默认套餐】模块中新建租户套餐时在前端设置的tenant_id=0，所以在TenantLineHandler#ignoreInsert发现sql语句已经有插入了tenant_id的值就不会插入。 所以【租户默认套餐】模块其实应该叫【默认租户套餐】
+   
+
+*sys_user、sys_role、sys_permision、sys_depart、sys_category、sys_data_source、sys_position、sys_announcement
+
+*vue3版本初始化时执行pnpm install后报以下错误，其实是代理设置有误可以先还原
+ ERR_PNPM_META_FETCH_FAIL  GET https://registry.npmmirror.com/@commitlint%2Fcli: request to https://registry.npmmirror.com/@commitlint%2Fcli failed, reason: connect ECONNREFUSED 127.0.0.1:7890
+ 解决方案：
+     npm config set proxy null 
+     npm config set https-proxy null
+     npm config set registry http://registry.npmjs.org/
+     如果想设置淘宝镜像再设置 npm config set registry https://registry.npmmirror.com
+
+*vue3版本中将很多相关的业务变量做了ts类型规约，让所有东西环环相扣，符合开发规范。
+
+？？了解学习
+  vite和webpack区别
+  vue3、ts了解
+  前端代码生成（vue3Native和vue3）
+  vue3和vue2功能差别 如租户逻辑、分类字典、字典白名单等
+
+
+************************SaaS 多租户 end******************************
+
 https://api.xmtieda.com/jeecg-boot/online/cgform/api/getColumns/6d8e3289002448f2a745d736582379ba?_t=1649752470
 *********获取online表单的列表展示列信息（包括对应列所需的字典）************
 {"success":true,"message":"","code":0,"result":{"code":"6d8e3289002448f2a745d736582379ba","description":"栏目表","tableType":1,"isDesForm":"N","enhanceJs":null,"desFormCode":"","columns":[{"title":"站点","dataIndex":"site_code","align":"center","customRender":"site_code","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"内容类型","dataIndex":"module_type","align":"center","customRender":"module_type","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"排序号（升序）","dataIndex":"tree_sort","align":"center","customRender":null,"scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"栏目名称","dataIndex":"category_name","align":"center","customRender":null,"scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"是否在导航中显示","dataIndex":"in_menu","align":"center","customRender":"in_menu","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null},{"title":"内容展现模式","dataIndex":"show_modes","align":"center","customRender":"show_modes","scopedSlots":null,"hrefSlotName":null,"showLength":0,"sorter":false,"linkField":null,"tableName":null}],"currentTableName":"cms_category","paginationFlag":"Y","hasChildrenField":"has_child","fieldHrefSlots":[],"relationType":null,"formTemplate":"2","foreignKeys":[],"dictOptions":{"module_type":[{"value":"0","text":"未定义","title":"未定义"},{"value":"1","text":"文章","title":"文章"},{"value":"2","text":"链接","title":"链接"},{"value":"3","text":"图片","title":"图片"},{"value":"4","text":"视频","title":"视频"},{"value":"5","text":"音频","title":"音频"},{"value":"6","text":"图书","title":"图书"},{"value":"7","text":"下载","title":"下载"}],"in_menu":[{"value":"Y","text":"是","title":"是"},{"value":"N","text":"否","title":"否"}],"site_code":[{"value":"1513328847070572545","text":"铁哒-翔安站","title":"铁哒-翔安站"}],"show_modes":[{"value":"0","text":"自动","title":"自动"},{"value":"1","text":"栏目列表","title":"栏目列表"},{"value":"2","text":"第一条内容","title":"第一条内容"}]},"hideColumns":[],"cgButtonList":[],"checkboxFlag":"Y","textField":"category_name","pidField":"pid","scrollFlag":1},"timestamp":1649752470439}
@@ -294,6 +376,7 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
 
 
 ***有时候启动springboot项目时会出现一些奇怪的问题，可以尝试intellij的maven工具里的刷新按钮，点下就好
+
 
 
 
