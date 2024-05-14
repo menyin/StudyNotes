@@ -67,10 +67,15 @@
  git tag v1.1.0 给当前分支当前版本打上tag后，只能在本地用git tag查看到所有tag。  本地版本库push到线上时默认不push tag。如果要push tag请用：
  git push origin --tags
 
+*注意：普通git commint命令是可以带文件名的，但是在解决冲突后并且合并分支后执行git commit是不能带文件名的，否则报错
+
 *tag的理解：tag是给每次的commitid取一个别名，不管在哪个分支下，用git tag命令都能看到所有的tag列表。而不是只看到当前分支下的commitid的tag。
+  tag的使用：git tag -a v1.0.0 -m '版本说明v1.0.0'  //打tag，则这个tag会和当前分支最近的一次commit相关联
+                   git push origin --tags  //将tag推送到线上，否则线上是看不到新创建的tag
 
 *在拉取远程非master分支（如cny分支）时候，不要有pull，它会覆盖master分支和cny分支。
  可以用git fetch origin cny:cny 或git checkout -t origin/cny
+ ！经测试，当前分支为非master，使用git pull   此时只是fetch了最新的本地对应的远程分支，如origin/master。并没有进行自动合并
 
 *几个常用命令注意区分
  *git fetch 更新所有分支到本地
@@ -98,6 +103,7 @@
  3、开发人员可在本地的dev分支进行开发，开发完成后push到对应的线上dev分支。此时如果线上dev分支已被更改，版本更新，则通过git pull origin dev来fetch和merge线上最新dev分支。通过解决冲突再次push
  4、由于线上master分支是受保护，不能被开发人员push，开发人员只能将自己的代码push到线上dev分支，并在GitHub上填写pull request单通知到管理员。
  5、管理员在GitHub或者邮件接收到开发人员的pullRquest后，在本地用git fetch origin命令下载所有分支，并且将有变更的dev分支合并到master分支并push到线上master。具体操作GitHub上会有命令提示。如果GitLab可以在线上直接合并分支并提交。
+ 5.1、实际上第5步可以由开发人员开发完dev之后push到线上origin/dev，然后发pullRequest给管理员去合并origin/master。为了尽量防止管理员接受pullRequest合并分支时冲突，开发人员可在本地先拉取最新origin/master先合并一遍再push到线上origin/dev。   当然如果管理员接收pullRequest合并分支时也是可以在线解决冲突的。
     Step 1: From your project repository, bring in the changes and test.
      git fetch origin
      git checkout -b dev origin/dev
@@ -109,8 +115,8 @@
   注意：git fetch origin master只是拉取了远程的master分支，即origin/master，此时要用git merge origin/master来合并远程分支到本地master分支
   
 *团队协作最佳实践：
-？？能否直接将线上的dev版本合并到本地对应dev版本，再由本地dev版本提交到线上dev版本？
-？？打Tag是不是只能在master上打，还是每个分支都可以打，然后被合并后，Tag也随之合并过去
+？？能否直接将线上的dev版本合并到本地对应dev版本，再由本地dev版本提交到线上dev版本？！可以
+？？打Tag是不是只能在master上打，还是每个分支都可以打，然后被合并后，Tag也随之合并过去。 ！tag是针对每次commit而言的，而不是针对分支的。 
 ？？git merge和git merge --no-ff的区别
 
 *在push之前一定要fetch+merge  
@@ -220,3 +226,14 @@
 ？？明天测试git配置多账号 有github和gitlab账号  应该如何区分配置https://www.cnblogs.com/fanbi/p/7825746.html
 
 
+??如何向jeecg等打发行版本，里面还有特定的一些说明
+??分支、版本记录、本地仓库、本地远程仓库、远程仓库等概念梳理
+
+======================== Idea Git begin ==========================
+*在idea中，文件代码红色代表未add，蓝色代表有add过但是修改了，绿色代表已提交
+
+*git使用时，当a文件执行了git add和git commit后，再一次修改，还需要先执行git add再执行git commit
+ 但是在idea中，有集成了两步操作，直接点击commit的按钮即可。
+
+*idea右下角是什么分支，那么当前就是什么分支。 比如是master
+======================== Idea Git end ===========================
