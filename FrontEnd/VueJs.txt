@@ -417,3 +417,42 @@ versionCode
   挂载虚拟dom：ReactDOM.render(<App />, document.getElementById("root")); // App元素作为虚拟dom的根元素会被挂载到实际的dom元素#root上
 
 ****************************React end*********************************************
+
+****************************Vue3 begin*********************************************
+*学习bili《尚硅谷Vue3入门到实战，最新版vue3+TypeScript前端开发教程》 内含课件
+
+*import type { Rule } from 'ant-design-vue/es/form';
+ 在 TypeScript 中，import type 是一种特殊的导入形式，它只导入类型，而不导入值。这意味着在运行时，这种导入不会产生任何实际的代码。有如下特点：
+ 1、仅导入类型信息：import type 只用于导入类型声明，例如接口、类型别名、枚举等。它不会引入实际的 JavaScript 对象。
+ 2、不产生运行时代码：在编译后，import type 引入的代码不会出现在生成的 JavaScript 文件中。这对于避免在 JavaScript 输出中产生不必要的代码或解决循环依赖问题非常有用。
+
+*vue开发浏览器插件 https://devtools.vuejs.org/
+
+*reactive对象里的ref属性在js代码中读取时并不需要加.value
+
+*修改reactive对象时不能用=号赋值，而应该用Object.assign(reactiveObj,newObj)，其实是对象属性赋值。不能用reactiveObj=newObj; 否则会失去响应式
+
+*let {name,age} =  toRefs(reactiveObj);//name,age是ref的
+ let {name,age} =  reactiveObj;//name,age是不是ref的，没有响应式。 它相当于let name =reactiveObj.name; let age =reactiveObj.age
+ 同理let age = toRef(reactiveObj,'age')
+
+*以下写法注意下，因为indexSytle取值要用 indexSytle.value，所以要用v-model:value做双向绑定
+ v-model:value="indexStyle"
+  const indexStyle = ref(0);
+ 
+*用以下代码定义已经存在的全局变量 window.myGlobalVar，有个好处就是myGlobalVar可以规定好类型
+declare const window: {
+    myGlobalVar: string;
+};
+
+*Vue.js Devtools 插件
+ *详见blogs《vue devtools使用指南》
+ *通过插件还可以定位到相应的组件dom，并且能直接定位打开对应的组件的代码文件。这个功能比较实用
+ *在控制台中输入$vm0，可以得到当前选中组件的vue实例对象。其中$vm0.ctx包含了该组件的变量和方法
+ *Inspect DOM按钮，可以将当前组件dom定位跳转到html的dom
+ *select component in the page按钮，可以定位选择到组件dom
+ *安装了 Vue.js Devtools 插件之后没有看到 Pinia 面板，可能配置问题，可以按以下尝试
+  __INTLIFY_PROD_DEVTOOLS__: true 或 Vue.config.devtools = true;
+ 
+****************************Vue3 end*********************************************
+
