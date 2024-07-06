@@ -19,7 +19,7 @@
  LayUI（目前最适合的前端框架，兼容IE8）   还有增强版http://layuimini.99php.cn/iframe/v2/index.html#/page/table.html
  H+（适合所有项目,但是IE8有兼容问题） http://yanshi.sucaihuo.com/modals/40/4078/demo/
  DWZ富客户端框架（适合做后台管理类项目） http://jui.org/#pagination2    文档
- layer.js 示例文档 https://layui.gitee.io/v2/layer/#quickstart
+ layer.js 示例文档 https://layui.gitee.io/v2/layer/#quickstart         https://www.cnblogs.com/micro-chen/p/9145763.html
 
  Electron用js+html配合vue脚手架开发桌面应用
 *Chrome查看前端对象内存
