@@ -102,10 +102,59 @@
 
 *选择控件中的表字典，在online生成前端代码中并未包含where条件
  如表字典为 t_title where name like '%翔安%'   最后生成控件的dictCode属性里是 t_title字符串。 可以自己改成前者
+
+
+*vue3版生成代码相关要点：
+ *list列表相关（即AntDesign4的Table组件，相关属性可以先看文档）
+      通过useListPage()方法生产出相关对象或函数解读如下：
+             prefixCls,  //useListPage()方法配置designScope: 'jz-resume'，得到的prefixCls='jeecg-jz-resume'
+             tableContext,  //tableContext表格上下文对象及函数等
+             onExportXls,  //useListPage()方法根据业务表参数生成的导出表格函数
+             onImportXls //useListPage()方法根据业务表参数生成的导入表格函数
+      通过tableContext对象解构出表格相关操作对象及函数，相关对象或函数解读如下：
+           tableContext[0]:
+	            registerTable, //用于注册表格实例相关，具体实现是useTable.ts#register方法，内部默认将注册生成的表格实例对象赋值给tableRef，将表单实例对象赋值给formRef。
+                                   tableContext是一个3个元素的数组，第二个元素是一个包含了表格实例和表单实例相关的所有方法的对象
+           tableContext[1]:
+	            reload, //即表格实例的reload方法，重新加载表格
+	            collapseAll, //即表格实例的collapseAll方法
+	            updateTableDataRecord, //即表格实例的updateTableDataRecord方法
+	            findTableDataRecord, //即表格实例的findTableDataRecord方法
+	            getDataSource //即表格实例的getDataSource方法，调用该方法获取表格原始数据集合
+	            ...更多方法详见useTable.ts里methods常量
+           tableContext[2]:
+            	            rowSelection  //选择功能相关配置，用于定义a-table表格中与选择操作相关的事件或设置信息等，其中事件是rowSelection对象的一个属性，如onSelect等，默认实现如下代码：
+              	            const defaultRowSelection = reactive({
+              	              ...rowSelection,
+              	              type: rowSelection.type ?? 'checkbox',
+              	              // 选择列宽度，默认 50
+              	              columnWidth: rowSelection.columnWidth ?? 50,
+			selections:{...用法请查阅AntDesign4的Table的“自定义选择项”}
+              	              selectedRows: selectedRows,
+              	              selectedRowKeys: selectedRowKeys,
+              	              onChange(...args) {
+              	                selectedRowKeys.value = args[0];
+              	                selectedRows.value = args[1];
+              	                if (typeof rowSelection.onChange === 'function') {
+              	                  rowSelection.onChange(...args);
+              	                }
+              	              },
+              	            });
+
+	            selectedRowKeys  //表格中所有选择行key相关信息，可以通过该变量设置选择行，也可以通过tableContext[0]的setSelectedRowKeys方法设置选择行
+
+             
+*以下代码中#bodyCell是指定在a-table组件中的名叫bodyCell单元格插槽，它可以让开发者自定义表格单元格内的内容html
+<a-table :columns="columns" :data-source="data" bordered>
+    <template #bodyCell="{ column, text }">
+	<a>{{ text }}</a>
+    </template>
+</a-table>
 ************************前端 end******************************
 
 
 ************************后端 begin******************************
+*实体的公共字段通过MybatisInterceptor进行统一填值处理
 
 ？启动时一直报“Error from chokidar...”错误，对后续的调试热更新是否有影响  
  网上用的解决办法是在终端输入一下命令即可
@@ -131,7 +180,12 @@
  *一级菜单的组件都是“layouts/RouteView”  
  *【默认跳转地址】是指上一级菜单点击默认跳转的地址，因为上一级菜单底下有多个菜单。
  *【隐藏路由】大概就是该页面不会在左侧菜单列表展示出对应的菜单项。？？待测
- *【聚合路由】大概是说比如A菜单下面有A1，A2子菜单，但是在左侧总菜单只想让A菜单展示，点击A菜单后右侧展示A菜单下的A1，A2的一个聚合页面。这个聚合页面还是会有A1、A2菜单栏
+ *【聚合路由】大概是说比如A菜单下面有A1，A2子菜单，但是在左侧总菜单只想让A菜单展示，点击A菜单后右侧展示A菜单下的A1，A2的一个聚合页面。这个聚合页面还是会有A1、A2菜单栏。
+                    注意：一级菜单无效！而且聚合路由配置后，当前链接为A1或A2时，A左侧菜单不能保证一定选中状态。 网上有解决方案（未实践）https://juejin.cn/post/7205839620202627128                   
+                             vue3和vue2版本都有该问题  http://jeecg-boot.mydoc.io/?t=346060
+                    解决： updateMenu ()和select:里去处理this.selectedKeys逻辑
+                    总结：jeecg的聚合路由并非正常理解的通过菜单配置就能实现，实际上还是通过配置A菜单为聚合路由，让A菜单点击时路由指向A1页面，在A1页面通过数据控制A1、A2内容的显隐。
+                             所以如果要通过URL进入到A2界面，还是得通过URL传参的方式，并通过监控路由（如$route.query.view2）方式获取变化
  *【路由缓存】当打开两个页面A、B，A页面表单填写了信息，然后切换页签到B页面，然后再切回来时A页面的表单信息就丢失了。  开启路由缓存能避免该问题
 
 *数据权限
@@ -342,6 +396,23 @@
 
 *vue3版本中将很多相关的业务变量做了ts类型规约，让所有东西环环相扣，符合开发规范。
 
+*以下是代码生成表单页面的编辑方法。
+ ？为什么要通过tmpData去复制属性到formData？
+   因为record对象并不单纯，它可能包含一些额外的方法。另外通过mpData过渡并一次性赋值给formData可以减少formData内部响应式监控（formData是reactive对象）
+function edit(record) {
+    nextTick(() => {
+      resetFields();
+      const tmpData = {};
+      Object.keys(formData).forEach((key) => {
+        if(record.hasOwnProperty(key)){
+          tmpData[key] = record[key]
+        }
+      })
+      //赋值
+      Object.assign(formData, tmpData);
+    });
+  }
+
 ？？了解学习
   vite和webpack区别
   vue3、ts了解
@@ -349,6 +420,22 @@
   vue3和vue2功能差别 如租户逻辑、分类字典、字典白名单等
 
 
+
+
+*jeecg角色、部门、租户的应用思考
+  jeecg通过这三者来分配菜单权限（包含数据规则）。
+  角色是非树形结构数据，提供单一维度分配菜单权限分配机制
+  部门是树形结构数据，提供子父级菜单权限继承分配机制。父部门先分配菜单权限集A，子部门再定义子部门角色，子部门角色再分配A里面的菜单权限
+  租户是非树形结构数据，提供套餐包分配权限机制。注意理解“租户关联用户+套餐关联用户”。租户更重要的是隔离用户和业务数据，并提供了“用户购买套餐获取菜单权限”的机制
+         “租户关联用户+套餐关联用户”解读：“租户关联用户”是用租户隔离用户数据，套餐关联用户是指哪些用户可以用到这些套餐。
+           比如：我是一个招聘平台供应商，有一个代理商购买了我的招聘平台产品（即一个租户），则他的用户是通过租户隔离的，而他的用户购买了套餐T，套餐T包含很多菜单权限。
+  最佳实践：类似boss招聘平台：
+                 用部门作为求职者、招聘者、管理者的隔离字段，特别是管理用户里还可以做子部门及部门角色划分，从而分配菜单权限
+                 用租户套餐作为用户获取菜单机制（仅限菜单分配，无法支持什么简历点刷新点等业务套餐项），总体不做租户隔离的话可以默认单租户。
+                 招聘前台界面注册用户后就给求职者和招聘者部门。  招聘管理后台注册的用户就给管理者部门（由上级管理者邀请或新建，并分配部门角色）。   
+                               
+ 
+  
 ************************SaaS 多租户 end******************************
 
 https://api.xmtieda.com/jeecg-boot/online/cgform/api/getColumns/6d8e3289002448f2a745d736582379ba?_t=1649752470

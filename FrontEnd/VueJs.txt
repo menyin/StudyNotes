@@ -454,5 +454,41 @@ declare const window: {
  *安装了 Vue.js Devtools 插件之后没有看到 Pinia 面板，可能配置问题，可以按以下尝试
   __INTLIFY_PROD_DEVTOOLS__: true 或 Vue.config.devtools = true;
  
+*如何在静态的html使用Typescript？
+ 使用github上的typescript-compile项目，即引入以下2个js
+ <script type="text/javascript" src="typescript.min.js"></script>
+ <script type="text/javascript" src="typescript.compile.min.js"></script>
+
 ****************************Vue3 end*********************************************
 
+****************************Typescript begin*********************************************
+*Partial作用是将User类型属性都转为可选属性，生成新的PartialUser类型
+ type PartialUser = Partial<User>; 
+ 
+
+*type TableProps = Partial<DynamicProps<BasicTableProps>>;
+ DynamicProps 的作用在于为 Vue 组件的 props 提供一种灵活的类型定义方式。在 Vue 组件中，props 是父组件传递给子组件的数据。通常，我们期望这些 props 是静态的、不可变的，或者至少是明确知道它们如何被修改和响应的。然而，在某些情况下，我们可能希望 props 能够接受更广泛的值类型，包括普通的值、Vue 的响应式引用（Ref），以及计算属性（ComputedRef）。
+
+
+*以下代码中，TableActionType & { getForm: () => FormActionType; }是怎么意思？
+ 答：&的意思是类型交并，它会生成新的类型，此例中代表这个新类型要是TableActionType类型并且包含一个getForm方法
+export function useListTable(tableProps: TableProps): [
+  (instance: TableActionType, formInstance: UseTableMethod) => void,
+  TableActionType & {
+    getForm: () => FormActionType;
+  },
+  {
+    rowSelection: any;
+    selectedRows: Ref<Recordable[]>;
+    selectedRowKeys: Ref<any[]>;
+  }
+] {
+//......此处实现代码省略
+}
+
+*以下代码<T = Recordable>什么意思？
+ 答：<T = Recordable>用于约束T类型如果没有传递，则默认为Recordable类型
+export interface TableActionType {
+  getSelectRows: <T = Recordable>() => T[];
+}
+****************************Typescript end*********************************************

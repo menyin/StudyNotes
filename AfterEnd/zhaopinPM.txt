@@ -1,0 +1,99 @@
+pages:
+*注意考虑结合直聘，提高扩展可能性
+*PC默认企业  APP和小程序默认个人
+
+*前台
+   城市切换 关联域名(暂时不要) 不与用户关联   前端存本地和存header（有些数据根据城市筛选）
+   树形类目（热门搜索另外做表）
+   登录注册按原有做
+？用什么区分求职者、招聘者、管理用户（考虑user_identity、role、work_id、部门角色） ！用role和部门角色则后续后台可以用角色控制菜单界面。采用部门可以使用当前部门切换功能，“不同部门还可以不同角色”可以做等级区分，比如招聘者的vip等级。 另外管理用户还可以通过我的部门去管理这些角色。
+   简历
+   简历搜索  ES搜索、推荐简历后面加 
+   职位
+   职位搜索（最新、最高薪、最多人看）ES搜索、推荐职位后面加 
+*后台   
+   账户
+   公司、认证表
+   公司余额
+   公司才币
+   套餐、套餐项用积分或者才币结算
+   VIP等级
+   个人、认证表
+   个人余额
+   个人积分
+
+   
+   *注意：索引优化、ES搜索、简单IM、AI相关集成、小程序或APP登录后续加
+
+   
+*后续上ES
+
+ 
+  
+*jeecg角色、部门、租户的应用思考
+  jeecg通过这三者来分配菜单权限（包含数据规则）。
+  角色是非树形结构数据，提供单一维度分配菜单权限分配机制
+  部门是树形结构数据，提供子父级菜单权限继承分配机制。父部门先分配菜单权限集A，子部门再定义子部门角色，子部门角色再分配A里面的菜单权限
+  租户是非树形结构数据，提供套餐包分配权限机制。注意理解“租户关联用户+套餐关联用户”。租户更重要的是隔离用户和业务数据，并提供了“用户购买套餐获取菜单权限”的机制
+         “租户关联用户+套餐关联用户”解读：“租户关联用户”是用租户隔离用户数据，套餐关联用户是指哪些用户可以用到这些套餐。
+           比如：我是一个招聘平台供应商，有一个代理商购买了我的招聘平台产品（即一个租户），则他的用户是通过租户隔离的，而他的用户购买了套餐T，套餐T包含很多菜单权限。
+  最佳实践：账号体系：
+                 类似boss招聘平台：
+                 用jeecg部门作为求职者、招聘者、管理者的隔离字段，特别是管理用户里还可以做子部门及部门角色划分，从而分配菜单权限。
+                 招聘前台界面注册用户后就给求职者和招聘者部门。  招聘管理后台注册的用户就给管理者部门（由上级管理者邀请或新建，并分配部门角色）。   
+                 用租户套餐作为用户获取菜单机制（仅限菜单分配，无法支持什么简历点刷新点等业务套餐项），总体不做租户隔离的话可以默认单租户。
+                 jeecg的角色没有用 
+                 注意：1、之所以用部门主要是可以分配带数据规则的菜单权限、管理者可以做子部门和子部门角色划分、切换当前部门等价于切换身份；2、租户功能暂时不用，因为需求不大
+
+ 	  套餐体系：聊天次数/日、发布职位数、vip账户个数（啥意思）、简历下载次数、刷新次数、推广金（类似积分）、道具（啥意思）
+                  jz_resource_type 套餐资源类型
+                  id,resource_type_name,unit,min_price,max_price,protocol,note,type(是否增值服务)
+                  jz_pack 套餐
+                  id,pack_name,min_price,max_price,protocol，city_id，starttime，endtime,note
+                  jz_resource 套餐资源(套餐表的附表)
+                  id,pack_id,resource_name,resource_type_id,num,min_price,max_price,protocol，note
+                  jz_contract 合同 （主表）（包含计算的资源总数和使用数） 注意“总数+使用数”逻辑可控，可以补资源给用户。另外职位数等合同资源不拆表主要是考虑后续查询性能问题
+                     合同属性字段：id,contract_name合同名称,pack_ids套餐id集合,buyer_id买家，buyer_name买家，buyer_phone买家电话，starttime合同开始时间，endtime合同结束时间，
+                                          city_id城市id ，salesman_id跟单员,salesman_note销售备注，type合同类型，status合同状态，buyer_note买家备注，licence_status执照状态，price应付总价
+                     支付属性字段：pay_sn支付订单编号，pay_order_no支付方式返回的交易号，flow_price实际支付价格，discount_price优惠金额，need_receipt是否需要发票，
+                                          cancel_reason取消原因，complete_time完成时间，pay_status付款状态，pay_time付款时间，price_detail价格详情，promotion_id优惠活动id，
+                                          pay_client_type支付终端类型，pay_method付款方式
+                     套餐项属性字段：vip_total,vip_used,job_total,job_used,chat_total,chat_used,resume_total,resume_used,refresh_total,refresh_used,ad_total,ad_used,tool_total,tool_used
+                     注意：支付记录和合同要分开，因为有可能多次支付或者多种方式混合支付                 
+	
+               支付体系：采用LiliShop已有的电商支付体系，将支付体系独立出项目（详见AfterEnd/支付系统.txt）
+                  
+
+  需求：
+         职位管理：根据业务套餐限制发布数、刷新次数、推广金
+         搜索简历：简历下载次数、聊天次数/日
+  支付
+
+*总体需要完成任务：账号体系、套餐体系、支付体系，前端具体不做、细节零散不做。  如果前端项目有性能问题则尝试按身份精简拆分部署、索引等各方面优化
+
+
+
+
+
+
+
+用户U用13960392037注册登录账号A，完成认证企业C认证发布职位、完成个人P认证发布简历
+登录账号A解绑更换手机号18250262037
+
+
+mvn archetype:generate "-DgroupId=org.springframework.boot"  "-Dmodule=payment" "-Dmodule-up-first=Payment" "-DartifactId=jeecg-module-payment"  "-Dversion=3.7.0" "-DarchetypeGroupId=org.jeecgframework.archetype"  "-DarchetypeArtifactId=jeecg-cloud-gen" "-DarchetypeVersion=3.5.0" "-DarchetypeCatalog=internal"
+
+
+mvn archetype:generate ^
+   -DgroupId=org.jeecg.modules.payment ^
+   -Dmodule=payment^
+   -Dmodule-up-first=Payment^
+   -DartifactId=jeecg-module-payment ^
+   -Dversion=3.7.0^
+   -DarchetypeGroupId=org.jeecgframework.archetype ^
+   -DarchetypeArtifactId=jeecg-cloud-gen ^
+   -DarchetypeVersion=3.5.0
+
+lilishop脚本   https://gitee.com/beijing_hongye_huicheng/docker/blob/master/init/mysql/lilishop.sql
+
+开源支付系统 https://docs.jeequan.com/docs/jeepay/jeepay-1dg3r7b2remns

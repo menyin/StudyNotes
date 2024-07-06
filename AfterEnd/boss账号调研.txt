@@ -1,0 +1,123 @@
+boss直聘微信扫码登录是小程序码，通过小程序获取手机号。  
+此时进入PC新账号处于未身份证验证状态。 有绑定了新手机号18250262037（PC不能改，APP可改），也绑定了微信号（PC和APP都能改）
+此时进入APP，会让用户选择角色（我选求职者），然后就让填微简历。
+在PC切换进入招聘者角色，会让用户填写职务并且加入一家公司，然后让发布第一个职位。 发布完弹出框让二维码下载APP完成认证。然后进入APP扫脸认证，完了要加入公司，如果是已有人绑定的公司还要邀请该公司的人进行配合验证。
+如果是没有人绑定的新公司则需要你提供营业执照通过人工审核验证。
+招聘者角色下手机号换绑，如果目标手机号已有账号则要先注销或者弄未被绑定。  换绑后的新手机号登录又要重新认证，简历跟到新手机号上。此时再登录旧手机号就是再注册登录一个新账号了
+求职者角色下手机号换绑,
+总结：账号user1通过手机号创建，账号需要HR人脸认证才能绑定公司，公司没有可以创建并绑定在账号user1下。
+      简历不需要人脸认证，它是绑定在手机号上的。
+
+https://zhuanlan.zhihu.com/p/86847091
+
+注意：boss可以多人登录同一账号，这可能产生相关的数据并发安全问题
+
+*文心一言回答：
+BOSS直聘作为一个招聘平台，其账号提醒数据结构的设计是为了有效地存储、管理和检索用户、公司、职位以及相关的认证信息。虽然无法直接提供BOSS直聘的确切数据库设计，但我可以基于一般的数据库设计原则和参考信息，提供一个概念性的数据结构设计概述。
+
+1. 用户（账号）表
+UserID（主键，唯一标识符）
+Username（用户名）
+Password（密码，通常加密存储）
+Email（电子邮箱）
+PhoneNumber（手机号码）
+LastLoginTime（最后登录时间）
+AccountStatus（账号状态，如正常、禁用等）
+2. 手机号信息表
+PhoneNumberID（主键，唯一标识符）
+UserID（外键，关联用户表）
+PhoneNumber（手机号码，冗余存储以方便查询）
+VerificationStatus（验证状态，如已验证、未验证）
+3. 公司信息表
+CompanyID（主键，唯一标识符）
+CompanyName（公司名称）
+Industry（所属行业）
+CompanySize（公司规模）
+CompanyDescription（公司描述）
+CertificationStatus（企业认证状态）
+4. 职位信息表
+JobID（主键，唯一标识符）
+CompanyID（外键，关联公司信息表）
+JobTitle（职位名称）
+SalaryRange（薪资范围）
+JobDescription（职位描述）
+JobRequirements（职位要求）
+JobLocation（工作地点）
+5. 简历信息表
+ResumeID（主键，唯一标识符）
+UserID（外键，关联用户表）
+ResumeContent（简历内容，可能以文本或文件链接形式存储）
+ResumeUpdateTime（简历更新时间）
+6. 个人认证信息表
+CertificationID（主键，唯一标识符）
+UserID（外键，关联用户表）
+CertificationType（认证类型，如身份证、学历证明等）
+CertificationNumber（认证编号或证件号码）
+CertificationStatus（认证状态，如已认证、未认证、审核中等）
+7. 企业认证信息表
+EnterpriseCertificationID（主键，唯一标识符）
+CompanyID（外键，关联公司信息表）
+CertificationType（认证类型，如营业执照、税务登记证等）
+CertificationNumber（认证编号或证件号码）
+CertificationStatus（认证状态）
+8. 关联表（可选）
+根据实际需求，可以设计一些关联表来存储用户与公司、用户与职位、公司与职位信息等之间的关联关系。
+请注意，这只是一个概念性的设计概述，并不代表BOSS直聘的实际数据库设计。实际设计中可能会根据业务需求、性能要求、安全性等因素进行调整和优化。
+
+===========================================
+1. 用户（账号）表   当换绑手机号时，短信验证手机号即可。   当发布职位时，先根据手机号找个人认证信息，有则找企业认证信息（有则可发），没有则去企业认证或申请加入企业。
+sys_user表所有字段
+
+2. 手机号信息表（如不要手机号换绑的监控限制就不需要该表，护着后续再添加都可以）
+phone_number_id（主键，唯一标识符）
+user_id（外键，关联用户表）
+phone_number（手机号码，冗余存储以方便查询）
+verification_status（验证状态，如已验证、未验证）
+
+3. 公司信息表 jz_company
+id（主键，唯一标识符）
+company_name（公司名称）
+company_nick_name（公司简称）
+industry（所属行业）
+company_size（公司规模）
+company_description（公司描述）
+certification_status（企业认证状态）
+
+
+4. 职位信息表 jz_job    
+id（主键，唯一标识符）
+company_id（外键，关联公司信息表）
+job_title（职位名称）
+salary_range（薪资范围）
+job_description（职位描述）
+job_requirements（职位要求）
+job_location（工作地点）
+
+5. 简历信息表 jz_resume   有手机号既可以发简历
+id（主键，唯一标识符）
+--UserID（外键，关联用户表）
+phone_number 手机号，不要UserID绑定
+resume_content（简历内容，可能以文本或文件链接形式存储）
+
+
+6. 个人认证信息表 jz_ 当账号要个人认证时，先根据sys_user下的手机号字段查询该表，无记录则进行认证。  当要变更认证信息则需要根据删除或更新已有认证记录（更新create_by）
+id（主键，唯一标识符）
+--UserID（外键，关联用户表）
+phone_number 手机号，不要UserID绑定，因为账号的手机号会变更
+certification_type（认证类型，如身份证、学历证明等）
+certification_number（认证编号或证件号码）
+certification_status（认证状态，如已认证、未认证、审核中等）
+certification_img（认证图片，以图片链接形式存储）
+
+7. 企业认证信息表 jz_certification   注意：如果账号变更所在公司，则此表相关原公司记录则删除（如果是创始人则该原公司下的所有认证记录都得删除）
+id（主键，唯一标识符）
+company_id（外键，关联公司信息表）
+certification_type（认证类型，如营业执照、税务登记证等）
+certification_number（认证编号或证件号码）
+certification_status（认证状态）
+certification_img（认证图片，以图片链接形式存储）
+user_id 账号id  考虑创建用户create_by字段替代，此时审核人就是update_by字段
+founder  是否是第一个认证的，是则创始人
+
+
+===========================================
