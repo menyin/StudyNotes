@@ -184,6 +184,8 @@ https://www.bilibili.com/video/av767359951/?vd_source=719aa7596cf8f5b8a8303d5eac
  Llama2可以用Ollama框架在本地运行，Ollama相当于node之类的软件环境框架，可以跑node应用
  https://github.com/ollama/ollama
 
+*LM Studio可以再本地运行许多大语言模型的桌面客户端，可以运行自带的模型市场的模型，还可以下载hugging face上的模型来运行。
+
 *LLM：大语言模型（Large Language Model）
 
 
@@ -511,6 +513,10 @@ aitestkitchen.withgoogle.com
 *套取GPTs应用信息和防止GPTs应用的信息被套取
  https://github.com/EmbraceAGI/Awesome-AI-GPTs?tab=readme-ov-file#gpts-%E6%94%BB%E5%87%BB%E5%92%8C%E5%AE%89%E9%98%B2
  以上链接中有防护prompt，可以将她添加到GPTS应用创建的prompt里【instruction】
+
+*dify工作流理的内置爬虫工具FireCrawl  秘钥fc-8e6764303ba94c9b80dd6d27faeefe90
+
+*dify有一个问题：使用cloud.dify.ai创建应用，需要翻墙（代理），而如果爬取一些zf相关网站会被屏蔽。
 
 
 ************ Dify end ******************

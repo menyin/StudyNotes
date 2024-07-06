@@ -267,7 +267,8 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
 
 ？Flink CDC为什么可以不用依赖kafka直接处理数据
   如果用Canal监控Mysql的binlog，为了不因为处理逻辑复杂或者处理时间较长导致消费binlog受影响，一般都先存kafka，然后另外去消费kafka上的数据。 
-  但是Flink CDC为什么可以不用依赖kafka直接处理数据呢？ 从内部实现上讲,Flink CDC Connectors内置了一套 Debezium 和 Kafka 组件，这样对于开发者就节省了一步，提高
+  但是Flink CDC为什么可以不用依赖kafka直接处理数据呢？ 从内部实现上讲,Flink CDC Connectors内置了一套 Debezium 和 Kafka 组件，无需额外配置Kafka连接器，这样对于开发者就节省了一步，提高
+  然而，这并不意味着Flink CDC本身包含了完整的Kafka服务。你仍然需要有一个运行中的Kafka集群
 
 *用FlinkCDC同步MySQL到ES
  具体文档可看github项目 https://github.com/ververica/flink-cdc-connectors
@@ -289,6 +290,8 @@ Ndb cluster	支持	行级锁	高可用性	大部分应用
  FlinkCDC2.x 支持全量读取阶段分布式（即并发，但增量还是单并发）和checkpoint、全量和增量读取过程不锁表仍然保持数据一致性。
  原理详见csdn《FlinkCDC原理详解+复制即用使用教程》
 
+*迁移后的数据校验：有很多种方法和工具pt-table-checksum、Debezium、表哈希对比、python脚本、
+ 如果你已经在使用Flink CDC进行数据迁移，可以利用Flink来进行数据校验。编写Flink作业从源和目标数据库中读取数据并进行对比。
 
 *同步公司数据到ES
           {
@@ -454,6 +457,13 @@ flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1
  解决：将userName进行hash得到的数字hashCode+userId进行改造，作为分片键。  hashCode可以截取后面部分数字，因为如果分片数量只有8，则这个hashCode只需要大于8的数即可取模
        如果把hashCode看作二进制的数，则相当于只需要取后3位，然后将后3位的数字和userId进行融合，组合成一个新的分片键字段（比如叫fenpianKey）则fenpianKey
        注意：用户名是固定不能更改的，否则会出现问题。 如果用户名更改则将数据按规则迁移到新的物理表（这可能涉及分布式事务，可以用seataAT）
+
+？为什么不直接用userName的哈希值做分片键？
+   因为如果某些userName的值特别常见或具有某种规律性(如：jack、jack0、jack00是常见的名称)，可能会导致某些分片上的数据量比其他分片多，导致数据倾斜。例如，如果有很多用户都使用相同或相似的用户名前缀，可能会导致哈希值分布不均。
+
+？登录时候之用userName查询，并没有userId，那么怎么办？
+  加一个表在写数据的时候，存储userName和userId   或者   userName和hash(userName+userId)  的关系
+
 ？构造使用场景：
   个人和企业用户浏览记录：平常用用户名查询，所以采用上述基因法多分片查询。 具体操作：利用基因法定制了一个分片键，然后进行数据迁移。
   职位表：
@@ -637,7 +647,7 @@ flink run -m localhost:8081 G:\Software\flink-1.17.1-bin-scala_2.12\flink-1.17.1
          
 
 *SQL优化
- 索引优化总结关键词：最左前缀法则、规避索引失效、规避回表查询、减少字段索引长度(减少页合并分裂)、顺序插入
+ 索引优化总结关键词：最左前缀法则、规避索引失效、规避回表查询、减少字段索引长度(减少页合并分裂)、顺序插入、索引排序（升序）
  锁优化总结关键词：降低锁颗粒度、避免锁升级。比如采用时间戳并在代码层面使用乐观锁判断、比如给常用查询的条件字段加索引从而避免“行锁升级表锁”
 
 *锁
