@@ -1,0 +1,56 @@
+const fs = require('fs');  
+const path = require('path');  
+  
+// 确保提供了新的base值  
+if (process.argv.length < 3) {  
+    console.log('请提供一个新的base值。用法: node updateManifest.js <newBase>');  
+    process.exit(1);  
+}  
+  
+const newBase = process.argv[2];  
+const manifestPath = path.join(process.cwd(), 'manifest.json');  
+  
+// 读取现有的manifest.json文件  
+fs.readFile(manifestPath, 'utf8', (err, data) => {  
+    if (err) {  
+        console.error('读取manifest.json时出错:', err);  
+        return;  
+    }  
+    let manifest;  
+    try {  
+        manifest = JSON.parse(data);  
+    } catch (parseErr) {  
+        console.error('解析manifest.json时出错:', parseErr);  
+        return;  
+    }  
+  
+    // 更新h5.router.base的值  
+    if (manifest.h5 && manifest.h5.router) {  
+        manifest.h5.router.base = newBase;  
+    } else {  
+        console.error('manifest.json中缺少h5.router部分');  
+        return;  
+    }  
+  
+    // 将更新后的对象转换回字符串并写回文件  
+    const updatedData = JSON.stringify(manifest, null, 2);  
+    fs.writeFile(manifestPath, updatedData, 'utf8', (err) => {  
+        if (err) {  
+            console.error('写入manifest.json时出错:', err);  
+            return;  
+        }  
+        console.log('manifest.json已成功更新。');  
+    });  
+});
+
+
+
+===================================
+
+写一个可nodejs执行的js脚本（注释写详细），按顺序完成以下功能，每个步骤执行完后再执行下一个步骤：
+1、将uniapp根目录的manifest.json里h5.router.base改为"//cdn.597.ny/m/worker"。
+2、在uniapp根目录的pages.json里"pages"属性值数组里查找元素，该元素的"path"属性值为"pages/worker/worker"。将该元素移动到"pages"属性值数组第一个
+3、执行命令cli.exe publish --platform h5 --project 597zgw-uniapp发布h5项目
+4、执行步骤3中的发布h5项目后，将G:/GitProjects/597zgw-uniapp/unpackage/dist/build/h5目录里的东西都拷贝到J:\m\worker目录下，
+5、拷贝J:\m\worker\index.html文件内容到Z:\m\default\worker.html.php
+特别注意manifest.json和pages.json文件里都有注释，在转化为JSON对象时需要特殊处理
