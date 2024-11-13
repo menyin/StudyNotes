@@ -108,6 +108,8 @@ openai-proxy：https://gist.github.com/paicha/d26e48a0288df22c3fad12eb9547ef94
     尝试过的ai工具：
           无界ai：https://www.wujieai.com/ai
 
+*ai公众号文章生成：https://www.135editor.com/
+
 *Make自动化工具，可以将Notion、Twitter、ChatGPT串联起来。 让ChatGPT帮帮我们对大佬的推文质量进行评级筛选。
  Zapier自动化工具，和Make一样可以通过Trigger和Action将海外一些应用串联起来，实现自动化。是无须代码的工具 。 国内的Jijianyun可以了解下？有待研究
 
@@ -188,6 +190,10 @@ https://www.bilibili.com/video/av767359951/?vd_source=719aa7596cf8f5b8a8303d5eac
 
 *LLM：大语言模型（Large Language Model）
 
+*openrouter可以在国内环境去调用国外的大模型的api，解决墙外等网络问题。 不怕封，调用api不需要用梯子，无网络问题。只需要申请一个openrouter，国外主流大模型api不用多次申请即可用
+  官网 https://openrouter.ai/   要梯子
+
+*AnythingLLM是用于解决要调用线上或本地的大模型和知识库的场景，能保证一些私有知识库和模型的安全性。
 
 *Axton推荐五大chatGPT神器
  buzz：根据不同模型音频转文字工具。github开源项目https://github.com/chidiwilliams/buzz
@@ -213,6 +219,8 @@ SoundBug 是国产音乐制作软件，可以快速地为一段简单的旋律�
 TuneFlow：
 TuneFlow 是一个智能音乐制作平台，可以根据您的旋律音频文件生成相应的伴奏。
 您可以选择喜欢的风格和节奏，生成完整的主旋律和伴奏3.
+
+*suno ai音乐https://www.sunozh.com/membership 需要充值，可以尝试
 
 *Windows Copilot：在操作系统内置了Copilot
 
@@ -269,6 +277,10 @@ Beta features
   GPT4资费降低、更长的上下文窗口、微调API、
   有状态的API（因GPT的token上下文长度限制会导致比较前面的对话“忘记了”，目前只有8k，32k的token还未完全开放）。眼睛里的画面会被提取到设备里进行人机交互，虚拟和现实打通界限
 
+*DeepSeek一款完全开源可商用的大语言模型，1 元 100 万 Tokens， 堪称 AI 界的拼多多
+ DeepSeek-V2 模型参数量更是达到了惊人的 236B，每个 token 激活 21B 参数，支持长达 128K token 的上下文长度，性能直逼 GPT-4-Turbo，而价格仅为其「近百分之一」。
+
+
 *苹果WWDC 2023新品发布会（没有提到AI，但是一直提到机器学习）：
  MR混合现实眼镜：带上可以看到虚拟的app场景，目光就是鼠标，手指动一动相当于点击操作。
  增强听写和自动更正的iPhone键盘：在听和写方面能够根据用户习惯等信息给出完整句子建议
@@ -313,12 +325,19 @@ Beta features
    概念梳理：
    gpt-3.5-turbo-16k这类都是具体大语言模型，GPT3、GPT4都是OpenAI的大语言模型归类，GPT plus是chatGPT的付费用户，OpenAI API提供给开发者的接口，而GPT plus和OpenAI API的账号可以是公用但计费却是分开的。
    GPTs是指OpenAI提供给用户个性化调校定制自己的GPT的平台，它可以通过非代码方式让用户定制自己专有的GPT APP，并且可以发布供别人下载使用。另外它可以扩展自己的知识库
-   套壳应用：NextChat、LibreChat都属于基于指定大模型进行请求的GPT，如对接OpenAI API进行聊天应用。Dify是可以让我们有一个自己的GPTs
+   套壳应用：NextChat、LibreChat、LobeHub都属于基于指定大模型进行请求的GPT，如对接OpenAI API进行聊天应用。Dify是可以让我们有一个自己的GPTs
    自动化：通过GPTs+国外Zapier或国内语聚进行相关流行app应用的操控
 
+？LobeHub
 *******需实践内容************
 *重点关注大语言模型：GPT、Claude、Gemini，捎带关注Mistral，自动化工具：Zapier、Make，AI平台关注下字节跳动的corze
- 
+
+*好用的AI浏览器插件 Zapier Central    用微软账号登录
+ 通过此链接添加插件: https://chromewebstore.google.com/detail/zapier-central/jfcmjbboehfdmgbhheahjlnoimbgfdbn
+ Notion账号用845257580@qq.com
+ 实践：？实践过程中，安装 Zapier Central的谷歌浏览器插件后，插件打开只有一个按钮，点击按钮只会打开Zapier Central独立客户端。 并不会附着在当前浏览器页面上。 
+           ！可能是梯子过期和GMail账号封禁导致的，GMail解封后就好了。 
+
 Python学习 ！
 Notion使用 ！
 ChatGPT的插件使用和开发，要求升级为ChatGPT Plus会员才能用 ！可直接略过，后面都是GPTs的年代
@@ -332,6 +351,8 @@ Google的Bard等应用了解
 ChatGPTNextWeb（包含PC客户端和web，但是对话单模态）  、LibreChat（仿chatGPT Web，可接多种厂商大语言模型，多模态）
 用lama运行Genma大模型（需要显存硬件）
 
+*Chandler AI 集成了联网搜索、总结与对话、图像生成、PPT生成、文本转视频等功能，有web端有PC客户端
+
 aitestkitchen.withgoogle.com
 
 *AutoGPT项目：
@@ -342,6 +363,13 @@ aitestkitchen.withgoogle.com
   文档：https://platform.openai.com/docs/overview  关注Documentation和API reference两个部分
            cookbook.openai.com   论坛，有相关案例代码
 
+
+*ai浏览器：arc浏览器
+
+*简历模版网站 http://jianliben.com/
+
+*马斯克的Grok目前是介于GPT3.5~Cloud2之间的一个产品，效率高，用户体验更好，有独家用Twitter上的数据进行训练
+ 
 ************ Python begin ******************
 *Conda是一个开源的软件包管理系统和环境管理系统，最初是为Python语言开发的，但现在已不限制语言，支持Python、R、Ruby、Lua、Scala、Java、JavaScript、C/C++、FORTRAN等多种语言。它可以在Windows、macOS和 Linux上运行，主要用于安装多个版本的软件包及其依赖关系，并在它们之间轻松切换。
  注意：不要安装Miniconda，它是一个轻量级的发行版，只包含了最基本的内容：Python 和 Conda。  安装Anaconda，完整版包含图形界面
@@ -474,6 +502,10 @@ aitestkitchen.withgoogle.com
 
 ？TensorFlow学习了解下
 
+？爬虫
+
+*爬虫项目GPT crawler  https://github.com/BuilderIO/gpt-crawler
+
 
 ************ Python end ******************
 
@@ -518,8 +550,12 @@ aitestkitchen.withgoogle.com
 
 *dify有一个问题：使用cloud.dify.ai创建应用，需要翻墙（代理），而如果爬取一些zf相关网站会被屏蔽。
 
-
+*dify对接到微信自动回复项目（学习详见bili《Dify AI 实战 - Dify智能聊天机器人接入微信》）： 
+ https://github.com/hanfangyuan4396/dify-on-wechat
 ************ Dify end ******************
+
+*FastGPT和dify差不多。 
+ https://cloud.fastgpt.in/
 
 ************ prompt begin ******************
 
@@ -606,6 +642,25 @@ function main(data) {
 
 *破解prompt和防止破解prompt
  此视频17"30  https://www.bilibili.com/video/BV1Lc411b7bS/?spm_id_from=333.337.search-card.all.click&vd_source=5d74800eec4782c9be5ee53ff7c9a201
+
+
+
+通用Prompt模版架构:
+1、角色定义:明确ChatGPT的角色和任务目标。
+·例如:你是一个友好的教练/设计师/学生/导师。
+2、自我介绍:简短地介绍自己和目的。
+·例如:首先介绍自己，并询问用户需要什么。
+3、信息收集:通过一系列问题收集用户信息。
+例如:询问学生的年级、主题等。
+·注意:每次只提一个问题，并等待用户回应。
+4、核心任务:根据收集的信息执行主要任务。
+     例如:提供教学计划、解释概念、给出例子等。
+5、反馈循环:询问用户对提供的信息或方案有无改进意见例如:你想改变什么?有没有误解或问题?
+6、额外建议/资源:如果适用，提供额外的建议或资源。·例如:如何确保学习目标得以实现。
+7、结束与后续:总结交流，并提供后续支持。
+     例如:如果你有更多问题，随时可以回来。
+
+这个模版架构可以根据具体需求进行调整和定制。
 ************ prompt end ******************
 
 ************ GPT 微调 begin ******************
@@ -627,4 +682,15 @@ fine_tuned_model
 ************ GPT 微调 end ******************
 
 
+************ GPT 视频相关 begin ******************
 
+*HeyGen可以做视频相关应用（如将中文视频转为外语视频），如数字人
+ 后续应该会开放类似丽莉那种“超逼真头像数字人视频”
+
+*国内数字人平台：硅基、微软小冰、腾讯智影
+
+*国内数字人第三方代理平台 https://aicopy.iiii.com/
+
+************ GPT 视频相关 end ******************
+
+？？？语聚、集简云

@@ -255,6 +255,8 @@ versionCode
   *manifest.json里配置基础路径 ./  
   *修改uniapp发布H5后的static/index.xxxxx.js里的A.p，可能是p.p，反正就是到“./”
   *复制生成的index.html到php模板比如叫index.html.php, 修改相关js，css的引用路径
+  *注意：可以直接manifest.json里配置h5的"base" : "//cdn.597.ny/testH5/"，注意不能加http:
+
 
 *uniapp开发h5时，如果<template>节点里的内容缺少标签，则会导致dom渲染出问题，这时候onLoad函数不会执行，此时还不会报错。
 
@@ -458,6 +460,11 @@ declare const window: {
  使用github上的typescript-compile项目，即引入以下2个js
  <script type="text/javascript" src="typescript.min.js"></script>
  <script type="text/javascript" src="typescript.compile.min.js"></script>
+
+
+*vite的原理，详见csdn《Vite介绍及实现原理》
+ ？defineAsyncComponent：如果A页面或其依赖的组件被配置为异步组件，并且使用了动态import()语法或defineAsyncComponent函数，那么在请求A页面时，这些组件将按需加载。
+ 在开发时，在浏览器和本地开发代码都会有socket，当代码更新时，会通知到浏览器加载新的模块，开发环境服务只是返回更新的模块。 整个过程vite只更新局部模块，没有全局编译更新。
 
 ****************************Vue3 end*********************************************
 

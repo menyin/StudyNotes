@@ -25,6 +25,10 @@
  2.通过后端获取的菜单列表menuData生成路由列表constRoutes
  3.menuData里的菜单项的component字段代表页面组件，children代表子页面组件。
 
+*vue3前端路由逻辑：
+ 1.src\store\modules\permission.ts中transformObjToRoute(routeList)将菜单数据库数据生成路由
+ 2.src\router\helper\routeHelper.ts里dynamicImport方法将dynamicViewsModules[matchKey]返回（实际是个固定的路由函数）。这里换成defineAsyncComponent(dynamicViewsModules[matchKey]);可以动态组件
+
 *前端的登录状态逻辑:
  *在整个App初始化的在main.js里如果有开启VUE_APP_SSO=true 则会通过是在src/cas/sso.js 做cas验证，整个cas单点登录逻辑在官方文档有流程图
  *如果没有开启cas验证功能则正常初始化App，并且通过在permission.js的路由前置守卫进行普通登录检测
