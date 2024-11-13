@@ -1,0 +1,33 @@
+*传统开发模式即网上博文常见开发模式，代码大致如下
+const { app, BrowserWindow, WebContentsView } = require('electron')
+app.whenReady().then(() => {
+......
+})
+
+*最佳开发模式（electron-vite脚手架），详见https://evite.netlify.app 或 https://cn.electron-vite.org/guide/
+
+*Electron关键概念：
+ 主线程：用于桌面客户端主线任务
+ 渲染线程：用于桌面客户端的界面渲染任务
+ 注：在electron-vite脚手架中就是根据这个两个线程来划分src目录（main、renderer、preload）
+
+
+*平时我们利用chrome要调试网页的时候，按F12（mac下面是shift+花+i）打开的开发者工具，就是这个devtools，或者可以称之为“开发者模式”
+在Electron项目中可以在主线程main.js里设置 mainWindow.webContents.openDevTools();
+
+*使用以下语法可以初始化并打开一个桌面应用窗口
+ myWin=new BrowserWindow({.....})
+
+*使用预加载脚本preload.js
+ 类似Chrome扩展插件篡改猴（Tampermonkey），可以再页面加载前添加注入一些脚本
+
+*要改变第三方网页a链接打开页面时的行为方式，可以网上搜索《electron监听网页_electron用默认浏览器打开链接的3种实现方式》相关博文
+ 可以在preload.js里进行window的a标签事件监听，然后将信息传递到主线程进行窗口处理。
+
+*打包发布Mac应用时，需要苹果开发者账号，账号分为两种：
+ 企业开发者账号，每年$299，可以发布到自己服务器上供下载（免审核），但每年需要重新更换签名打包发布一次
+ 个人开发者账号，每年$99，只能发布到AppStore供下载，需要接受审核，但不用每年都更换签名打包发布
+
+*有两种打包工具 （详见B站《26丨Electron 应用打包：从HTML到安装包》和文档 https://cn.electron-vite.org/guide/distribution ）
+ Electron-Builder 推荐
+ Electron-Forge 
