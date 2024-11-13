@@ -97,3 +97,30 @@ mvn archetype:generate ^
 lilishop脚本   https://gitee.com/beijing_hongye_huicheng/docker/blob/master/init/mysql/lilishop.sql
 
 开源支付系统 https://docs.jeequan.com/docs/jeepay/jeepay-1dg3r7b2remns
+
+*网站初期数据采集
+ 火车头采集器 http://www.locoy.com/download
+ “如果你想直接就拥有一个内容充实，模板全面的人才网站，骑士人才系统可以帮你搭建人才网站，里边也有大量数据采集工具”
+ 各类爬虫demo  https://gitee.com/AJay13/ECommerceCrawlers   其中洞见网安项目可以研究下 https://wechat.doonsec.com/
+
+
+*相关人才或资源网站
+ (搜索“骑士人才系统”出来很多人才网站)
+ 
+ https://www.zquan.cc/
+ http://m.taocijob.com/
+ https://www.neijob.com/job/198447.html
+ https://csptvip.qmei.me/info
+ https://nanan.meiluojiu.com/
+ https://tc.shouyinbei.cc/plugin.php?id=tom_tongcheng&site=1&mod=index
+
+*网页拷贝工具 https://gitee.com/mail_osc/templatespider
+ 
+
+
+*开办人才网条件：
+ 工商营业执照、ICP许可证、人力资源服务许可证（人力资源服务许可证商用场地、3名及以上人力资源证书专职人员（大专以上学历）、）
+ 注意：
+   至少需要拥有2名以上（‌含2名）‌具有人力资源服务职业资格的专职工作人员。‌这些工作人员应具备职业指导员、‌劳动关系协调员、‌企业人力资源管理师或经济类初级职称，‌且应具有大专以上人力资源类专业学历，‌并经过人力资源市场主管部门组织的从业人员培训。‌工作人员的社保缴交记录可以作为其专业资格的证明
+
+网上是这样说的，好像还挺复杂（职业指导员、‌劳动关系协调员、‌企业人力资源管理师或经济类初级职称）
