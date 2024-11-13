@@ -1,5 +1,8 @@
 ﻿*淘淘商城应该是传智28期的内容  但是后面32期居然没有了这部分内容。
 
+*nginx配置运维web端项目 https://gitee.com/cym1102/nginxWebUI
+ 可在本地运行，管理nginx服务器
+
 *Nginx并发量在5w  而tomcat在500  不是一个数量级的。
 
 *Nginx应用场景：
