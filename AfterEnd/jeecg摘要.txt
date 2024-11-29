@@ -25,7 +25,15 @@
  2.通过后端获取的菜单列表menuData生成路由列表constRoutes
  3.menuData里的菜单项的component字段代表页面组件，children代表子页面组件。
 
+*vue3版的jeecg是用了vben-admin框架，前端相关的配置可以看官方文档
+ vben-admin框架有精简版和Electron版本可以使用
+ vben-admin框架项目的一些前端设置都在src/settings文件夹下
+     如src\settings\projectSetting.ts下的multiTabsSetting.show=false可以设置没有多页签
+ vben-admin框架项目的一些前端布局的设置可以通过src\layouts\default\setting\enum.ts
+     如src\layouts\default\setting\enum.ts里的menuTypeList调整首个元素即可设置默认布局
+
 *vue3前端路由逻辑：
+ 0.从设置路由守卫中作为路由权限菜单生成的入口，查找代码‘createPermissionGuard(router);’
  1.src\store\modules\permission.ts中transformObjToRoute(routeList)将菜单数据库数据生成路由
  2.src\router\helper\routeHelper.ts里dynamicImport方法将dynamicViewsModules[matchKey]返回（实际是个固定的路由函数）。这里换成defineAsyncComponent(dynamicViewsModules[matchKey]);可以动态组件
 
@@ -257,7 +265,7 @@
 
 *第三方登录逻辑：
   如微信扫码登录逻辑：
-     1、用户请求跳转到微信扫码二维码界面并扫码
+     1、用户请求跳转到微信扫码二维码界面并扫码（微信二维码页面会阻塞等待处理并携带结果跳转到业务服务器回调地址）
      2、微信接收到用户扫码同意请求后将用户信息通知到我们服务器接口（redirect_uri参数指定的api）
      3、服务器接口接到用户信息（主要有username、avatar、uuid），分几种情况：
          3.1、用户已注册过SysUser：到sys_third_account表查询sys_user_id再到sys_user表查询sysUser对象，生成token返回给用户
@@ -265,6 +273,8 @@
                 绑定接口逻辑：
                       根据手机号查找sys_user表，如果有sysUser则将id写到sys_third_account表，两者相关联，即绑定。生成token返回给前端
                       根据手机号查找sys_user表，如果无sysUser则创建一个初始密码为123456的sysUser用户，也是将id写到sys_third_account表，两者相关联，即绑定。生成token返回给前端
+    注意：jeecg使用com.xkcoding.justauth插件进行第三方登录属于auth2.0标准（用户认证结果通过第三方服务器给业务服务器发送到回调的方式）
+              但微信小程序并不符合auth2.0标准（微信小程序是直接调用接口返回用户认证结果），所以使用铁哒的方式+jeecg第三方登录方式相结合（即将微信认证结果信息存储在表SysThirdAccount）
 
 *online表单 begin*
 *online表单相关请求Controller在org\jeecgframework\boot\hibernate-re\3.0.02\hibernate-re-3.0.02.jar 下面的 org.jeecg.modules.online.cgform.c.a;
