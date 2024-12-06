@@ -1,5 +1,9 @@
 ﻿*兼容IE8+的相册插件http://photoswipe.com/ 
 
+*微信公众号文章编辑器 https://bj.96weixin.com/
+ 可以实现文章跳转到指定公众号（公众号卡片），这个公众号卡片是固定样式，如果要自定义样式可以参考以下链接（其实就是新的样式将公众号卡片遮盖）：
+ https://mp.weixin.qq.com/s/Qcvkt2SrYfII7oyPNBRmgQ
+
 *前端常用的点：seajs做js模块化加载、图片延迟加载、图片放大相册、截图工具、web打印功能、弹框组件、加载动画、分页组件
  
 
