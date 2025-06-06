@@ -1,0 +1,132 @@
+*apache 各版本下载地址http://archive.apache.org/dist/httpd/binaries/win32/
+ 和Tomcat、nginx等软件差不多，在conf目录下有相关配置
+ conf/httpd.conf部分配置
+     DocumentRoot 配置网站根目录
+     ServerName 网站服务域名，这里可以不带端口，直接写localhost。 然后用Listen配置80端口
+                          但是如果有多个网站服务，开启多个ServerName，那么就要带端口
+     
+  注意：配置修改后必须重启阿帕奇才能生效
+
+*php和python等语言一样，也是要下载安装
+ php很多功能是需要安装扩展的，在安装目录下的ext目录里
+ php.exe是php的解释器
+ php5apache2_4.dll等带有apache的dll是对阿帕奇的支持包
+ php.ini-development、php.ini-production配置文件，一个开发环境和生产环境
+
+
+*phpstudy是一个PHP调试环境的程序集成包。（公司应该也都是用这个集成工具）
+ 包括apache服务容器（相当于Tomcat）、nginx、Mysql、phpMyAdmin
+ phpstudy还可以做hosts映射域名
+ 注意：在phpstorm里点击浏览器打开php页面时，可以配置关联到phpstudy启动的网站服务（在settings里的Deploment里添加In Place）
+
+*除了用phpstudy来启动php的网站服务外，还可以用phpstorm里的Run/Debug Configurations里添加PHP Built-in Web Server
+
+*php方法调用方式（java等其它语言一般用点号.）
+ 方式一：用->代表实例方法，如$user->getName();
+ 方式二：用::代表静态方法，如Tools::strLenth('abc');
+
+*重定向：
+  header('Location: http://www.baidu.com/');
+
+*php基本也和aspdotNet差不多，前后端混合，当然也可以做分离，大概就是定义一些后端变量，然后用include template('wechat/11/index')引入前端模板，前端模版使用后端变量
+
+*预定义变量：即已存在一些内置变量，一般以$_开头
+ 如：$_GET 、$_POST、$GLOBALS....
+
+*和js有点像var a='name';console.log(arr[a]) 
+  php是这样的：$a='name'; echo $$a;
+
+*值传递和引用传递
+ 值传递：$a=1; $b=$a;   此时$b开辟了新内存空间并存储了值1
+ 引用传递：$a=1; $b=&$a;   此时$b没有开辟新内存空间，存储的是$a值的地址。 此时如果$a值改变，则$b也会跟着改变
+
+*常量定义（通常是大些）
+ 方式一：define('PI',3.1415926); //可以使用constant('PI')访问常量
+ 方式二：const PI=3.1415926;
+ 注意：两种方式在访问权限有区别、特殊名称的常量只能用方式一、通常常量不区分大小写（如要区分则用define定义）
+ *系统魔术常量：以__开头和结尾，如__DIR__当前脚本所在电脑绝对路径
+
+*数据类型：指的是数据本身类型，而不是变量的类型，php属于弱类型语言
+
+*类型判断函数：一般是is_xxx格式
+ 用echo输出bool变量不能输出类型，用var_dump可以输出类型(如var_dump(is_int($a)))
+ 获取类型函数 gettype 
+ 设置类型函数 settype 如settype($a,'int')  和强制转换类型不同，它会直接改变$a本身的类型
+
+*连接运算符：多个字符串连接的符号
+ .    它相当于js里的+
+ .=  它相当于js里+=
+
+*错误抑制符：一些可以提前预知但无法避免的错误
+ 如：$b=0;@($a/$b); //相当于try-catch
+
+*自操作符号：包含++，+=，*=等
+*自加符号，分前置和后置
+ $a=1;
+ $b1=$a++; // 最后$a=1，$b=1
+ $b2=++$a; // 最后$a=1，$b=2
+ 
+*常用函数
+ print()
+ print_r()  //通常用于打印数组
+
+*文件加载
+ include  当php文件执行到include时才去加载外部文件，如果加载文件有执行有错误，并不影响当前文件include之前的代码。  include一次执行一次，注意和include_once区分
+ require  和include一样功能，但是如果加载外部文件不存在，报错形式不一样。include不会影响下面代码执行，require如果报错则下面代码不会执行
+ 注意：多层嵌套包含时，再去使用./这类包含相对路径，会出现问题（./表示的当前路径是代表最根层php文件所在目录）。
+
+*函数
+ function show($a,&$b){
+   $a=$a*$a
+   $b=$b*$b
+ }
+ $a=10;
+ $b=10;
+ echo '<hr/>' ,$a,'<hr/>' ,$b
+ 会发现$b最后值是100，而$a为10，$b参数是引用传递
+
+*作用域
+ 可以在函数内部用 global关键字定义全局变量
+
+*静态变量
+ function show(){
+    $a=1;
+    static $b=1;
+    echo $a,'++’$b;
+ }
+  show();
+  show();
+  show();
+  会发现static $b=1;只在程序初始化执行一次，$b是一直叠加的，最终值是3。 而$a最终值是1
+  静态变量主要是进行计数、共享
+
+*可变函数
+ $a='show';
+ function show(){...}
+ $a(); //调用函数
+ 可以作为回调函数变量传入一个函数
+
+*匿名函数
+ $a=function(){...} 
+ 闭包：函数func1里的变量$a给func1内部的一个函数$func2使用，导致变量$a在func1运行完后没有被释放
+ function func1(){
+   $a=111;
+   $func2=function() use($a){
+   echo $a;
+  }
+  return $func2;
+ }
+ $b=func1();//执行完函数
+  $b(); //实际执行了$func2，访问了$a变量，说明$a没有被释放。
+
+*伪类型： php实际不存在的类型，通过伪类型可以帮助开发更好的查看操作手册
+ Mixed 混合的，可以是多种数据类型
+ Number 数值的，可以是任意数值类型
+
+*字符串相关函数：
+ implode 将数组元素按照特定规则连接成字符串，相当于join
+ explode 将字符串按照特定规则切割成数组，相当于split
+ 
+*数组
+ $a[]=1; 往$a数组里追加元素1
+ 

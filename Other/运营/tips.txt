@@ -1,0 +1,10 @@
+*总体概要学习b站《2024B站最牛新媒体运营课程0基础入门》 资料在百度网盘“大咖新媒体-短视频、直播、图文笔记 运营教程资料”
+
+*运营工具：
+  5118营销大数据网站 https://www.5118.com/
+  百度推广营销的后台（企业开通百度推广才有）里的工具中心-关键词规划师
+  热榜工具：今日热榜网站（用于发现热榜） https://tophub.today/  即时热榜 https://www.jsrank.com/
+  营销日历：ADGuider： https://www.adguider.com/calendar？包含【营销日历】【营销导航】【热门搜索】【使用技巧】课程老师没有说名字有待研究
+  文案提取工具（将抖音等平台短视频链接复制上去即可） wenan.douge.club
+  AI PPT工具：灵感ppt（AI生成ppt，效果怎么样有待和百度文库对比）  https://www.lgppt.cn/  ？还有两款工具课程老师没有说
+  AI 导航：媒帮派导航：https://123.meibp.com/

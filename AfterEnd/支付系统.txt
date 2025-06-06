@@ -24,6 +24,25 @@
 *微信h5支付接口中，/v3/pay/transactions/h5和/v3/pay/partner/transactions/h5 有什么区别？
  前者是商户用的，后者是给服务商用的
 
+*交易类型（用CashierEnum枚举类区分） ：不同交易类型的支付参数计算方式不同，但最终都是生成支付金额等参数
+    ORDER：单个订单，相当于单个商品，当进入待付款界面，就只能一个个商品单独付款。下单时就创建一条Order数据表记录
+    TRADE：整单交易，其实就是多个商品合并支付，当在购物车多个商品一起结算时就是这个类型。在购物车合并支付时，会先创建一条Trade记录和n条关联的Order记录
+    RECHARGE：充值，给账户充值
+    注意：1、一个Trade叫交易，它可以包含多个Order订单，交易完成时会在DB插入Trade记录和若干Order记录，Trade算主表，Order是管理Trade的编码sn
+               2、一个Order，构造Order时会拷贝Trade、CartVO相关信息，
+               3、CartVO包含了List<CartSkuVO> skuList列表，CartSkuVO是包含每个具体goodsSku商品及购买数量等信息。
+               总结：虽然lilishop中并没有订单合并支付功能，但是电商都有，所以应该是基于电商合并支付设计思想，一个Order订单包含了
+                          多个“goodsSku商品+购买数量+优惠等信息”，然后一个Trade可以包含关联多个Order（即合并支付）
+                          所以无论是单独一个订单还是多个订单，都统一通过Trade来作为支付交易主体，合并支付则Trade一对多Order，单订单支付则Trade一对一Order
+                      
+
+*下单总体逻辑（购物车不存数据库而是用缓存实现）：
+     1、用户在商品界面点击“立即购买”，其实是将特定sku商品及数量请求后端添加到购物车，并且cartType='BUY_NOW'，然后跳转到“提交订单页”
+     2、在“提交订单页”会先从缓存中根据cartType和memberId加载购物车，补充填写备注信息等，用户点击“提交订单”，进入选择支付方式。
+      总结：所以无论用户是“添加购物车再提交订单支付”或“立即购买”，其实都是先添加购物车，并且添加购物车是cache存储而不是DB存储
+      注意两个概念：Order订单是商品sku及数量相关、Trade交易是订单sn和支付方式及详情相关。所以订单Order其实是关联了交易单号
+      
+
 *支付总体逻辑
  以微信支付为例：
       1、用户在界面调用后端统一下单接口，后端调用微信平台统一下单接口，返回下单标识（h5支付是一个301链接，JsAPI是一个prepay_id及签名等），返回给用户
@@ -39,10 +58,8 @@
       3、微信退款成功通知到买家（调用后端退款通知接口）
       注意：支付退款系统中，manager卖家项目只涉及退款相关功能，这部分是否有必要再单独抽出项目
 
-*交易类型（用CashierEnum枚举类区分） ：不同交易类型的支付参数计算方式不同，但最终都是生成支付金额等参数
-    ORDER：单个订单，相当于单个商品，当进入待付款界面，就只能一个个商品单独付款。下单时就创建一条Order数据表记录
-    TRADE：整单交易，其实就是多个商品合并支付，当在购物车多个商品一起结算时就是这个类型。在购物车合并支付时，会先创建一条Trade记录和n条关联的Order记录
-    RECHARGE：充值，给账户充值
+
+                
 
 *支付终端类型（用ClientTypeEnum枚举类区分）
     H5("移动端"),
@@ -67,4 +84,32 @@ LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();//cny_
   ？@PreventDuplicateSubmissions 防重复提交 jeecg怎么处理
   ？在GlobalControllerExceptionHandler的@RestControllerAdvice注解
   ？@Phone，对比看下jeecg是如何做后端实体校验，如用户电话校验
+
+************SKU 体系 begin********************
+lilishop创建商品接口：https://store-api.pickmall.cn/store/goods/goods/create  
+  虚拟商品请求数据：{"salesModel":"RETAIL","goodsGalleryFiles":["https://lilishop-oss.oss-cn-beijing.aliyuncs.com/STORE/1857433098549063680/default/3f211813146d410183492f6a9a2f2408.png"],"release":true,"recommend":true,"storeCategoryPath":"1902242890475831298","brandId":"1349563815406886974","goodsUnit":"个","goodsType":"VIRTUAL_GOODS","categoryPath":"1348576427264204941,1348576427264204942,1348576427264204943","sellingPoint":"超级优惠","intro":"<p>pc描述</p>","mobileIntro":"<p>描述m</p>","updateSku":true,"regeneratorSkuFlag":true,"templateId":0,"goodsParamsDTOList":[],"categoryName":["数码办公","手机通讯","手机"],"goodsVideo":"","goodsName":"租房套餐2","price":"4999","skuList":[{"cost":1,"price":"4999","quantity":"999999","sn":"sku002","images":[],"租房发布数":"1000","租房刷新数":"2000"}],"goodsGalleryList":["https://lilishop-oss.oss-cn-beijing.aliyuncs.com/STORE/1857433098549063680/default/3f211813146d410183492f6a9a2f2408.png"]}
+ 实体商品请求数据：{"salesModel":"RETAIL","goodsGalleryFiles":["https://lilishop-oss.oss-cn-beijing.aliyuncs.com/STORE/1857433098549063680/default/14a919af11884af1a5c2fdb75dbe3673.png"],"release":true,"recommend":true,"storeCategoryPath":"1902242890475831298","brandId":"1349563815411081216","goodsUnit":"个","goodsType":"PHYSICAL_GOODS","categoryPath":"1348576427268399553,1348576427268399554,1348576427268399557","sellingPoint":"实惠","intro":"<p>这飒飒</p>","mobileIntro":"<p>这飒飒</p>\n<p>这飒飒</p>\n<p>这飒飒</p>\n<p>这飒飒</p>","updateSku":true,"regeneratorSkuFlag":true,"templateId":"1852229122933346305","goodsParamsDTOList":[{"groupId":"1522766396295163906","groupName":"参数","goodsParamsItemDTOList":[{"paramName":"参数cf","paramValue":"1","isIndex":0,"paramId":"1522766468659490818","sort":0},{"paramName":"电压","paramValue":"100V","isIndex":0,"paramId":"1896488743751372802","sort":10}]}],"categoryName":["家用电器","大家电","冰箱"],"goodsVideo":"","goodsName":"冰箱","price":"999","skuList":[{"cost":1,"price":"999","quantity":"1111","sn":"sku007","images":[],"weight":"50","深":"50","宽":"60","高":"200"}],"goodsGalleryList":["https://lilishop-oss.oss-cn-beijing.aliyuncs.com/STORE/1857433098549063680/default/14a919af11884af1a5c2fdb75dbe3673.png"]}
+  注意：虚拟商品和实体商品差异主要在运费模板
+            请求参数中通过goodsParamsDTOList添加商品附加参数（特定商品类别可以在平台绑定特定参数），像租房套餐的期限可以通过该功能设置，如设置一季度、一年、两年...
+
+*RockMQ相关功能点：
+  *当用户下单支付完成后，第三方支付调用服务端回调，会给MQ发送消息，然后服务端再消费消息对库存进行扣减（？异步的作用）
+
+
+
+sku概念：具体规格的特定商品或服务，在lilishop中是存储在GoodsSku表
+   电商具体商品：单个sku：【荣耀60、黑色、128G内存】， 单个sku库存：100：
+   房产套餐：单个sku：【租房发布数100个、刷新50个、过期时间1周】，单个sku库存：1000（相当于活动名额）
+ 
+************SKU 体系 end********************
+
+
+************分销 体系 begin********************
+*分銷总体逻辑：
+  1、商家在后台将自己商品添加为分销商品，并可以设置分销佣金
+  2、管理员后台能查看到商家的分销商品，并设置分销绑定天数
+  3、个人用户在后台提交分销申请给管理员后台审核，管理员进行审核
+  4、个人用户在后台选择要分销的商品，会生成相应的分销链接及二维码等，从而进行推广分销
+
+*************分销 体系 end********************
  

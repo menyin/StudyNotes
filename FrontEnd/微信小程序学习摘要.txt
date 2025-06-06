@@ -137,6 +137,14 @@ weapp.d.ts
   微信开发者工具的登录用户没有开发权限
   在不是在一个界面按钮绑定的事件内执行wx.getUserProfile()，这是微信为了用户体验和安全强制要求的
 
+
+*以往通过wx.getUserProfile()获取用户昵称和头像，然后发送后端，后端再降用户昵称+头像和openId或unionId绑定。 现在getUserProfile()已经被腾讯弃用，使用以下方式获取用户昵称和头像
+  在使用<button scope="userAvatarInfo" open-type="chooseAvatar" @chooseavatar="onChooseAvatar" >  获取小程序头像时报错
+  chooseAvatar:fail api scope is not declared in the privacy agreement(env: Windows,mp,1.06.2208010; lib: 3.8.7)
+ 解决：首先在小程序官方后台找到【基本设置-服务内容声明-用户隐私保护指引】中去添加“用户信息”选项，审核通过后线上
+            但是在本地开发者工具里还是不行，可在开发者工具【本地设置-调试基础库】进行设置低版本点的库，上线后不影响。
+            再不行的话，"__usePrivacyCheck__": true 这个属性是在uniapp使用的,纯原生开发是不需要的,加上就报错了,所有在全局的app.json里面找到这个删掉就可以了
+
 ***********************小程序与公众号注册相关 begin*************
 *注意：小程序与公众号在公众号平台关联是方便公众号链接小程序页面。而在微信开放平台关联，则是为了生成unionid，使得微信各种应用绑定到一起。
 

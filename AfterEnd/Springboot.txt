@@ -8,7 +8,7 @@
  *在spring-boot-dependencies-2.5.4.pom里有对应各种技术的依赖版本管理，有时候忘记可以到里面进行查找
  *每一项技术一般都是通过starter启动，所以找到的@ConfigurationProperties注解配置类和@EnableConfigurationProperties注解的启动类可以了解相关原理或信息。
  *在yml配置文件里输入对应技术部分关键字，会有自动提示，如输入redis...
-*辅助功能：内嵌web容器：tomcat、jetty、undertow
+ *辅助功能：内嵌web容器：tomcat、jetty、undertow
 
 *rest风格在springboot主要是这几个注解的使用
  @RestController：等价于@Controller+@ResponseBody
@@ -85,6 +85,7 @@
          private int age;
          ...
       }
+      然后在Controller里注入UserProperties配置类Bean
 
    *配置文件里的属性相互引用：如tmpDir：${baseDir}\temp
    *加载测试专用属性：@SpringbootTest(properties = {"test.myprop=11"}),然后就可以在测试类里用@Value("${test.myprop}")注入引用

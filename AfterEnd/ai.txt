@@ -143,6 +143,7 @@ https://www.bilibili.com/video/av767359951/?vd_source=719aa7596cf8f5b8a8303d5eac
  通义听悟：阿里云的声音转文字工作，可用于制作会议记录
  佐糖：图片处理工具，抠图修图等
 
+*普通视频转漫画视频开源项目 https://github.com/modelscope/DiffSynth-Studio/tree/main
 
 *Copilot GPTs：它是微软chatGPT+Bing的整合   axton提到的BingChat已经更名为Copilot GPTs，chatGPT4等高级模型都可以免费不翻墙使用
  网址：https://copilot.microsoft.com     需要登录微软账号
@@ -216,11 +217,16 @@ Amper Music 是一个易于使用的人工智能音乐生成器，可以根据�
 SoundBug（音虫）：
 SoundBug 是国产音乐制作软件，可以快速地为一段简单的旋律编配伴奏。
 您只需输入主旋律，然后选择 “AI 编曲”，即可生成相应的伴奏2.
-TuneFlow：
+TuneFlow：（已经是终身会员了）
 TuneFlow 是一个智能音乐制作平台，可以根据您的旋律音频文件生成相应的伴奏。
 您可以选择喜欢的风格和节奏，生成完整的主旋律和伴奏3.
 
-*suno ai音乐https://www.sunozh.com/membership 需要充值，可以尝试
+豆包AI生成音乐 https://www.doubao.com/chat/467311837513218
+
+*suno ai音乐https://www.sunozh.com/membership 需要充值，可以尝试 （58元每月） 已订购1年会员146元  20241211 
+                      https://www.sunozh.cn中文站      https://www.sunozh.kim代理站
+
+*MakeBestMusic可以尝试下歌曲创作   https://makebestmusic.com/
 
 *Windows Copilot：在操作系统内置了Copilot
 
@@ -374,6 +380,7 @@ aitestkitchen.withgoogle.com
 *Conda是一个开源的软件包管理系统和环境管理系统，最初是为Python语言开发的，但现在已不限制语言，支持Python、R、Ruby、Lua、Scala、Java、JavaScript、C/C++、FORTRAN等多种语言。它可以在Windows、macOS和 Linux上运行，主要用于安装多个版本的软件包及其依赖关系，并在它们之间轻松切换。
  注意：不要安装Miniconda，它是一个轻量级的发行版，只包含了最基本的内容：Python 和 Conda。  安装Anaconda，完整版包含图形界面
           pyCharm里创建项目时可以选择基于Conda创建项目，后续可以用conda切换python版本环境
+ 注意：Anaconda只是一个环境管理界面工具，conda是核心用于切换环境的工具，PyCharm中可以在项目设置中“Add Interpreter-Add Local Interpreter”选择Conda Environment选择已存在的Conda虚拟环境
 
 *pyCharm插件Translation  代码翻译
 
@@ -502,10 +509,146 @@ aitestkitchen.withgoogle.com
 
 ？TensorFlow学习了解下
 
-？爬虫
+*爬虫框架scrapy
+ tips：WebMagic和SeimiCrawler是Java语言的爬虫框架，前者适合单机、后者适合分布式，可以了解
+ 核心概念：
+         引擎：中间核心角色，其它所有部分都通过引擎进行交互
+         spider蜘蛛：负责解析http请求回来的数据解析
+         调度器   负责管理请求的url，进行请求调度。 里面有两个重要的东西：去重集合(即scrapy.request方法参数dont_filter相关的集合)和url任务队列
+         管道：   注意具体的管道类的钩子函数要将对象return出去才能保证下一个管道类的钩子函数才能接收到
+         下载器  用于执行实际的http请求
+         中间件：下载中间件（常用）、蜘蛛中间件
+  大概原理：看架构图，引擎在中间，spider蜘蛛、调度器、下载器、管道都通过引擎进行数据交互。 引擎控制总体过程逻辑
+                   首先从调度器的任务队列中获取url，交给下载器，下载器进行请求并得到响应交给具体spider的parse
+                   parse方法里解析数据并且yield出Request或者Item等类型数据，这时会根据不同数据类型交给不同组件。 其中Request交给调度器的队列、Item交给管道保存
+                   管道根据得到的Item类型数据进行保存处理。 
+                   当然整体过程中有不同类型中间件，中间件看架构图，去分析具体作用范围
+                   注意：在分布式爬虫scrapy-redis中，其实将请求url和去重集合这两个调度器核心东西都放在了redis上
+  网络请求：
+        注意 通过 yield scrapy.Request(url=url, headers=_headers, cookies=cookies,meta=meta, callback=self.parse,dont_filter=True, errback=self.errback)请求结果较给scrapy引擎去处理，
+                当self.parse回调函数里也有yield关键字，则会等yield的结果，也就是说self.parse可以再做一层子网络请求。
+
+*python的项目最好每个项目都单独自己的虚拟环境（用于安装特点python和依赖版本等）
 
 *爬虫项目GPT crawler  https://github.com/BuilderIO/gpt-crawler
 
+*Scrapy框架基本使用步骤
+  准备环境：使用conda切换指定的Python环境
+  安装Scrapy：
+  创建项目： scrapy startproject <项目名>     如：scrapy startproject testscrapy1
+                     注意：查询网络看创建后的目录结构
+  创建爬虫：scrapy genspider <爬虫名> <允许爬取的域名>  如：scrapy genspider itcast itcast.cn
+                     注意：<允许爬取的域名>用于设置爬虫爬取的范围，如果爬取url和它不匹配则会被过滤掉
+                                该命令是在项目根目录下执行，即testscrapy1目录下
+                                该命令执行完会在testscrapy1/testscrapy1/spiders目录底下生成一个itcast.py爬虫文件
+                             
+
+  执行爬虫：scrapy crawl <爬虫名称>  如：scrapy crawl itcast 
+                    注意： 用命令切换到Python3.6.5版本   conda activate pachong-master3.6.5
+  完成爬虫 ：在start_requests方法中写爬取代码逻辑（或直接使用start_urls），并用yield返回给parse方法处理
+                    在parse方法中写爬取处理逻辑，并用yield返回给pipeline去处理，返回数据类型只能是BaseItem、Request、dict、None类型  
+                    特别注意：当yield返回BaseItem则会交给pipeline进行保存处理，而如果yield返回Request则继续请求
+                    实际上parse方法yield返回的解析数据是交给了testscrapy1\testscrapy1\pipelines.py里的process_item(self, item, spider)方法的item
+  保存数据：testscrapy1\testscrapy1\pipelines.py里的process_item(self, item, spider)方法的item 会接受到“完成爬虫”yield的数据
+                   这里的process_item已经是最后的数据保存方法，所以方法内用return返回
+                              
+*Scrapy框架其它使用：
+  数据建模：统一在testscrapy1\testscrapy1\items.py 定义各种数据类， 类似Java中定义Entity类
+  请求：
+          scrapy.Request()：一般用于普通请求，相关参数如下
+                   url
+                   callback：默认parse函数
+                   meta：用于不同parse解析函数之间传递，比如职位列表的单个列表记录要再查询详情，则要先爬取职位列表，然后再根据id去爬详情。
+                               这个过程中就要将职位列表单个列表记录信息传递到详情的解析方法中，然后做两个数据合并。在callback的方法中response.meta接收
+                   dont_filter：偶尔用。
+                   method：一般不用
+                   headers、cookies、body：注意scrapy中cookie是不能放headers中，要用cookies来设置
+           scrapy.FormRequest()：一般post请求此方法，而不用scrapy.Request()，相关参数如下：
+           注意：在请求网页时可以用类似jQuery的response.xpath('xpath路径')解析具体元素，在浏览器右击元素copy-copy xpath可复制到选择语法  
+                      xpath可以用xpath selector浏览器插件进行验证查看     
+    配置：在settings.py文件中，包含总体相关配置，如pipeline配置、user-agent等
+              注意：一般都把ROBOTSTXT_OBEY = True注释掉，不然很多目标网站会拒绝爬虫
+    管道：当创建具体爬虫时会在pipelines.py代码文件中生成具体管道类（但是管道是多个爬虫公用的），如Testscrapy1Pipeline，相关方法如下：
+              open_spider(self, spider) 爬虫关闭时仅执行一次
+              close_spider(self, spider) 爬虫开启时仅执行一次
+              process_item(self, item, spider) 对已爬取的数据进行保存，方法中必须return Item对象，否则下一个管道接收不到数据
+                                                                  其中spider参数就是爬虫实例（即：testscrapy1\testscrapy1\spiders\itcast.py定义的具体爬虫类
+              特别注意：1、pipelines.py代码定义多个管道类，而又有多个爬虫，那么多个管道类都会执行，而不是对应爬虫执行，
+                                     此时可以通过process_item的spider参数进行不同区分，从而让具体管道类对应具体爬虫类
+     中间件：有两种中间件并且都在middlewares.py中定义，用return返回而不是yield返回
+          分类：
+                 下载中间件：主要对具体请求和响应进行拦截处理，重写方法如下
+                                    process_request(self, request, spider)：请求之前执行，可返回None、Request、Response三种类型数据
+						    None 则请求交给下载器处理，或交给其它权重低的中间件process_request
+						    Request 直接交给scrapy调度器去调度，不会再通过其它权重低的中间件process_request
+						    Response 直接返回给scrapy引擎的具体spider的parse解析，不再经过调度器和下载器
+                                    process_response(self, request, response, spider)：在下载器下载之后返回给引擎之前执行。可返回Request、Response类型数据
+						    Request 直接交给scrapy调度器去调度，不会再通过其它权重低的中间件process_request
+						    Response 直接返回给scrapy引擎的具体spider的parse解析，不再经过调度器和下载器
+                                      
+                 爬虫中间件：
+           应用：
+                 中间件实现随机UA：比如豆瓣top250需要设置随机UA，不能在settings.py中设置固定的UA
+                 中间件实现IP代理：通常是为了避免目标网站QPS限制。 通过request.meta['proxy']设置。 有些付费代理ip厂商还可以设置你的本机免密白名单
+                 中间件配合selenium：比如一些页面信息是通过js计算出来的，那么就要用selenium替代浏览器渲染，才能获取信息。
+                                                      注意：此时直接就用selenium进行下载，而不用再经过下载器，所以中间件返回值应该是Response类型
+     创建自动提取链接爬虫crawlspider：该类型爬虫和普通的爬虫不一样，它可以根据规则自动提取链接并发送给scrapy引擎
+              创建方式：scrapy genspider -t crawl <爬虫名> <允许爬取的域名>               
+              特殊爬虫类：里面没有parse方法，而有一个rules规则变量来用于提取要请求的链接列表。rules对象有相关参数来规定提取和不提取的正则或域名等 
+              注意：这种方式不比较费解也比较僵化，常用于在同个页面上采集，而不适用于有子页面的采集场景。没办法传meta参数进行子父页面数据串联    
+     其它命令：scrapy shell <url> 会进入一个环境，可以在这个环境写相关的python代码，一般用户本地调试测试
+                       并且获取一些scrapy框架相关的一些内部有用的对象和方法信息，也可以测试能否请求获取数据，
+                       scrapy crawl <爬虫名> --nolog 执行爬虫并不输出log
+     分布式爬虫（安装scrapy-redis）：
+              原理：把scrapy单机架构中的调度器所涉及的去重集合和任务队列放到redis中去。 最后爬取的数据也保存到redis的数据队列中
+                         在redis里存储着三个数据，如demo:dupefilter、demo:requests、demo:items，
+              逻辑：将请求的url尝试放到redis去重集合中，如果放得进去则放到redis任务队列中。
+                             在每个分布式爬虫中请求响应解析时再次产生的url会被放到redis任务队列中供所有分布式爬虫抢
+                             所有分布式爬虫去抢队列里的url时，会先去抢锁（即redis_key），从而拿到队列里的url
+              使用demo：可以看scrapy-redis官方demo    git clone https://github.com/rolando/scrapy-redis.git     
+              注意：数据可以不用保存到redis队列中
+                        去重集合也是一个指纹集合，原理是通过请求相关参数生成哈希
+                        任务队列也是里存储的是请求对象序列化后的值
+                        数据集合是保存最后下载处理后的数据 
+              分布式爬虫开发流程：
+                       1、编写普通爬虫（理清业务）         
+                       2、改造成分布式爬虫
+                              1、导入scrapy——redis的分布式爬虫类，并继承它
+                              2、将start_urls和allowed domains改造下（或者是改造start_request函数），从而获取redis上的起始url和允许域
+                              3、设置redis上获取起始url的key的名称、改造__init__设置允许的域
+                              4、改造相关参数配置
+              分布式爬虫案例：
+                       流程：爬京东图书分类列表，根据单个分类查询图书列表，根据列表项的id再ajax查询价格==>最后保存包含分类、图书详情的图书记录
+                      
+     scrapy_splash：模拟浏览器加载js，并返回js运行后的数据。可以直接安装在scrapy项目中，也可以单独启动一个类似浏览器的服务供scrapy项目代理请求
+                               特别注意：scrapy_splash和scrapy-redis在settings.py中都有DUPEFILTER_CLASS配置会有问题，一般自己重写一个过滤器类去区分解决
+     日志信息：看教程
+     配置：并发、重试、下载后休眠时间、
+                ROBOTSTXT_OBEY： 是否遵守网站robot协议，可以看https://www.taobao.com/robots.txt文件，规定了允许的路径资源。 非搜索引擎的爬虫一般都关闭它
+                CONCURRENT_REQUESTS：并发数
+                CONCURRENT_REQUESTS_PER_DOMAIN：限制每个域名并发数
+                CONCURRENT_REQUESTS_PER_IP：限制每个IP并发数
+                DOWNLOAD_DELAY：下载器请求后停顿时间
+                为了防止两个页面之间相互跳转造成死循环的配置“深度配置”
+      部署：scrapd部署工具，在服务器和本地安装服务端和客户端，然后客户端发布爬虫应用到服务端。
+                                             通过命令客户端或者直接进行post请求来管理爬虫启停、列表信息、任务状态信息等
+                 gerapy分布式爬虫管理框架，可以对爬虫进行项目打包、运行控制、状态管理、结果查看、部署、主机管理。 它通过连接服务器上的scrapyd服务来管理爬虫
+                                             相当于一个web的可视化管理界面，可以在本地部署，然后将项目代码放置于指定目录，即可通过界面进行操作管理
+*代理厂商：快代理、
+
+*摘要认证：一般就是在请求头添加上Authorization:Basic xxxxxx
+
+*注意：yield的用法（其实就有点像Java中simple_generator返回的是一个迭代器）：
+ def simple_generator():
+    yield 1
+    yield 2
+    yield 3
+ # 使用生成器
+ gen = simple_generator()
+ for value in gen:
+     print(value)
+
+*917爬虫任务项目任务调度过程：
 
 ************ Python end ******************
 
@@ -556,6 +699,28 @@ aitestkitchen.withgoogle.com
 
 *FastGPT和dify差不多。 
  https://cloud.fastgpt.in/
+
+************ Coze begin ******************
+*扣子支持将搭建的智能体发布到各种渠道中，让你的智能体服务更多的用户。目前支持将智能体发布到商店、模板库、第三方应用、API、SDK 或自建的第三方渠道。
+ 商店、模板库：在Coze官方的商店和模板库供用户或开发者使用
+ API：发布为 API 服务后，你可以通过发送 HTTP 请求的方式与智能体进行交互。
+ SDK：扣子提供各种常见开发语言的 SDK，你可以通过 SDK 快速实现 OAuth 等模式的鉴权流程，高效调用 OpenAPI。包括js、python。 可以像网易云信一样集成到前端和后端
+           web聊天SDK中没有提供发送消息的事件，所以只能自己用js去给聊天界面的发送按钮注册点击事件，才能做类似“积分是否充足”的业务判断
+
+？个人版和专业版的区别和条件
+？Coze中“开发智能体”和“开发AI应用”有什么区别
+    开发智能体：算是一个独立的功能块，可以完成独立的逻辑，但是要集成到网站啥的，需要自己去整合
+    开发AI应用：可以创建界面，并绑定业务逻辑，将智能体或者工作流的输出的东西显示到界面上
+    注意：二者都可以发布成api、sdk、抖音\微信小程序等
+              集成到应用上（如网页）时，通常没办法植入一些业务逻辑（如：智能体或AI应用加载时判断下localstorage有没有用户信息、在用户发送消息时判断下用户的积分够不够）。
+              当发布为SDK时，授权机制有待研究，目前测试了集成到网页上，但发现Secret token运行后，AI机器人聊天窗口初始化是401或403没有权限。（Secret token包含了所有权限）
+
+*coze的工作流中的代码节点，代码中并不支持XMLHttpRequest之类的对象，所以基本只能做一些运算，无法发起网络请求。
+ 虽然代码节点无法完成网络请求，但是可以通过插件来实现网络请求。
+
+？一个微信账号可创建几个小程序，一个主体可以创建几个小程序
+
+************ Coze end ******************
 
 ************ prompt begin ******************
 
@@ -670,6 +835,20 @@ function main(data) {
  openai tools fine tunes.prepare data -f <LOCAL FILE>
  注意：给点微调数据要大于10个
 
+*微调数据格式：
+  简单版：
+	{
+	  "prompt": "What is the capital of France?",
+	  "completion": "The capital of France is Paris."
+	}
+ 复杂版：
+	{
+	  "messages": [
+	    {"role": "system", "content": "You are a helpful assistant."},//通常定义用户角色
+	    {"role": "user", "content": "What's the capital of France?"},//通常定义用户输入内容
+	    {"role": "assistant", "content": "The capital of France is Paris."}//通常定义ai回复内容
+	  ]
+	}
 *网友提供的训练数据集：
   https://huggingface.co/datasets/ehartford/samantha-data
   ChatGLM-Efficient-Tuning
@@ -694,3 +873,89 @@ fine_tuned_model
 ************ GPT 视频相关 end ******************
 
 ？？？语聚、集简云
+
+语聚AI是集简云推出的全国第一款AI+连接器解决方案产品
+
+************************************************** deepseek begin *********************************************************
+Java架构师想要学习AI相关知识并深入了解DeepSeek，可以从以下几个方面入手：
+### 1. **基础知识学习**
+- **AI基础概念**：了解机器学习、深度学习、自然语言处理（NLP）等基础知识。可以参考一些入门书籍或在线课程。
+- **Transformer架构**：学习Transformer架构及其变体（如MoE、Dense等），这是理解DeepSeek模型架构的基础。
+
+### 2. **DeepSeek模型架构与技术**
+- **DeepSeek-V3和DeepSeek-R1**：研究DeepSeek的两大开源模型。DeepSeek-V3是基于混合专家（MoE）架构的多模态大模型，适合数学、代码生成和长文本处理。DeepSeek-R1是一个强化学习驱动的推理模型，适合数学、代码及逻辑推理任务。
+- **开源项目**：访问DeepSeek的GitHub主页（[https://github.com/deepseek-ai](https://github.com/deepseek-ai)），查看DeepSeek-V3和DeepSeek-R1的开源代码。
+- **技术论文**：阅读DeepSeek的技术论文，了解其训练方法、架构设计和性能优化。
+
+### 3. **实践与应用**
+- **API集成**：学习如何通过DeepSeek的API开放平台（[https://platform.deepseek.com](https://platform.deepseek.com)）将DeepSeek集成到你的项目中。
+- **本地部署**：尝试使用Ollama工具将DeepSeek模型部署到本地，进行实验和测试。
+- **实战项目**：参考一些基于DeepSeek的实战项目，例如[DeepSeek Engineer](https://github.com/Doriandarko/deepseek-engineer)，这是一个与DeepSeek API集成的编程辅助工具。
+
+### 4. **学习资源**
+- **官方文档**：阅读DeepSeek的API文档（[https://api-docs.deepseek.com/zh-cn/](https://api-docs.deepseek.com/zh-cn/)）和提示词库，了解如何高效使用DeepSeek。
+- **视频教程**：观看一些针对DeepSeek的视频教程，例如哔哩哔哩上的“Java赋能！1个小时大佬手把手带你基于DeepSeek，从0到1构建基于企业级Al Agent应用及个人助手”。
+- **社区与论坛**：关注DeepSeek的官方社交媒体账号（如微信公众号、小红书、Twitter），并加入相关社区，与其他开发者交流经验。
+
+### 5. **持续学习与拓展**
+- **关注最新动态**：定期访问DeepSeek官网（[https://www.deepseek.com](https://www.deepseek.com)）和GitHub页面，了解最新的技术进展和开源项目。
+- **复现与研究**：参与一些DeepSeek的复现项目，例如HuggingFace的Open-R1，通过实践加深对模型的理解。
+- **拓展技能**：学习与AI相关的其他技术，如Langchain、RAG等，提升对AI应用的综合开发能力。
+
+
+
+
+
+
+*在deepseek官网首页，有deepseek模型与其它模型的对比表格，各个对比项都是什么意思：
+  这些对比项都是评估大语言模型能力的标准化测试，我来用通俗易懂的方式解释几个主要指标：
+0. **Architecture**  
+1. MoE（Mixture of Experts，混合专家）
+核心思想：MoE架构将模型划分为多个“专家”（子网络），每个输入仅激活部分专家，通过路由机制动态分配任务。
+优点：
+计算效率高：在推理时只激活部分专家，而不是所有参数，因此计算资源利用更经济。
+扩展性强：可以在保持计算成本相对固定的情况下增加模型规模。
+适合大规模任务：适合多任务、多模态场景，能够处理复杂任务。
+缺点：
+训练复杂度高：容易出现专家偏好问题，训练过程较复杂。
+通信开销：在分布式训练中，专家之间的通信开销可能较高。
+2. Dense（密集）
+核心思想：Dense架构是传统的Transformer架构，所有参数对所有输入生效，每层神经元全连接，统一处理所有输入特征。
+优点：
+结构简单：基于经典的Transformer架构，易于理解和训练。
+性能稳定：模型质量可预期，通过增加参数量可以直接提升输出质量。
+适合小规模任务：在资源受限或任务单一的场景中表现较好。
+缺点：
+计算效率低：每个输入都要经过所有参数，导致资源浪费。
+扩展性差：随着模型规模增长，计算成本和内存消耗会显著增加。
+
+1. **MMLU-Redux (EM)**  
+类似"综合知识考试"，测试模型对57个学科（数学、物理、历史等）的理解能力。"Redux"是精简版，"EM"代表答案必须完全正确（Exact Match）。比如考试中填空题必须一字不差。
+
+2. **DROP (3-shot F1)**  
+"阅读理解考试"，评估模型从文本中提取信息的能力。"3-shot"表示测试时给3个示例，F1是综合准确率和召回率的评分（类似考试中既要答对又要答全）
+
+3. **HumanEval-Mul (Pass@1)**  
+"编程能力测试"，要求模型根据题目描述直接写出正确代码，"Pass@1"指生成一次就通过测试的概率
+
+4. **MATH-500 (EM)**  
+"数学解题考试"，包含500道高中/大学难度的数学题，要求解题过程和答案完全正确
+
+5. **C-Eval (EM)**  
+"中文综合考试"，包含13948道涵盖52个学科的中文题目，评估中文语境下的综合能力
+
+其他常见标记说明：
+- **MoE/Dense**：模型架构类型（混合专家/密集全连接）
+- **Activated Params**：实际使用的参数规模（决定计算量）
+- **Pass@1**：首次尝试成功率
+- **Acc.**：准确率（正确回答比例）
+- **F1**：综合准确率和召回率的平衡分数
+
+这些指标就像给AI做"学科考试"，分数越高代表该领域能力越强。不同模型在不同测试中的表现差异，反映了它们在知识广度、逻辑推理、代码能力等方面的特长。
+
+
+
+
+
+
+************************************************** deepseek end *********************************************************

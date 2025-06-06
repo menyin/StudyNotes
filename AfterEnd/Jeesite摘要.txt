@@ -387,6 +387,35 @@
   -JeeWx-qywx-api主要开发企业的公众号。
   -集成源码需要修改相应的命名空间，并且可能出现一些jdk引用错误，可将项目的jdk引用删除重新添加即可。
  -给微信公众号发送信息后，公众号会自动回复内容。这些回复的内容是在微信的【素材管理】里的，包括图片素材、文本素材、视频素材、音频素材、图文素材
+   各类型素材字段如下：
+    图文素材：
+    private String title;        // 标题
+    private String author;       // 作者
+    private String contentUrl;   // 图文消息的网页链接
+    private String content;      // 图文消息的内容，如果content存在，则content_url为空
+    private String picUrl;       // 图文消息的图片链接（可以是图片素材的Media ID）
+    private String url;          // 点击图文消息跳转链接
+   private String title;          // 标题
+   视频素材
+    private String description;    // 视频描述
+    private String videoUrl;       // 视频链接（或视频素材的Media ID，如果是上传到微信服务器的视频）
+    private String thumbUrl;       // 视频缩略图链接（或缩略图的Media ID）
+    private Integer playTime;      // 视频播放时长（单位：秒）
+   音频素材：
+   private String title;          // 标题
+   private String description;    // 音频描述
+   private String musicUrl;       // 音频链接（或音频素材的Media ID）
+   private String thumbUrl;       // 音频封面图链接（或封面图的Media ID）
+   private Integer playDuration;  // 音频播放时长（单位：秒）
+   图片素材（单独上传的图片，非图文消息中的图片）
+   private String title;          // （可选）标题，某些情况下文本消息可能没有标题
+   private String author;         // （可选）作者
+   private String content;        // 文本消息的内容
+   自定义菜单中的链接按钮
+   private String name;           // 按钮名称
+   private String type;           // 按钮类型（对于链接按钮，通常为"view"）
+   private String url;            // 点击按钮后跳转的链接
+
  -微信公众号安全性、更新速度、开发周期、安装卸载（关注/取消关注）会比App好，但流量消耗会更大、体验较差
  -微信公众测试号：基本拥有正式的认证公众号的功能，就是不能群发消息和支付。通过这个url登录  https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
  -微信小程序测试号：基本拥有正式的认证小程序的功能，就是不能群发消息和支付。通过这个url登录 https://developers.weixin.qq.com/miniprogram/dev/devtools/sandbox.html
@@ -747,3 +776,9 @@
  千峰教育：
   教程：https://www.funtl.com/zh/spring-cloud-alibaba/  、https://www.funtl.com/zh/spring-cloud-netflix/
   项目：https://www.funtl.com/zh/spring-cloud-alibaba-myshop/ 、 https://www.funtl.com/zh/spring-cloud-itoken/
+
+==============================工作流 begin ================================
+*jeesite的流程架构
+     流程分类：是一个树形结构分类，一个流程类别管理、比如项目管理、办公流程
+     流程实例：流程设计器设计完部署就得到一个流程实例，这个流程实例会去划分为一个流程分类
+==============================工作流 end ================================

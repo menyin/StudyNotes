@@ -60,6 +60,28 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+注意：阿里云配置是镜像仓库相当于私有的，像nginx这类常用的镜像也是要自己下载再push到阿里云仓库的
+          可以直接在运行或下载镜像时直接制定镜像仓库，也可在daemon.json里配置固定永久的镜像仓库。 
+          可用的仓库详见csdn《国内仍然可用docker镜像源汇总，长期维护，定期更新（2025年3月21日）》
+          有些镜像就是要找国内一些镜像仓库去试下（用docker pull <镜像仓库>/<带版本镜像名>）
+          可用的/etc/docker/daemon.json配置可以直接拷贝以下配置。
+         
+``````````````````````````````````````````````
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "dns": ["8.8.8.8", "8.8.4.4"],
+  "registry-mirrors": [
+    "https://docker.1ms.run",
+    "https://docker.xuanyuan.me",
+    "https://docker.sunzishaokao.com",
+    "https://swr.cn-north-4.myhuaweicloud.com",
+    "https://mirror.ccs.tencentyun.com",
+    "https://hub.rat.dev"
+  ]
+}
+``````````````````````````````````````````````
+
+
 
 
 *docker只能简化安装过程，不能帮我们简化配置。比如要配置Nginx的负载均衡

@@ -527,3 +527,9 @@ bTgxi9uMF2tjZz0wrDsnGF6b
 
 
 
+*es分词器插件下载需要到github上https://github.com/infinilabs/analysis-ik/releases 页面的点击进入 https://release.infinilabs.com链接
+ https://release.infinilabs.com/analysis-ik/stable/
+
+*es ik分词器插件安装：
+  linux docker安装只要配置好相应的插件挂载映射目录，然后将插件下载解压到该目录，然后启动es即可
+  Windows环境下只需要将下载插件解压，在安装目录的plugins新建ik目录，将解压内容拷贝到ik目录，重启es即可
