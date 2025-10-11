@@ -1,0 +1,6 @@
+*破解vip方法
+  在使用了一些vip特效或工具后，在导出视频时无法导出。可以通过以下方法拿到最终生成视频。
+  1、全选所有轨道右键菜单【新建复合片段（子草稿）】
+  2、选中合成通道右键菜单【预合成复合片段（子草稿）】
+  3、在电脑中类似以下路径下能拿到对应的合成的视频，路径中"8月28日"是视频文件名。
+        C:\Users\Administrator\AppData\Local\JianyingPro\User Data\Projects\com.lveditor.draft\8月28日\Resources\combination 
