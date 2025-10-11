@@ -85,7 +85,7 @@
   *util.js#generateIndexRouter的【"path": "*", "redirect": "/job/list", "hidden": true】为找到匹配路由重定向为默认页，即首页路由
   *在原本的list页面，去掉固定的mixins混入JeecgListMixin, mixinDevice去掉
   *GlobalLayout.vue将<side-menu标签相关隐藏判断去掉，让左侧菜单一直显示
-  *右侧菜单改造：有些后台页面再右侧菜单栏无对应菜单，此时实现不能作隐藏路由，而是也配置菜单然后通过样式隐藏 
+  *右侧菜单改造：有些后台页面再右侧菜单栏无对应菜单，此时实现不能作隐藏路由，而是也配置菜单然后通过样式隐藏
 
 
 ****** 改造成鱼泡网项目    end *******
@@ -99,7 +99,7 @@
    在html引用：
            <j-dict-select-tag v-model="formData.sex" title="性别" dict-code="sex" placeholder="请选择性别"/>
 
-           var testBox = new Vue({el: '#testBox', 
+           var testBox = new Vue({el: '#testBox',
 			components: {'j-dict-select-tag': myLibrary.JDictSelectTag},
 			data:{formData:{sex:1}}
 		});
@@ -109,8 +109,8 @@
   问题：打包了j-dict-select-tag生成myLibrary.umd.js有3.3M，太大了。 应该是依赖的AntDesign库导致的。   如果依赖了该库，在html再引入AntDesign库会不会出现冲突（特别是版本不一致时）
            解决：无法解决或很难解决
   最终方案：jeecg组件有管理vue-ls、axios等，导致拆解不开。  最好的方式就是将jeecg组件抽出放入单独一个vue-cli项目，对组件的vue-ls、axios相关内容进行重构。//TODO
-         
-           
+
+
 
 *选择控件中的表字典，在online生成前端代码中并未包含where条件
  如表字典为 t_title where name like '%翔安%'   最后生成控件的dictCode属性里是 t_title字符串。 可以自己改成前者
@@ -155,7 +155,7 @@
 
 	            selectedRowKeys  //表格中所有选择行key相关信息，可以通过该变量设置选择行，也可以通过tableContext[0]的setSelectedRowKeys方法设置选择行
 
-             
+
 *以下代码中#bodyCell是指定在a-table组件中的名叫bodyCell单元格插槽，它可以让开发者自定义表格单元格内的内容html
 <a-table :columns="columns" :data-source="data" bordered>
     <template #bodyCell="{ column, text }">
@@ -175,9 +175,9 @@
 ************************后端 begin******************************
 *实体的公共字段通过MybatisInterceptor进行统一填值处理
 
-？启动时一直报“Error from chokidar...”错误，对后续的调试热更新是否有影响  
+？启动时一直报“Error from chokidar...”错误，对后续的调试热更新是否有影响
  网上用的解决办法是在终端输入一下命令即可
- echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl 
+ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl
  ！！应该是在虚拟机内部有限制，在物理机下运行就不会报那个错误。
 
 *online代码生成器生成的模板是在jeecg-boot-module-system\src\main\resources\jeecg\code-template-online，可以自定义
@@ -196,11 +196,11 @@
 
 *代码生成功能使用时，在相关配置完成后要重启前后端项目才能生效
  代码生成功能在配置菜单时注意：
- *一级菜单的组件都是“layouts/RouteView”  
+ *一级菜单的组件都是“layouts/RouteView”
  *【默认跳转地址】是指上一级菜单点击默认跳转的地址，因为上一级菜单底下有多个菜单。
  *【隐藏路由】大概就是该页面不会在左侧菜单列表展示出对应的菜单项。？？待测
  *【聚合路由】大概是说比如A菜单下面有A1，A2子菜单，但是在左侧总菜单只想让A菜单展示，点击A菜单后右侧展示A菜单下的A1，A2的一个聚合页面。这个聚合页面还是会有A1、A2菜单栏。
-                    注意：一级菜单无效！而且聚合路由配置后，当前链接为A1或A2时，A左侧菜单不能保证一定选中状态。 网上有解决方案（未实践）https://juejin.cn/post/7205839620202627128                   
+                    注意：一级菜单无效！而且聚合路由配置后，当前链接为A1或A2时，A左侧菜单不能保证一定选中状态。 网上有解决方案（未实践）https://juejin.cn/post/7205839620202627128
                              vue3和vue2版本都有该问题  http://jeecg-boot.mydoc.io/?t=346060
                     解决： updateMenu ()和select:里去处理this.selectedKeys逻辑
                     总结：jeecg的聚合路由并非正常理解的通过菜单配置就能实现，实际上还是通过配置A菜单为聚合路由，让A菜单点击时路由指向A1页面，在A1页面通过数据控制A1、A2内容的显隐。
@@ -208,7 +208,7 @@
  *【路由缓存】当打开两个页面A、B，A页面表单填写了信息，然后切换页签到B页面，然后再切回来时A页面的表单信息就丢失了。  开启路由缓存能避免该问题
 
 *数据权限
- 实现：代码上处理，在线编码。 
+ 实现：代码上处理，在线编码。
  基本使用逻辑：前端或后端在对应的地方做权限埋点，然后在系统中添加权限控制菜单项和给对应角色分配菜单。
  *前端权限控制
   hasPermission.js定义的has指令用于控制页面元素的显隐，和shiro的页面权限标签类似（如admin:addUser)。 详见官方文档 http://doc.jeecg.com/2044038
@@ -255,17 +255,17 @@
  &特别注意jeecg只在登录操作的时候去验证刷新token，并没有在每次请求刷新token。 所以登录一阵子后会掉线。这可能是为了token有别于session
  在51CTO博客里有一篇《JWTToken超时刷新策略》就是解析jeecg的用户状态管理机制
  在简书里有一篇《jeecg中的shiro使用》也是解析jeecg的用户状态管理机制
-  使用shiro进行管理。 
+  使用shiro进行管理。
   1、在shiro的过滤器链上添加了一个JwtFilter过滤器，当有请求里含有token时，则进行shiro的subject.login(token)操作（其实内部回去掉用自定义realm#doGetAuthenticationInfo方法进行认证登入）
   2、在用户访问controller的时候，会经过shiro，shiro会去自定realm#doGetAuthorizationInfo拿权限，即角色和标识等（如：user:add），然后进行鉴权，如果权限不足则返回事先配置好的权限不足url="/sys/common/403"
-  3、在权限不足或未登录时会跳转到ShiroConfig配置的"/sys/common/403"，这个url请求其实直接返回了权限不足的json，由前端自己去跳转到自己的登录页面进行登录。 
+  3、在权限不足或未登录时会跳转到ShiroConfig配置的"/sys/common/403"，这个url请求其实直接返回了权限不足的json，由前端自己去跳转到自己的登录页面进行登录。
   4、前端请求登录时，后端登录保存到redis当中，而第1步自定义realm#doGetAuthenticationInfo方法会去SysBaseApiImpl#getUserByName拿用户实体，
        此时特别注意checkUserTokenIsEffect方法里用了2个缓存：
             SysBaseApiImpl#getUserByName方法这里有个缓存注解@Cacheable(cacheNames=CacheConstant.SYS_USERS_CACHE, key="#username")  用spring缓存了用户实体
             jwtTokenRefresh(...)方法里用了redis缓存
    5、token是采用了JwtToken，JwtToken自带了过期时间，然后又放在redis中设置过期时间。 在ShiroRealm#jwtTokenRefresh方法是验证并且刷新token过期时间
         逻辑是：设置token的redis过期时间是JwtToken过期时间的2倍。 当redis未过期（可以获取到token），此时如果JwtToken过期时间已过，则从新签发jwtToken（过期时间也会刷新）和刷新redis过期时间
-  *在ShiroConfig里有配置了RedisCacheManager，可以对权限 信息进行缓存 
+  *在ShiroConfig里有配置了RedisCacheManager，可以对权限 信息进行缓存
 
 *jeecg的token存储了username和password的加密信息，通过String username=JwtUtil.getUsername(token)可以获取用户名
 
@@ -309,7 +309,7 @@
 		    that.superQuery.params='[{"rule":"eq","type":"text","val":"A01A04A01","field":"category_code"}]';
  		    that.loadData();
  		}
-           注意：1、利用此原理，可以将cms的文章列表按照栏目切分成不同的菜单。 
+           注意：1、利用此原理，可以将cms的文章列表按照栏目切分成不同的菜单。
                      2、配合菜单的数据规则，可以按照角色分配不同栏目的文章数据。
                      3、
 
@@ -319,7 +319,7 @@
   response.setContentType("image/png;image/jpg;image/git");// 设置不强制下载，可打开预览 cny+
 
 
-*自定义树强制需要ID列,父ID列,显示列,是否有子节点列 { 例如：id,pid,name,has_child}   
+*自定义树强制需要ID列,父ID列,显示列,是否有子节点列 { 例如：id,pid,name,has_child}
  部门树没有has_child，而且默认存数据库值是id，？online表单设计时如果想要存生成的org_code似乎没什么解决方案
 
 
@@ -338,7 +338,7 @@
 *数据库备份方案：
    intellij备份：1.备份ddl：右击数据库->SQL Script->Generate DDL to CLipboard->粘贴到文档中保存
                       2.备份数据sql：右击数据库->Export Data to files->选择指定位置保存
-   
+
 
 ？定时任务点立即执行可以执行，但是设定了表达式定时却没有真正执行，是为何？
   官方给的回复可能性：定时任务是分布式的，如果多个机器链接同一个数据库，会随机在某个机器上跑任务，所以不是到时间没跑，而是不知道在谁的机器上跑了
@@ -350,7 +350,7 @@
 *flyway指定了固定的规范，用于在springboot启动时进行升级sql脚本执行。
  ？为什么jeecg-boot不执行flyway升级脚本？
   ！在jeecg的yml配置了autoconfigure.exclude:org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration，导致了springboot启动时并不执行升级sql脚本
- 
+
 ************************后端 end******************************
 
 ************************SaaS 多租户 begin******************************
@@ -363,14 +363,14 @@
   注意：在MybatisPlusSaasConfig里可以看出默认部门、职务等也是和租户关联，但是实际前端项目的添加表单中并无租户字段可选。其实不是bug，是默认是存储了当前登录用户的租户。
            系统管理-角色管理中角色添加也没有租户字段可选，但是默认是存储了当前登录用户的租户。
            租户开启时，sys_depart、sys_category、sys_data_source、sys_position是通过MybatisPlus拦截处理租户筛选查询逻辑，而sys_role、sys_user_role则是通过代码层面处理。
- *租户只做数据隔离，并没有像角色那样可以分配菜单权限。 
+ *租户只做数据隔离，并没有像角色那样可以分配菜单权限。
    问1：那么租户套餐分配菜单权限的逻辑又是怎么样的？ 用户->租户->租户套餐->菜单权限->最终显示  这五者是怎么样一个关联关系
-   答：租户下可以有多个套餐，每个租户套餐下有多个菜单权限，每个租户套餐可以有多个用户。   
+   答：租户下可以有多个套餐，每个租户套餐下有多个菜单权限，每个租户套餐可以有多个用户。
    问2：【我的租户-租户角色】并不能分配菜单权限，也不能分配用户。   而【我的租户-租户用户】也是一样不能分配用户。那么对于一个租户角色来说要分配菜单权限还是得到【系统管理】，有点别扭？
    答：只能通过【系统管理-角色管理】去分配菜单权限，那就会有“问4”的问题
    问3：有角色分配的菜单权限，也有租户套餐分配的菜单权限，还有部分分配的菜单权限，最后用户加载的菜单权限是什么？
    答：最终是租户套餐和角色以及部门分配的菜单权限的并集。 个人感觉：应该是角色+部门分配的菜单权限并集再和租户套餐分配的权限菜单取交集（如果要实现可以到SysPermissionMapper.xml里修改sql）。
-   问4：tA租户套餐分配了【系统管理-角色管理】菜单权限，则tA下的uA用户则可以管理角色，此时uA登录进行角色的菜单权限分配（可以看到全部的菜单权限），那不是可以全部菜单权限分配？ 
+   问4：tA租户套餐分配了【系统管理-角色管理】菜单权限，则tA下的uA用户则可以管理角色，此时uA登录进行角色的菜单权限分配（可以看到全部的菜单权限），那不是可以全部菜单权限分配？
    答：居然可以分配，也就是说如果tA租户下的uA租户有【系统管理-角色管理】权限，则他就可以通过角色给uA分配所有菜单权限，并且这些菜单权限居然还没有经过tA租户套餐过滤，显然是bug？？？？
         也就是说有两个问题：1、角色分配菜单权限是的菜单权限树数据并未经过tA租户套餐过滤的全数据。 2、界面右侧菜单列表其实也没有经过tA租户套餐过滤，是角色、部门、租户套餐分配菜单权限的并集。
    注意：官方文档其实也有说明“系统目前有系统用户、系统角色菜单，这个是给超级管理员用的，不做租户隔离。”
@@ -385,9 +385,9 @@
    总体逻辑：付费的相关菜单权限通过租户套餐来实现分配（无论企业或个人或CRM用户），基本免费菜单权限通过角色来实现分配。 用户类型也是通过角色来区分。
                   系统用户和系统角色由超级管理员来管理，不在租户套餐或角色的菜单权限分配内。
                   ？以上的菜单权限都是以菜单和按钮标识作为资源为前提的，如果要业务套餐如简历数等，那么扣点扣积分怎么实现（企业用户的套餐要有点数）
-   
-   
-  
+
+
+
 
  注意：租户模式开启时加载菜单权限时，会默认将临时角色（test）的相关权限添加进去。 所以如果发现某用户多出一些不属于自己角色的菜单权限，不要惊讶，可以去看看临时角色是否有这些菜单权限。
 
@@ -411,14 +411,14 @@
 *从TenantLineHandler#ignoreInsert 规定了是否忽略对租户字段的处理，即是否注入tenant_id
  默认实现是：当租户相关的业务表插入数据时，如果已经业务sql已经带了租户字段赋值，则不需要注入tenant_id。否则要注入
  【租户默认套餐】模块中新建租户套餐时在前端设置的tenant_id=0，所以在TenantLineHandler#ignoreInsert发现sql语句已经有插入了tenant_id的值就不会插入。 所以【租户默认套餐】模块其实应该叫【默认租户套餐】
-   
+
 
 *sys_user、sys_role、sys_permision、sys_depart、sys_category、sys_data_source、sys_position、sys_announcement
 
 *vue3版本初始化时执行pnpm install后报以下错误，其实是代理设置有误可以先还原
  ERR_PNPM_META_FETCH_FAIL  GET https://registry.npmmirror.com/@commitlint%2Fcli: request to https://registry.npmmirror.com/@commitlint%2Fcli failed, reason: connect ECONNREFUSED 127.0.0.1:7890
  解决方案：
-     npm config set proxy null 
+     npm config set proxy null
      npm config set https-proxy null
      npm config set registry http://registry.npmjs.org/
      如果想设置淘宝镜像再设置 npm config set registry https://registry.npmmirror.com
@@ -461,10 +461,10 @@ function edit(record) {
   最佳实践：类似boss招聘平台：
                  用部门作为求职者、招聘者、管理者的隔离字段，特别是管理用户里还可以做子部门及部门角色划分，从而分配菜单权限
                  用租户套餐作为用户获取菜单机制（仅限菜单分配，无法支持什么简历点刷新点等业务套餐项），总体不做租户隔离的话可以默认单租户。
-                 招聘前台界面注册用户后就给求职者和招聘者部门。  招聘管理后台注册的用户就给管理者部门（由上级管理者邀请或新建，并分配部门角色）。   
-                               
- 
-  
+                 招聘前台界面注册用户后就给求职者和招聘者部门。  招聘管理后台注册的用户就给管理者部门（由上级管理者邀请或新建，并分配部门角色）。
+
+
+
 ************************SaaS 多租户 end******************************
 
 https://api.xmtieda.com/jeecg-boot/online/cgform/api/getColumns/6d8e3289002448f2a745d736582379ba?_t=1649752470
@@ -543,23 +543,23 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
       jeecg-server-cloud 是SpringCloud五大组件的相关启动服务，如网关项目。
               jeecg-server-cloud\jeecg-visual是一些非必要的服务，包括监控、流控、任务调度
                         jeecg-server-cloud\jeecg-visual\jeecg-cloud-test里面是微服务相关组件的测试demo，即1点中jeecg-boot-starter里组件的测试demo
-      jeecg-module-demo 微服务相关的测试demo	
+      jeecg-module-demo 微服务相关的测试demo
   3、独立出了后台的前端项目 ant-design-vue-jeecg
   注意（“有个bug”实际上是因为把单体的jeecg-system-start项目作为微服务项目了，应该是要用jeecg-system-cloud-start项目才对）：
        1、：微服务的system项目yml缺少“spring.cloud.nacos.discovery.server-addr”配置，导致路由不能再spring容器初始化时加载到redis缓存。后续gateway项目通过“database”方式加载路由配置时加载不到路由列表。解决方式就是加上上述配置。
        2、但是加了“spring.cloud.nacos.discovery.server-addr”配置后，登录随机图片是不能访问的。访问是403。但是将随机图片url复制到浏览器请求又没错。！网络请求是403，但看console发现是跨域。jeecg官方文档说是在网关中添加path谓词，比如/sys/randomImage/**。（可以本地vue项目做跨域开发代理启动起来，然后进入路由维护页面添加path）
        3、即使通过postman请求来规避跨域（第2点的问题），也会出现404报错。 最后折腾两天，发现yml没配置server.servlet.context-path: /jeecg-boot  。导致了springmvc和shiro的过滤链没有匹配上。 【特别注意！！！】
-       
-            
-            
+
+
+
 ？单体转微服务的实践的思考
   *jeecg在2022年8月左右将项目的目录做了大的结构调整，使得目录结构更加清晰。
 
   ？考虑在tieda-after上直接改造微服务，还是另外复制一份jeecg来改造微服务
   ！由于tieda-after是在2022年2月初开始的，这期间jeecg已持续更新升级，所以还是下载新的代码来进行实践。
 
-  ？tieda-after用的jeecg的Version是2.3.5.RELEASE，那么在开发一段时间后，我们又如何同步升级呢？ 
-  ！如果不是像2022年8月这种太大的目录结构升级，我们可以采用“git双origin”方案。   详见csdn收藏《一个项目设置两个git地址，并最终实现一次性同时推送到到两个git地址上的方法总结》 
+  ？tieda-after用的jeecg的Version是2.3.5.RELEASE，那么在开发一段时间后，我们又如何同步升级呢？
+  ！如果不是像2022年8月这种太大的目录结构升级，我们可以采用“git双origin”方案。   详见csdn收藏《一个项目设置两个git地址，并最终实现一次性同时推送到到两个git地址上的方法总结》
   ！最终优化方案，详见csdn收藏《Github 上面git fork后的代码，如何保持同步更新》：fork完后正常开发，jeecg有更新时再add remote官方远程地址，然后拉取分支来合并
 
   ？为什么官方文档中有“单体升级为微服务3.4.1+”章节，但是实际上jeecg的源码的Version只到3.4.0
@@ -568,15 +568,15 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
  * ${key:default_value} 这种表达方式是通过key来获取value，如果获取不到就使用后面默认值。
  * 在一些直接通过Jar包启动的场景中，可以在启动时手动配置相关参数，如果没有配置，也会自动获取默认值进行启动，
     java -jar -DREDIS_HOST=172.16.0.36 -DREDIS_DB=2 xxx.jar
-   在intelliJ里启动时就是配置启动的jvm option 如：-DMYSQL-PWD=Cfcny362331,, -DMYSQL-HOST=39.108.237.61 
+   在intelliJ里启动时就是配置启动的jvm option 如：-DMYSQL-PWD=Cfcny362331,, -DMYSQL-HOST=39.108.237.61
  * 使用这种方法也可以获取path中的环境变量如：在path中配置了M2_HOME即可在springboot中使用下面的方式获取相应的值。 如：${M2_HOME}
     如：jeecg-boot\jeecg-server-cloud\jeecg-cloud-nacos\src\main\resources\application.yml
 
 *jeecg的微服务启动相关项目问题
   *启动nacos，限制先配置数据库，详见上述“jeecg微服务的数据库配置里包含${MYSQL-PWD:root}”
-  *启动jeecg-system-cloud-start   
+  *启动jeecg-system-cloud-start
     PropertiesComponent
-    <property name="dynamic.classpath" value="true" />  
+    <property name="dynamic.classpath" value="true" />
  https://www.cnblogs.com/hujunwei/p/15410184.html
 
 
@@ -614,7 +614,7 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
      刷新：？redis监听方式，在RequestRateLimiter第三方组件限流 ？？？有待研究
   ？jeecg后台【系统监控-路由网关】的配置
   ？响应式编程Flux 和 Mono 的知识
- 
+
 *gateway流控和token拦截
   ？通过限流来做token拦截，具体逻辑后续研究。-->最终目的是让新生成的erp
   *可以通过http://localhost:9999/erp/hello?token=xxx 来传递token
@@ -640,14 +640,14 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
                        原理：jeecg-boot-starter\jeecg-boot-starter-cloud\src\main\java\org\jeecg\config\FeignConfig.java作为Feign客户端公共配置
                                 依次判断A当前请求头或UserTokenContext里，有无token，有则添加到Feign客户端的requestTemplate.header上面，发送到B服务端
                                 因为jeecg已经将token都放在了请求头里了，所以有则有，没有则没有。
-    
+
 ？消息总线
 
 ？jeecg微服务启动访问system项目出现“Vue2路由菜单表....”问题提示，可用官方方案解决：http://doc.jeecg.com/3075165
 
 *AI相关功能
  建表字段建议：在在线开发中和在表单设计器中都有建议
- 
+
 ============================================= jeecg spring cloud end ========================================================
 
 *** 接兼职猫的设想 ***
@@ -662,6 +662,103 @@ https://api.xmtieda.com/jeecg-boot/online/cgform/api/getQueryInfo/6d8e3289002448
     表单设计器：formmaking
     流程前端组件：vue-flow  命令：npm install @vue-flow/core
 
+*formmaking的原理过程：
+ 表单设计器设计完表单，可以直接生成配置json，然后拿着这个json可以在vue项目文件中通过formmaking的组件库一个叫“表单生成器”的对象进行渲染
+
+*formmaking表单生成器：决定了使用哪种风格的UI进行渲染，有提供了AntDesign、Vant、GenerateForm三种表单生成器
+
+*formmaking中有子表单和子表单+两种类型可以嵌套的容器，但是子表单+，又叫subform是可以嵌套到列表相关的布局字段容器的
+
+**formmaking有默认的组件库，也可以扩展外部组件库
+
+*jeecg的表单设计器使用可以借鉴，比如“表单设计器模板”实际上就是表单模板
+
+*阿里的formily的扩展性和功能都比较强大，但是因为我们需求变动比较频繁，而且个性化需求很普遍，所以没有使用
+
 
 *阿里的代码引擎 https://lowcode-engine.cn/
 ============================================= 低代码 begin========================================================
+
+
+============================================= AIGC begin========================================================
+官网文档提供docker安装向量库命令会报错，可以加--privileged参数，命令如下
+docker run -d --privileged --name postgres-pgvector \
+-v /path/to/host/directory:/docker-entrypoint-initdb.d \
+-e POSTGRES_USER=postgres \
+-e POSTGRES_PASSWORD=postgres \
+-e POSTGRES_DB=vector_db \
+-p 5432:5432 \
+registry.cn-hangzhou.aliyuncs.com/jeecgdocker/pgvector
+
+============================================= AIGC end========================================================
+
+============================================= 工作流 end========================================================
+*总结jeecg流程管理的设计
+ 1、流程设计器设置流程模型，此处拓展了Flowable流程设计器插件的能力，即能设置业务分类、能设置节点的负责人的用户或组给业务用户或业务的角色/部门/职务
+ 2、在流程实例列表的流程实例项可以配置：配置流程节点关联的业务表单（可以是表单设计器产出表单|online表单|自定义表单）、配置流程节点关联表单字段显隐登细节
+ 3、上述流程实例配置好即可使用，即：在后台主界面菜单OA申请、业务业务申请进行发出流程（如请假审批），然后相关用户可以在后台主界面菜单的个人办公和OA申请和业务申请中看到
+
+*Flowable是基于activity的框架
+
+
+
+*jeecgboot中添加系统用户的表单中有一个项是“同步工作流引擎”，这个功能是什么作用？
+ 当选中“同步工作流引擎”选项后，在JeecgBoot系统中创建或更新的用户信息，会被自动同步到Activiti等工作流引擎的用户数据表中（比如 ACT_ID_USER, ACT_ID_GROUP, ACT_ID_MEMBERSHIP）。这样做的目的是确保两个系统中的用户数据保持一致。
+
+
+*学习bili《黑马程序员java教程工作流引擎Activiti7基础到进阶，Activiti和Spring框架、SpringBoot整合》
+
+*activity25表：
+    规则： 带_ge代表通用类型表、_hi代表历史类型表、_re代表资源类型表、ru代表运行时产生数据的表
+
+*流程符号大致了解：事件、活动、网关、流向
+*业务流程通过businessKey进行关联activity工作流实例
+*根据业务需求还可以将流程实例进行挂起和激活（挂起后，这个流程就不能进行相应的操作）、可多个和单个流程实例挂起。activity的表很多都有是否挂起状态字段
+*任务分配负责人时可以固定分配、表达式分配（UEL表达式）、监听器分配
+*流程变量：和dify流程变量一样。  默认作用域是整个流程实例（global变量）、还有任务或执行实例作用域的变量（local变量）
+           流程变量可以在流程引擎启动，流程实例中（未执行完），任务执行时（未执行完）等地方设置
+*UEL表达式里可以带流程变量，而UEL可以用在流程的节点或者连线上使用
+*注意：如果两个分支连线没有设置条件，则会执行在bpmn的xml排序靠上的那个分支的节点
+
+*网关：为什么有流程变量可以控制分支走向还要网关？！因为可能几个分支并行走或都不走，这时变量做不到
+       类型：排他网关、并行网关、包含网关
+       注意：并行网关后面的分支连线如果设置条件为false，连线也会继续执行。
+             包含网关后面的分支连线如果设置条件为false，连线不会继续执行。分支连线如果条件为true或者未设置条件则连线会执行
+             包含网关最佳实践：用包含网关拆分，再用并行网关合并
+       总结：
+             当你确切地知道需要同时进行多个任务，并且这些任务一个都不能少时，使用并行网关。
+             当你需要根据流程数据（条件）动态决定走一条还是多条路径时，使用包含网关。 使用时务必注意汇聚逻辑是否符合业务预期，
+             通常需要与并行网关配合使用以确保所有必要的分支都已完成。
+
+*spring中的事务传播模式复习下
+
+*springboot下固定的目录放置bpmn文件，springboot会帮我们自动部署
+
+*面试题：https://blog.csdn.net/koushen001/article/details/133170673
+
+
+？当流程第一个审批节点审批时，并不能驳回给发起人，那么这时候是否可以在它之前插入一个自动审批的空审批人员的节点来解决？
+
+？角色管理里有个工单授权，它和菜单授权有何不同，是否也有角色+租户+部门角色的工单授权？
+
+？我的任务里的“转办”何“委托”的区别
+   转办就是全权给代办的对象
+   委托是转个代办人后还会回到自己这边来审批
+
+*表单设计器的模式何online表单类似，形成相关的表单和列表后可以进行相应的数据/按钮/字段权限控制，并且可以从用户+角色+部门维度来控制（没有租户）
+
+？查看下10w基础商业版jeecg有没有表单设计器功能
+
+ce_paita_wangguan
+ai_rules_main
+
+？当我提交一个流程并挂载一个表单时，进入审核节点1，我希望审核人修改表单字段并进入排他网关判断该表单字段。结果表单值还是之前的值。
+   原因：当提交流程时Jeecg会监听挂载表单并将字段值设置到流程变量中，但当审核人在中途修改表单字段值时并未同步到流程变量中
+   解决：在中途的审核节点添加任务监听，添加Jeecg自带的监听器“节点监听更新业务数据到流程变量”org.jeecg.modules.extbpm.listener.task.TaskUpdateFormDataListener
+             当然也可以自己写个监听器进行同步处理。
+
+*审批流程中有【处理意见】选项的字典是“常用审批语”，但要根据不同的流程节点或者不同的审批人来显示不同的“处理意见选项”只能改前端。
+  这个处理意见是其实是Flowable框架里的Flowable Comment，通过taskService.addComment(...)设置，其实就是一个跟进记录
+
+？如果流程已经进入了项目审核阶段，
+============================================= 工作流 end========================================================

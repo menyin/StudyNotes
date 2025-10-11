@@ -39,6 +39,10 @@
 
  docker container stop $(docker container ls -aq)   # 停止所有容器
  docker container rm $(docker container ls -aq)     # 删除所有容器
+ docker stats nginx0 #查询nginx容器占用内存和cpu等资源的情况
+ docker stats --no-stream $(docker ps --filter "name=sphinx_" --format "{{.ID}}")   #查询容器名以sphinx_开头容器锁占用内存和cpu等资源的情况
+
+
 
 *docker-compose详见简书《关于docker-Compose基本使用》，下载的时候可以切换下版本
  详见blogs《docker、docker compose、k8s的区别 》

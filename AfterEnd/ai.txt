@@ -142,6 +142,9 @@ https://www.bilibili.com/video/av767359951/?vd_source=719aa7596cf8f5b8a8303d5eac
  Gamma：PPT制作工具
  通义听悟：阿里云的声音转文字工作，可用于制作会议记录
  佐糖：图片处理工具，抠图修图等
+ comfyUI：图像AI生成
+ 视频生成：runway、king、即梦
+
 
 *普通视频转漫画视频开源项目 https://github.com/modelscope/DiffSynth-Studio/tree/main
 
@@ -163,6 +166,10 @@ https://www.bilibili.com/video/av767359951/?vd_source=719aa7596cf8f5b8a8303d5eac
   
  ？Copilot Studio是什么
  ？Microsoft 365是什么
+
+*AI代码编辑器
+  Cursor 可以很方便的进行编码，好像每天限制10次，每月$20，值得付款
+  Claude Code 听说比Cursor更强大
 
 *Bard 谷歌的ai，对标chatGPT。 现已改名 Gemini。 有些功能只支持英文，有些不便
  网址：https://gemini.google.com/   需要谷歌账号845257580@qq.com  手机号182...
@@ -286,6 +293,12 @@ Beta features
 *DeepSeek一款完全开源可商用的大语言模型，1 元 100 万 Tokens， 堪称 AI 界的拼多多
  DeepSeek-V2 模型参数量更是达到了惊人的 236B，每个 token 激活 21B 参数，支持长达 128K token 的上下文长度，性能直逼 GPT-4-Turbo，而价格仅为其「近百分之一」。
 
+ Deepseek API  名称：testLLM   key：sk-74b2ac4310b34a0090988b80174a57e9
+
+*智普大模型
+  jeecg里配置智普向量模型   
+  模型名称：默认项目(426149)，  模型key：e4c03b4efc0a48608f6e4f77c36b1352.vVl2QYrA8kQV4MgR
+  模型名称：测试向量模型，  模型key：e4c03b4efc0a48608f6e4f77c36b1352.vVl2QYrA8kQV4MgR
 
 *苹果WWDC 2023新品发布会（没有提到AI，但是一直提到机器学习）：
  MR混合现实眼镜：带上可以看到虚拟的app场景，目光就是鼠标，手指动一动相当于点击操作。
@@ -665,6 +678,7 @@ aitestkitchen.withgoogle.com
       ？居然没有像word等软件的回退或前进按钮（ctrl+z）、表格方面沒有一些统计功能
 ************ Notion end ******************
 
+*智能体相关同类产品：dify、coze、anythingLLM
 
 ************ Dify begin ******************
 *代码：https://github.com/langgenius/dify
@@ -701,6 +715,15 @@ aitestkitchen.withgoogle.com
  https://cloud.fastgpt.in/
 
 ************ Coze begin ******************
+*智能体核心：
+ 大模型：大脑，提供推理、思考等核心能力
+ 记忆：
+      短期记忆：单次对话上下文形成的临时存储
+      长期记忆：可以横跨多对话多任务或多周期。实现方式有模型参数微调（固化知识）、知识图谱（结构化语义网络）、向量数据库（相似性检索）
+ 工具：外部插件工具，可以扩展能力边界
+ 规划决策：通过任务分解、反思、自省框架实现复杂任务处理
+ 行动：执行决策模块，包含软件接口操作（如订票接口）和物理交互（如机器人搬运）
+
 *扣子支持将搭建的智能体发布到各种渠道中，让你的智能体服务更多的用户。目前支持将智能体发布到商店、模板库、第三方应用、API、SDK 或自建的第三方渠道。
  商店、模板库：在Coze官方的商店和模板库供用户或开发者使用
  API：发布为 API 服务后，你可以通过发送 HTTP 请求的方式与智能体进行交互。
@@ -955,7 +978,14 @@ Java架构师想要学习AI相关知识并深入了解DeepSeek，可以从以下
 
 
 
-
+*Deepseek会有流控，可以用平替网站“问小白”
 
 
 ************************************************** deepseek end *********************************************************
+
+************************************************** ai智能开发 end *********************************************************
+*使用工具组合：Deepseek + Sealos-Devbox + Cursor 
+       Cursor要安装相关插件：Vue-Official  、 Devbox  、Material Icon Theme 、Remote -SSH 、Extension Pack for Java
+       Sealos是一个云操作系统，在它的Devbox里可以用Intellij、VS-Code、Cursor等编辑器打开代码，这样本地就可以连接到Devbox上的代码了
+
+************************************************** ai智能开发 end *********************************************************
