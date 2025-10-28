@@ -1,0 +1,97 @@
+*官网文档 https://gitcode.com/open-source-toolkit/2d6d5/?utm_source=tools_gitcode&index=top&type=card&&uuid_tt_dd=10_30866383490-1734626244403-820803&isLogin=9&from_id=143290935&from_link=da47c41018e0f5651d94e78688190189
+
+*Flowable流程设计器
+  idea似乎没有好用的插件
+  eclipse比较老但有插件
+  Flowable官方UIweb
+
+*bpmn.js是为了满足复杂流程设计需求提供的一套自定义流程设计器的库
+
+？会签、加签、
+  多人会签：一个节点需要多个人来处理，可能都要处理或者有某几个需要处理。并且还要区分并行会签或串行会签
+                 还可以指定UEL表达式调用代码中springBean的方法返回bool值来确定怎么样才算这个任务会签完成
+                 具体可以看jeecg里流程设计器有相应的设置参考
+                 注意：其实内部就是一个流程节点会签就会生成多个任务（比如2人会签则对应生成2个对应任务），任务监听器会监听到2次任务创建
+？flowable中候选组、候选用户、分配个单个用户的区别
+
+*当审批节点有候选人或候选组时，某一候选人查出任务列表后要对任务进行拾取进行后续操作，这样其它候选人就拾取不了了。 
+ 拾取后还可以归还也可以交接(指派给其它人)
+ 这种拾取和归还操作可以用来做任务抢办理场景，比如一个订单可以作为一个任务给多个候选人抢（拾取）并在一定时间内办理，超时就用定时任务将其归还
+
+？实际业务中会通过角色、部门、租户等业务维度来划分用户，结合到工作流的候选组有两种方案
+   1、将业务里的业务维度同步到候选组相关表中（一般应该是这种）
+   2、实际用户划分就是用的flowable的候选组相关表
+
+？流程变量的类型
+
+*相关的流程变量产生时还会在历史变量表里存储一份，便追溯
+
+？jeecg的表单是通过bussinesKey挂载吗，那么在监听器里如何去获取表单内容，然后根据业务内容来控制流程，比如改变某个流程变量
+   
+？jeecg流程设计时节点可以设置监听器，并且可以将当前节点挂载表单数据设置到流程变量中，但是如果表单是主子表这类复杂表，特别是
+   当子表有很多分页数据时，那么这些业务数据不会直接存到flowable相关的表中？那样就有点多了。
+*代码创建流程图：bpmnModel
+
+*包容网关和并行网关区别
+ 并行网关：所有并行分支都执行，即使分支线设置条件是flase也会执行，然后在汇聚节点处等待全部分支执行完再继续往下
+ 包容网关：所有并行分支根据分支线设置的条件为true才执行（被选中），然后被选中的分支在汇聚节点处等待执行完再继续往下
+
+？事件网关
+
+*Flowable和Camunda都是从Activity演变过来的，前者是Activity6演变，后者是Activity5演变
+  Camunda比Flowable功能更强大些，性能会更强大些（Flowable并发只能100以下），比如节点跳转、外部任务、脚本语言（比如python、ruby等）
+  但是Flowable更轻量化，Flowable 的开源版本功能更丰富，GitHub 社区响应速度较快，但商业支持相对较弱。
+
+*回退（可以回退到指定节点）：
+  串行回退
+  并行回退
+  子流程回退
+
+
+
+*动态表单
+  内置表单：flowable内置的表单，在流程节点里定义<flowable:formProperty id="days" name="请假天数" type="long" required="true"/>
+  外置表单：挂载外部的业务表单，在流程节点里定义formKey（可以是 URL等任意字符串），如<userTask id="ut1" name="填写请假申请" flowable:formKey="leave-form.html"/>。如果是通过表单设计设计的表单则通常是存储表单json到数据库，在把表单数据的主键id赋值到formKey，前端拿到这个formKey就可以进行渲染了。
+
+？所以formKey和formRoute 是Flowable里流程节点的属性吗？ 那Flowable流程节点里还有一个“数据对象”的属性，和它们是什么关系？
+    formKey 是 Flowable 原生 就在 userTask 上的标准属性；
+    formRoute 则是 JeecgBoot 自己 <extensionElements> 里打的扩展字段，属于“外挂”属性。它们俩都跟 「节点级表单渲染」 有关，而 「数据对象（dataObject）」 是 流程（process）级别 的全局只读变量，三者层级和用途完全不同，互不替代。
+
+*定时器事件节点
+ 定时器启动事件：流程部署后就会按设定的定时规则进行启动流程实例，不需要手动启动流程实例。
+                          应用：比如每天9点给后勤部启动一个巡检流程派发巡检任务
+
+*挂起和激活：针对的是流程而不是流程实例，当流程挂起时则其下面的流程实例则会全部暂停，并且不允许启动新的流程实例。激活则相反
+
+*JeecgBoot3.1和Flowable包含前后端整合项目 https://gitee.com/happy-panda/flowable
+  虽然比较完整但是前端vue2的，可以用比较独立的项目https://gitee.com/MiyueSC/bpmn-process-designer里面有vue2、vue3版本 
+  这是vue3版本 https://github.com/moon-studio/vite-vue-bpmn-process.git
+
+*bpmn.js是一个独立的流程设计器
+  react_bpmn_designer项目（此项目是基于 React、BpmnJs、 Antd 开发的网页版流程设计器。） https://gitee.com/gailunJAVA/react_bpmn_designer
+
+？jeecg的流程设计器是用的Vue3 + bpmn-js方案吗？
+  kimi：JeecgBoot 官方主线（3.x/4.x）的流程设计器 并不是 Vue3 + bpmn-js，而是 Vue2 + ElementUI + 自研 JavaScript 画布；
+            但在 社区（非官方） 里已出现 “JeecgBoot-Vue3 + bpmn-js” 的完整集成方案，可直接使用。
+           JeecgBoot 3.x	Vue2 + ElementUI	自研 Canvas 画布（非 BPMN 标准库）	
+           JeecgBoot 4.x	Vue3 + Ant Design Vue	沿用自研画布（官方未换 bpmn-js）
+           推荐开源：
+              jeecg-boot-vue3-flowable（CSDN 开源）
+                技术：JeecgBoot 3.x 后端 + Vue3 + bpmn-js 前端
+                功能：拖拽设计、表单挂接、租户隔离、中文水印
+                源码地址：https://gitcode.com/gh_mirrors/jee/jeecg-boot 
+                最后更新：2025-08-22 ✅（活跃）
+              bpmn-process-designer 社区插件
+                技术：纯 Vue3 + ElementPlus + bpmn-js 流程设计器组件
+                使用：直接 npm install bpmn-process-designer 后嵌入 JeecgBoot-Vue3 项目
+                集成教程：https://developer.aliyun.com/article/1504829 
+                最后更新：2024-05-10 ✅（组件仍维护）
+              FlyFlow（Gitee 开源）
+                技术：SpringBoot + Flowable + Vue3 + bpmn-js
+                功能：仿钉钉流程中心、表单设计器、会签/加签/驳回、多租户
+                源码地址：https://gitee.com/cqcnihao/flyflow
+                在线体验：https://www.flyflow.cc 
+                最后更新：2025-05 ✅（持续迭代）
+
+
+？回退和驳回有什么区别？
