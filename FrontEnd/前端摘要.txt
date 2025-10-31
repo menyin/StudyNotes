@@ -30,7 +30,10 @@
  https://jingyan.baidu.com/article/6b182309eb747fba58e159d1.html
  https://blog.csdn.net/kingzone_2008/article/details/9083327
 
+*Nuxt
+ 支持SSR（服务端渲染，相对于CSR而言）
 
+*SPA 单页面渲染
 
 *Figma是一个全平台可以使用的软件，类似于Sketch功能；但他可以在Mac，Windows PC，目前iPad也可以使用Linux计算机甚至Chromebook。只要你能打开网页，理论上基本上就可以使用这个工具，而不受系统的限制。
  总结：*tailwind是一套css的规范，可以做各种定制，bootstrap类的框架是一个按钮用一个“btn”类样式来规定。 tailwind是一套样式规范则是规定了text-large等类来快捷书写元素样式。 
@@ -94,3 +97,15 @@
 1.3统一使用相同的css-reset，统一定制统一引用。
 1.4所有非动态数据模块的图片显示均为背景图
 1.5所有可循环的项，其中容器
+
+
+*ESLint
+  用于代码规范校验修正的工具，可以执行ESLint相关命令，比如非规范提示、修复等
+  但是一般是在idea、VSCode等代码工具里安装ESLint来实时做提示，比如在VSCode里安装ESLint插件后，代码写完保存时就会做自动修复
+
+*pretter
+  有ESLint为啥还要Pretter
+  1、ESLint修复完代码无法格式化代码？
+  2、ESLint只能处理s，但是html和css这些处理不了
+  注意：ESLint和Pretter规则理念要保持一致，否则会冲突，比如格式化代码
+             当然也可以用eslint-plugin-pretter插件
