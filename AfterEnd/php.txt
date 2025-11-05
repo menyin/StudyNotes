@@ -21,6 +21,18 @@
 
 *除了用phpstudy来启动php的网站服务外，还可以用phpstorm里的Run/Debug Configurations里添加PHP Built-in Web Server
 
+
+*wampserver和phpstudy差不多，前者是一般php开发者使用、轻量、占用资源少，仅windows，社区广泛，后者偏向于初学者、占用资源多、支持windows/linux、社区一般
+  碧花用的是wampserver
+
+*phpEnv比较新，功能也多些，也比较轻量，可以用nginx发布
+ 张良用的是phpEnv。总体的逻辑和wampserver、phpStudy都差不多
+ 本地开发环境用phpEnv的nginx发布时要配置php解析FPM相关的东西
+ *注意：G:\Software\phpEnv\phpEnv\phpEnv\server\nginx\conf里有相关配置，正常就是nginx.conf
+             nginx.conf里会引入G:\Software\phpEnv\phpEnv\phpEnv\server\nginx\conf\vhosts相关配置， 即phpEnv创建的站点的配置，如xm.917.net.conf是xm.917.net站点的配置
+             xm.917.net.conf里会引入G:\Software\phpEnv\phpEnv\phpEnv\server\nginx\conf\vhosts\rewrite\xm.917.net.conf中路径重写相关配置，这个和jsp不太一样，和vue有点类似
+             FPM的地址和端口配置在 G:\Software\phpEnv\phpEnv\phpEnv\server\nginx\conf\php\php-7.4.conf里，当然这里不一定是7.4，可能是别的。从这个配置看，phpEnv里的FPM服务是要开的
+
 *php方法调用方式（java等其它语言一般用点号.）
  方式一：用->代表实例方法，如$user->getName();
  方式二：用::代表静态方法，如Tools::strLenth('abc');
