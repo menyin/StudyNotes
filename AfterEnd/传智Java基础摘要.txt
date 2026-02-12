@@ -1,4 +1,16 @@
-﻿*教程中用的jdk是1.7以上~ 如有问题先考虑此问题。
+﻿*SDKMAN是管理切换JDK的版本工具（类似NVM切换NodeJS版本的工具）
+ 基本使用：
+  sdk list java
+  sdk install java 1.8.472-amzn  安装时注意后缀-amzn需要加上
+  sdk use java 1.8.472-amzn  在当前窗口切换jdk版本，窗口关闭重开就失效
+  sdk default java 1.8.472-amzn  默认切换jdk版本，窗口关闭重开依然有效
+ 注意：通过SDKMAN切换JDK版本，但是是将JDK可执行文件路径添加到环境变量里，并没有添加JAVA_HOME，会导致Maven等和JAVA_HOME相关的工具无法使用
+          AI解决方案就是写一个自动化脚本在SDKMAN切换JDK版本时同时改写JAVA_HOME变量，但怎么整都不行
+          只能用命令setx JAVA_HOME "C:\Users\Administrator\.sdkman\candidates\java\8.0.472-amzn"补充更新JAVA_HOME，注意必要时用sdkm命令替换sdk命令
+
+  
+  
+*教程中用的jdk是1.7以上~ 如有问题先考虑此问题。
 
 *某些应用程序双击后会出现黑屏一闪，这种一般都是要在控制台运行。
 
