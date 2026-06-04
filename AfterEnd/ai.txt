@@ -1082,8 +1082,8 @@ Java架构师想要学习AI相关知识并深入了解DeepSeek，可以从以下
  OpenCode:国内流行，配置也比较好用。但其实用户体验其实没Trae那么中国化
                   配置步骤：1、新建C:\Users\Administrator\.aws，并创建credentials文件，文件里编辑如下内容
                                           [bedrock-prod]
-                                          aws_access_key_id = AKIAWPUCDSFZ6MZVNKQZ
-                                          aws_secret_access_key = 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
+                                          aws_access_key_id = 自己的aws_access_key_id
+                                          aws_secret_access_key = 自己的aws_secret_access_key
                                    2、通过配置opencode.jsonc文件或者OpenCode界面配置相应内容如下
                                         注意：Windows10我的在C:\Users\Administrator\.config\opencode\opencode.jsonc
                                                  opencode配置界面有bug不能编辑供应商，可以删除opencode.jsonc相关配置，重启再重启即可。
@@ -1234,7 +1234,7 @@ Java架构师想要学习AI相关知识并深入了解DeepSeek，可以从以下
       },
       "openrouter": {
         "baseUrl": "https://openrouter.ai/api/v1",
-        "apiKey": "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",
+        "apiKey": "自己的APIKey",
         "models": [
           {
             "id": "openroutrer/free",
