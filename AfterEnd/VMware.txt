@@ -4,3 +4,12 @@
  *设置【首选项】-【抓取的输入内容(G)】 为 高  并且勾选【禁用内存页面修整】
  *移除打印机等不需要的设备
  *安装完整的VMwareTools
+
+*苹果系统安装
+ 苹果系统正常是.app或.dmg格式的系统安装文件，但是在VMWare里只能用ISO文件
+ 可以下载github上的工具gibMacOS下载InstallAssistant.pkg再转换ISO，但是非常麻烦
+ 最终在sysin.org站点注册会员，捐款18，留言，得到ISO文件。  注册会员邮箱845257580@qq.com  gd...
+ https://sysin.org/blog/macos-sonoma/#1-ISO-%E6%A0%BC%E5%BC%8F%E8%BD%AF%E4%BB%B6%E5%8C%85-%E6%8E%A8%E8%8D%90
+ 注意：VMware如果支持安装macOS则有法律风险，所以默认不支持。需要下载unlock.exe补丁
+ 总结：经过折腾发现，VMware虚拟机指定了macOS Sonoma ISO.iso在启动时会一直停留在logo界面，无报错无进度条。根据vmware.log错误信息查资料也无法解决问题。
+          淘宝上有帮忙安装实现VMware虚拟机装macOS的，但是也比较贵，如macOS14要150元，太贵了。如果真有需要再说。

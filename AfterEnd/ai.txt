@@ -92,6 +92,8 @@ openai-proxy：https://gist.github.com/paicha/d26e48a0288df22c3fad12eb9547ef94
            基本原理：通过自己或者第三方的dns解析服务器将自己的域名代理转发到https://api.openai.com，代码请求接口时将原本的https://api.openai.com替换成自己的域名
            注意：本地因为有梯子影响，铁哒网页访问api.xmtieda.com可能会有问题，此时开启梯子并且在cloudflare的代理js判断openai.xmtieda.com即可解决
                    注意：python代码里的base_url应该填写"https:/openai.xmtieda.com/v1"
+*海外手机号短信平台https://hero-sms.com/cn/purchases/numbers  账号：845257580@qq.com Cf
+ GPT账号验证手机号1(424)4821238，用的是Microsoft账号  3331866906@qq.com Cf
 
 我们发现近期有很多 outlook/hotmail/live 等微软邮箱注册的 OpenAI 账户，在平时使用没有问题，但一旦升级到 GPT Plus 或绑定 API 就会在 24 小时内被封。
 我们猜测是微软给 OpenAI 提供了邮箱的注册国家信息，为了不必要的损失，请您尽量不要用微软的邮箱升级 Plus 或绑定 API 。
@@ -1333,3 +1335,27 @@ er Free",
 
 
 ************************************************** 龙虾 end *********************************************************
+
+************************************************** codex begin *********************************************************
+？本地文件操作，opencode能不能做？
+？斜杠命令，opencode有没有？
+? @技能插件，opencode有没有？
+*codex可以向Hbuilder一样有内置浏览器，然后可以审查元素并用AI辅助改dom样式
+
+*定时自动化、手机操控、版本管理
+
+*插件扩展
+ 注意：通过第三方AIP key登录的Codex，并不能连接插件市场，因为无法关联插件订阅状态，只能两三个插件。 所以需要更多插件功能就用OpenAI的GPT账号登录。
+*常用插件：
+     Brower Use：预览页面、自动点击、填写表单、滚动翻页....
+     Chrome浏览器插件，可以操作电脑上已经登录状态的Chrome浏览器，可以保留登录状态，而且是在后台执行不占用屏幕。注意需要在Chrome里先安装codex扩展crx
+     Computer Use：操作电脑，查看屏幕、移动鼠标、点击和打字、操作应用.....  目前只支持Mac系统，缺点一大堆。
+     Netlify 部署网站插件
+*常用技能：
+     Firecrawl联网搜索
+     Context7获取最新技术文档
+     UI UX Pro Max 美化前端页面 
+     Skill Installer 快速安装其它技能。注意：知名技能可以直接放权安装，但是不知名的技能还是要自己判断审核后再说
+     remotion best practice 动画制作技能。可以制作产品发布宣传片，节日祝福视频等
+exe目录：C:\Users\Administrator\AppData\Local\OpenAI
+************************************************** codex end *********************************************************
