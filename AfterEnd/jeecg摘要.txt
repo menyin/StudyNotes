@@ -6,6 +6,8 @@
 ******计划8月19~11月19用3个月完成eecg总体框架学习：前端，后端，数据结构******
 
 ************************前端 begin******************************
+****JeecgBoot3.9.5后将@jeecg/online前端依赖包去掉，把源码放到src/views/super/online，即Online表单功能开源了
+
 ？注意vue extend和minix的区别，前者有点像继承，数据和方法是所有组件共享的。 后者有点像字节码混入，数据和方法不共享但却是可以动态注入到特定组件中。
 
 *在前端的页面中visible数据来控制一些弹窗的显隐
@@ -115,6 +117,7 @@
 *选择控件中的表字典，在online生成前端代码中并未包含where条件
  如表字典为 t_title where name like '%翔安%'   最后生成控件的dictCode属性里是 t_title字符串。 可以自己改成前者
 
+*注意表字典有在后端做5分钟redis缓存，如果表字典数据量比较大，就需要增加缓存时间，否则频繁失效，会导致高并发时直接访问数据库造成缓存雪崩。
 
 *vue3版生成代码相关要点：
  *list列表相关（即AntDesign4的Table组件，相关属性可以先看文档）
@@ -754,6 +757,191 @@ docker run -d --privileged --name postgres-pgvector \
 -p 5432:5432 \
 registry.cn-hangzhou.aliyuncs.com/jeecgdocker/pgvector
 
+
+？流程设计中，开始节点的输入字段history怎么用？
+？流程设计中，知识库如何使用，比如输出文档列表或data如何在下一个LLM节点使用
+？流程设计中，官方文档说到“直接回复节点回复的内容只通过SSE返回”，是什么意思？SSE 的全称是 Server-Sent Events（服务器发送事件）
+？Jeecg创建AI应用类型选择智能体，则可以关联到多个流程，形成多流程功能聚合。 而各个流程都可以配置到菜单，菜单可以权限管控。 那么多流程功能聚合后受权限管控吗？
+？在创建AI应用才有记忆库，记忆库可以存储“变量”和“长期记忆”，整个原理过程是什么样？“长期记忆”用知识库实现，那么每个用户的记忆都存储同个知识库后要怎么区分？
+？多会话是啥意思
+
+？官方文档里说“不建议用PGvector，因为他的向量类型只支持最大两千的切片，现在很多模型的嵌入切片都远远超过2000了，所以很多模型都无法使用他存储向量值”
+
+*JeecgBoot的AI平台里集成外部能力的途径主要是MCP和插件
+ MCP有sse、stdio、http三种协议
+ 插件主要就是适用于没有遵循MCP协议的外部能力，比如某个平台提供的api服务
+
+
+
+------------  基于项目源码和互联网信息的AI应用平台深度分析报告（md文档）begin -------------
+
+---
+
+# JeecgBoot【AI应用平台】企业信息化建设分析报告
+
+## 一、源码结构（基于本项目实际分析）
+
+AI 应用平台代码分布在 **3 个位置**：
+
+| 位置 | 路径 | 说明 |
+|------|------|------|
+| 后端主模块（开源） | `jeecg-boot-module-airag` | 9 个 Controller、核心 Service 源码齐全 |
+| 系统业务扩展（开源） | `jeecg-system-biz/.../airag/` | 业务工具集成（如 `JeecgBizToolsProvider`，含你写的边际汇率工具） |
+| 前端模块（开源） | `jeecgboot-vue3/src/views/super/airag/` | 9 个子目录（aiapp/aiknowledge/aimcp/aimodel 等） |
+
+底层技术栈：**langchain4j 1.9.1** + **LiteFlow 2.15.0**（流程引擎）+ **PgVector**（向量库）+ **Apache Tika**（文档解析）。
+
+---
+
+## 二、功能模块清单与开源/闭源划分（核心）
+
+通过对 `jeecg-boot-module-airag/pom.xml` 的依赖分析和 jar 包反编译验证，AI 应用平台的**开源/闭源边界**如下：
+
+### ✅ 开源部分（源码可见、可修改）
+
+| 功能模块 | Controller | 性质 |
+|----------|-----------|------|
+| AI 应用管理 | `AiragAppController` (`/airag/app`) | 开源 |
+| AI 对话助手 | `AiragChatController` (`/airag/chat`) | 开源（调用闭源工厂） |
+| AI 知识库 | `AiragKnowledgeController` (`/airag/knowledge`) | 开源 |
+| AI 模型配置 | `AiragModelController` (`/airag/airagModel`) | 开源 |
+| MCP/插件配置 | `AiragMcpController` (`/airag/airagMcp`) | 开源 |
+| 提示词管理 | `AiragPromptsController` (`/airag/prompts`) | 开源 |
+| 提示词评估器/轨迹 | `AiragExtDataController` (`/airag/extData`) | 开源 |
+| OCR 识别 | `AiOcrController` (`/airag/ocr`) | 开源 |
+| Word 模板引擎 | `EoaWordTemplateController` (`/airag/word`) | 开源 |
+
+### 🔒 闭源部分（jar 包混淆、无源码）
+
+| 闭源组件 | 证据 | 影响 |
+|----------|------|------|
+| **`jeecg-aiflow:3.9.1-beta1`（84MB）** | jar 内类名被混淆为单字母（`flow/a/a.class`）；pom license 声称 LGPL 但 URL 指向 `jeecg.com/vip` 商业页；`META-INF/.templates/` 下有加密文件 | **AI 流程设计器**全部闭源（流程编排、条件分支、代码节点、HTTP 节点、子流程等） |
+| **`jeecg-boot-starter-chatgpt:3.9.1.1`** | 提供核心 `AiModelFactory`、`LLMHandler`、`AiChatAssistant` 等 | **模型工厂闭源**，新模型适配依赖官方更新 |
+| **前端 `@jeecg/aiflow` npm 包** | `registerPackages.ts` 中作为独立商业包懒加载，与 `@jeecg/online`（已知商业模块）并列 | AI 流程设计器前端不在项目源码中 |
+| **敏感节点开关** | `AiRagConfigBean.allowSensitiveNodes` 控制 stdio MCP 命令行、SQL 节点 | 部分高级功能需显式开启 |
+
+---
+
+## 三、企业信息化建设的注意事项
+
+### 1. 商业授权风险（最关键）
+
+**风险点**：AI 流程设计器（`jeecg-aiflow`）是闭源商业组件，pom 中 license URL 指向 `jeecg.com/vip`，表明实际是商业授权产品。
+
+**可能的问题举例**：
+- **License 到期/限制**：闭源 jar 内可能含授权校验（虽然开源部分未发现，但校验逻辑封装在混淆 jar 内无法确认）。若商业化部署，可能遇到功能受限或需要购买授权。
+- **无法深度定制流程引擎**：如果你需要扩展 AI 流程节点类型（如自定义一个"审批节点"），由于 `jeecg-aiflow` 混淆闭源，**你无法修改流程引擎核心逻辑**，只能通过它暴露的 `IAiRagEnhanceJava` 接口做有限的 Java 增强节点。
+- **升级被动**：闭源 jar 的 bug 修复、新功能只能等官方发布，你无法自行 patch。例如本项目就遇到了 `guava` 版本冲突导致智谱模型 `NoClassDefFoundError`（上一轮排查的问题），这种闭源 jar 引入的传递依赖冲突，排查成本极高。
+
+### 2. 向量数据库强依赖 PostgreSQL
+
+知识库 RAG 功能基于 **PgVector**（`langchain4j-pgvector`），`application.yml` 配置 `jeecg.ai-rag.embed-store` 指向 PG。如果你的企业标准化数据库是 MySQL/Oracle/达梦，**需要额外部署 PostgreSQL 作为向量库**，增加运维负担。
+
+### 3. 模型激活机制带来的运维复杂度
+
+`AiragModel.activateFlag` 字段（0=未激活，1=已激活）：模型必须通过 `/airag/airagModel/test` 接口测试成功后才能被业务调用。`AIChatHandler` 中有 `assertSame("模型未激活...", activateFlag, 1)` 校验。这意味着：
+- 模型 API Key 失效或网络波动会导致激活失败 → 业务对话直接报错
+- 你需要建立**模型可用性监控**，不能假设配置过就一直可用
+
+### 4. 多租户隔离与 AI 数据的交叉
+
+JeecgBoot 的 `MybatisPlusSaasConfig` 对 `sys_depart` 等表做了租户隔离，但 **AI 相关表（airag_app、airag_knowledge 等）的租户隔离策略需单独验证**。在企业多组织场景下，要确保不同租户的知识库、对话记录不会串库（本项目之前就遇到过租户隔离导致的"补全子公司节点返回 0 条"问题）。
+
+### 5. AI 对话的 SSE 长连接稳定性
+
+`AiragChatController` 使用 SSE（Server-Sent Events）流式返回。数据库 `sys_log` 中已记录过 `AsyncRequestNotUsableException: Response not usable after response errors`（`AiragChatServiceImpl.java:496`）。在生产环境需注意：
+- Nginx/网关需关闭 SSE 缓冲（`proxy_buffering off`）
+- 需配置合理的超时时间（大模型响应较慢）
+
+---
+
+## 四、对新版本模型的支持能力分析
+
+### 当前支持的 7 家模型提供商（源码验证）
+
+通过前端 `aimodel/model.json` 和反编译 `AiModelFactory.class` 交叉验证：
+
+| Provider | 厂商 | 实现方式 | 支持类型 |
+|----------|------|----------|----------|
+| `OPENAI` | OpenAI | `OpenAiChatModel` | LLM + EMBED + IMAGE |
+| `ZHIPU` | 智谱 AI | `ZhipuAiChatModel` | LLM + EMBED + IMAGE |
+| `QIANFAN` | 百度千帆 | `QianfanChatModel` | LLM + EMBED |
+| `QWEN` | 阿里通义 | `QwenChatModel` | LLM + EMBED + IMAGE |
+| `OLLAMA` | 本地模型 | `OllamaChatModel` | LLM + EMBED |
+| `DEEPSEEK` | 深度求索 | 复用 `OpenAiChatModel`（兼容协议） | LLM（含 reasoner 推理模型） |
+| `ANTHROPIC` | Claude | `AnthropicChatModel` | LLM |
+
+### 对新模型的支持能力评估
+
+**有利因素**：
+- 底层使用 **langchain4j 1.9.1**（较新版本），社区版 BOM `1.9.1-beta17`，langchain4j 社区迭代活跃，新模型会持续加入
+- **OpenAI 兼容协议**的模型（如 DeepSeek、Moonshot/Kimi、零一万物、SiliconFlow 等）可以直接用 `OPENAI` provider + 自定义 baseUrl 接入，无需官方适配
+- 模型配置支持自定义 `baseUrl` 和模型名，有一定灵活性
+
+**风险因素（闭源带来的限制）**：
+1. **非 OpenAI 兼容协议的新模型，必须等官方更新 `AiModelFactory`**。例如 Google Gemini、MiniMax 等目前不在支持列表中，而 `AiModelFactory` 是闭源的，你**无法自行添加新 Provider**。
+2. **特殊能力适配滞后**：如本次遇到的 GLM-5.2 激活报错（`AuthorizationUtils` guava 版本冲突），就是闭源 jar 的传递依赖问题。新模型如果引入新的鉴权机制（如智谱改用新 JWT 库），闭源 jar 升级可能滞后。
+3. **版本升级风险**：`langchain4j-bom` 版本由 `jeecg-boot-module-airag/pom.xml` 锁定，升级 langchain4j 主版本可能与闭源的 `jeecg-aiflow`/`chatgpt-starter` 不兼容。
+
+### 应对新模型的实操建议
+
+| 模型类型 | 接入方式 | 可行性 |
+|----------|----------|--------|
+| OpenAI 兼容协议（DeepSeek/Kimi/Moonshot/SiliconFlow） | 选 OPENAI provider，改 baseUrl | ✅ 直接可用 |
+| 智谱/通义/千帆/Ollama/Claude 新版本 | 选对应 provider，改模型名 | ✅ 直接可用 |
+| Google Gemini / MiniMax / 其他非兼容协议 | **官方未适配，需等闭源 jar 更新** | ❌ 受限 |
+| 本地私有大模型 | 走 Ollama 或 OpenAI 兼容接口 | ✅ 推荐 |
+
+---
+
+## 五、总结建议
+
+| 维度 | 结论 |
+|------|------|
+| **可用性** | AI 应用管理、知识库、对话、MCP、模型配置、提示词管理这些**基础功能开源可用**，能满足大部分企业 AI 助手场景（如你已实现的边际汇率查询） |
+| **核心风险** | **AI 流程设计器完全闭源**（混淆 jar + 独立 npm 包），这是最大的供应商锁定风险。如果业务重度依赖流程编排，建议评估商业授权或考虑替代方案（如直接用开源的 Dify） |
+| **模型扩展** | 基于 langchain4j 1.9.1，对 OpenAI 兼容协议的模型支持良好；但非兼容协议模型受限于闭源 `AiModelFactory`，无法自行扩展 |
+| **建议** | ① 优先使用 OpenAI 兼容协议接入模型，避免依赖闭源工厂的适配；② 流程编排类需求评估是否值得绑定闭源组件；③ 向量库规划好 PostgreSQL 部署；④ 建立 AI 模型可用性监控机制 |
+
+------------  基于项目源码和互联网信息的AI应用平台深度分析报告（md文档）end -------------
+
+
+
+
+*JeecgBoot的AI聊天应用是如何存储会话消息的
+ 将同一会话的历史对话消息存储在redis，
+  key有两种形式：
+            通常情况是 airag:chat:{用户名}:{conversationId}   如：airag:chat:NyaQiu:40284a81a0f01ae601a0f023aca7000a
+            门户/分享等特殊入口还会插入 sessionType 段是这样 airag:chat:{用户}:{sessionType}:{conversationId}    如：
+  value形式如下：
+   {
+     "@class": "...ChatConversation",
+     "app": { ...应用的完整快照(模型配置/插件/提示词等) },
+     "id": "40284a81...",            // conversationId
+     "title": "测试智能体",           // 会话标题(取首条消息前N字)
+     "izSaveSession": null,
+     "flowInputs": {...},             // 流程入参
+     "sessionType": "",
+     "messages": [                    // ★ 历史消息就嵌在这里，一整个数组
+       {
+         "@class": "...MessageHistory",
+         "conversationId": "40284a81...",
+         "topicId": "40284a81...",    // ← 你纠结的topicId在这里
+         "role": "ai",                // user / ai / tool
+         "content": "🎉好消息！...",
+         "images": null,
+         "files": null,
+         "datetime": "...",
+         "toolExecutionRequests": [...],  // AI的工具调用记录
+         "toolExecutionResult": "..."     // 工具执行结果
+       },
+       ... 共18条
+     ]
+   }
+
+ 注意：1、后端在新增消息时，是取出整个会话历史消息，然后再新增，然后整体存进去Redis。
+           2、topicId正常是一个会话一个topicId，但是前端刷新等一下特定场景会丢失topicId，然后就会重新创建，导致同一个会话可能会包含两个topicId
+           3、
 ============================================= AIGC end========================================================
 
 ============================================= 工作流 begin========================================================

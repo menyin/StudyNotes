@@ -306,6 +306,7 @@ Beta features
   jeecg里配置智普向量模型   
   模型名称：默认项目(426149)，  模型key：e4c03b4efc0a48608f6e4f77c36b1352.vVl2QYrA8kQV4MgR
   模型名称：测试向量模型，  模型key：e4c03b4efc0a48608f6e4f77c36b1352.vVl2QYrA8kQV4MgR
+               18250262037账号 模型key：8e896a2cdbae448ca4022da0690973d8.jVGyXodYZMeWH6tH
 
 *苹果WWDC 2023新品发布会（没有提到AI，但是一直提到机器学习）：
  MR混合现实眼镜：带上可以看到虚拟的app场景，目光就是鼠标，手指动一动相当于点击操作。
@@ -768,9 +769,12 @@ aitestkitchen.withgoogle.com
 
 一些ai学习平台：
 product hunt
-hugging face
+hugging face：下载模型外网比较慢，可以用modelscope（阿里的）
 LinkedInt
 TwitterX
+
+？Vllm
+？AutoDL
 
 *你可以直接使用 Dify 生态提供的第一方内置工具，或者轻松导入自定义的 API 工具（目前支持 OpenAPI / Swagger 和 OpenAI Plugin 规范）。
 
@@ -815,6 +819,45 @@ TwitterX
  
  ### 额外建议/资源：
   - 提供一些建议 
+
+
+*发给大模型的消息json示例
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是一个智能助手，可以使用工具查询天气信息。"
+    },
+    {
+      "role": "user",
+      "content": "北京今天天气怎么样？"
+    },
+    {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+        {
+          "id": "call_abc123",
+          "type": "function",
+          "function": {
+            "name": "get_weather",
+            "arguments": "{\"city\": \"北京\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_abc123",
+      "content": "{\"temperature\": \"25°C\", \"condition\": \"晴朗\"}"
+    },
+    {
+      "role": "assistant",
+      "content": "北京今天天气晴朗，气温25°C。"
+    }
+  ]
+}
 
 *为模型扩展能力
  上网：模型锁拥有的知识通常都在一个时间范围内。
@@ -897,6 +940,26 @@ function main(data) {
 fine_tuned_model
 fine_tuned_model
 ************ GPT 微调 end ******************
+
+************ 向量化 begin ******************
+*知识库整体过程：
+ 建库阶段（一次性 / 文档变更时）：文档分块（chunk 1..N）→Embedding模型将每个 chunk 转为向量→ 向量存储库（如：pgvector）
+ 查询阶段（每次提问都要）：用户问题转为向量，然后问题向量匹配检索知识库的向量，捞出Top-K条
+
+
+
+
+*向量化过程使用的算法函数的区别与适用场景：
+   1. 余弦 <=> —— 文本语义检索的事实标准
+      文本转向量后，模长主要受文本长度、词频影响，语义集中在方向上。“猫”的向量和“狗”的向量方向接近；一段 50 字的猫介绍和一篇 5000 字的猫科普，方向依然接近，虽然模长差很多。用余弦就能让长短文本公平比较——这正是 RAG/知识库检索的场景（JeecgBoot、langchain4j、OpenAI embeddings 生态都默认余弦）。
+   2. 欧氏 <-> —— “位置”本身有意义的特征
+      图像特征（人脸识别）、数值特征聚类（K-means）、异常检测（离群点=离大家都很远的点）。这些场景里“向量绝对位置/幅度”就是信息：两张人脸照片相似不只是“特征类型相同”，而是特征值本身接近。注意：如果向量已归一化（模长=1），欧氏和余弦排序结果完全等价（数学上单调对应），所以很多图像检索其实两者都行。
+   3. 曼哈顿 <+> —— 高维稀疏、要抗噪的场景
+      推荐系统的用户行为向量（几万维，大部分是0）、稀疏的统计特征。它的好处是对离群维度不敏感：欧氏距离里某一个维度出现巨大差值会被平方放大、主导整个距离；曼哈顿只线性累加，个别异常维度不会淹没其他维度的信息。物理含义也直观——城市街区走路，只能横平竖直。
+
+************ 向量化 end ******************
+
+
 
 
 ************ GPT 视频相关 begin ******************
@@ -1119,6 +1182,11 @@ Java架构师想要学习AI相关知识并深入了解DeepSeek，可以从以下
 
 ***************************Trae end**********************************
 
+***************************Zcode begin**********************************
+*Zcode是智普的
+
+***************************Zcode end**********************************
+
 ***************************Claude Code begin**********************************
 
 
@@ -1331,9 +1399,9 @@ er Free",
          MCP
          SSE流式输出
   注意：目前AI开发框架对于多模态适配度并不是太好
+？对比Spring AI和LangChain4j
 
-
-
+*AutoClaw+Pony-Alpha-2（实质为 GLM-5-Turbo）
 ************************************************** 龙虾 end *********************************************************
 
 ************************************************** codex begin *********************************************************
@@ -1358,4 +1426,137 @@ er Free",
      Skill Installer 快速安装其它技能。注意：知名技能可以直接放权安装，但是不知名的技能还是要自己判断审核后再说
      remotion best practice 动画制作技能。可以制作产品发布宣传片，节日祝福视频等
 exe目录：C:\Users\Administrator\AppData\Local\OpenAI
+
+
+*关注每个模型在每个AI工具里的有效上下文量
+ GPT5.5官方公布总上下文窗口是400k Token，其中128k输出，272k输入（但还要x95%安全系数），所以在Codex显示的有效上下文约258k 
+ ？其它模型在codex的量总结下
+  注意：
+         一般商业的AI应用（网页Deepseek、KIMI等）基本都不公开“默认历史轮数”这种精确数字，也不用"历史轮数"来限制上下文量，而是用Token量。输入输出的Token量一样，"历史轮数"可能不一样。
+        而在自研的AI应用项目（如JeecgBoot等）一般通过设置“默认历史轮数”来进行上下文控制，更加简单，也更加符合用户和业务需求。LangChain提供了两种设置方式
+  商业AI应用共同经验：
+   1、没有一家用“固定轮数”作为主要机制——都是 token 预算驱动：每轮对话把历史尽量塞进上下文窗口，塞不下时裁掉最老的。JeecgBoot 的 msgNum 按“条数”裁剪其实是简化版，条数只是 token 的粗略代理。
+   2、都发现“有效记忆”远小于“标称窗口”。社区实测有个经验规律：哪怕窗口标称 128K，模型 100% 不遗忘核心约束的“有效轮次”大约只有前 10~25 轮（窗口越大，有效轮次略多）。这就是“上下文衰减”——不是硬截断，而是模型注意力稀释、开始选择性遗忘早期细节。
+   3、应对手段殊途同归：
+              主动总结压缩：Kimi 官方直接建议“20轮后让AI总结当前计划”，把长历史浓缩成一段摘要重新注入——这是业界最通用的招
+              新会话隔离：换任务就开新话题（Kimi、DeepSeek 都强调），防止无关上下文互相干扰
+              关键信息重申：长对话中把核心约束定期复述，对抗遗忘
+   4、记住所有不一定是好事：历史越长，推理越慢、越贵、注意力越散。这就是为什么这些产品宁愿裁剪也不全量带——和你在 JeecgBoot 里设 msgNum=10~20 而不是 100 的理由完全一样。
+
+*模型价格
+ Claude-Opus4.6 百万Token（1M Token）价格大概是$0.73 
+ GPT-5.5-high 百万Token（1M Token）价格大概是$0.78
+ Fable5   百万Token（1M Token）价格大概是$1.5  所以Fable5大概是Claude-Opus4.6和GPT-5.5-high的2~3倍
+
+*Codex、Opencode等工具的归档功能：本质上是为了突破模型上下文窗口限制实现“长记忆”，采用向量技术、sqllite等技术实现
+   Codex: 社区开发了如 codex-recall 这样的工具，它会扫描 ~/.codex/archived_sessions 目录，将其中的JSONL对话记录建立SQLite FTS5的全文搜索索引，从而高效查询。
+   OpenCode: 也有类似的插件，如 @haisto/opencode-mem 能基于向量数据库实现跨会话的上下文记忆。这些工具通常依赖better-sqlite3和sqlite-vec等SQLite扩展实现向量搜索。
+
+*记忆：和Opencode一样分为全局、项目、自动记忆
+    全局：在Codex设置里设置
+    项目：在项目目录下新建AGENTS.md，然后写入约束内容
+    自动记忆：设置-个性化，开启【启用记忆】
+
+*自动化：可以自己写提示词进行创建，也可以到对话框让AI帮你创建。 还可以查看运行记录。 还可以结合skill和插件一起用
+
+*接入github或gitee做代码审查
+ ？做下实践，创建pr，代码审查等
+
+？其它玩法
+  SubAgents并行加速
+  Fork分叉 自定义模型
+  Hooks 生命周期钩子等
 ************************************************** codex end *********************************************************
+
+*GPT5.5、Claude、GLM5.2模型对比：
+ 同做一个静态网站页，
+    视觉效果：Claude大于等于GPT5.5大于GLM5.2
+    速度上 
+ 同做一个高还原度的蘑菇玛丽游戏单页
+    还原效果：Claude大于GPT5.5约等于GLM5.2                           
+    速度：GPT5.5大于GLM5.2大于Claude
+               7min          20min        24min
+ 同做一个图书管理系统
+     还原效果：Claude大于GPT5.5约等于GLM5.2          
+
+
+*GLM还是一个纯文本非多模态模型，在编码和长程任务上表现极强，上下文量也高           
+ 但在视觉上的能力还是有些欠缺，所以对于设计或者前端方面的效果可能相对差些
+
+*ClaudeCode封禁中国用户的逻辑（隐秘的监控）
+ *读电脑时间，一般用户不会改电脑时间
+ *中转站池匹配，如果匹配到，然后将发送的文本的一些符号替换掉，这些符号看起来一样，但实际编码是不一样的      
+ 总结：如果你用ClaudeCode并且用Claude厂商的模型，则会将以上信息（应该还有其他）收集分析，然后进行封号，限速等
+          如果你用ClaudeCode但用的是国内模型，比如GLM等，则它并不会进行有限制。
+
+版本对比  OpenAi GPT          Anthropic Claude
+             Sol 旗舰                   Opus 旗舰
+             Terra 均衡                Sonnet 均衡
+             Luna 走量                Haiku 轻量
+  
+*OpenAi GPT三个版本的价格基本是依次减半
+*GPT5.6价格比 Anthropic的Fable5便宜很多，大概是它的1/16，但同个测试题测试高出13分（至少效果应该是差不多的）            
+
+*GPT5.6发布时，Codex桌面应用并入ChatGPT中，也就是Codex就不再用了，也就是将Codex的能力整合融入到ChatGPT客户端里了
+  ChatGPT变成总平台，包含三种模式：Quick chat负责想、Work负责知识工作、Codex负责动手。 **特别要注意后两种模式区别。
+  Work模式：目标是交付一个业务或只是成果，输入一般是资料、网页、文件、任务要求等，通常主要用于研究、运营、咨询等
+  Codex模式：目标是修改并雁阵一个软件系统，输入一般是项目目录、Git仓库、代码等，通常用于开发者、工程师、代码自动化等
+
+
+朱总，DeepSeek-V4-Flash好了，访问方式：
+URL: http://192.168.157.200:82/v1 
+API KEY: sk-qw3c0d3r-n3xt-9f8e7d6c5b4a3210
+模型：DeepSeek-V4-Flash
+注意：实际上是GLM5.2模型，只是名称没有改而已
+
+
+conda active dbgpt
+dbgpt start webserver --config E:\GitRepositories\cac-seek\configs\dbgpt-proxy-zhipu.toml
+
+E:\GitRepositories\cac-seek\web\public
+E:\GitRepositories\cac-seek\assets
+
+E:\GitRepositories\new-api-wy-v1.0.1\web\public
+
+C:\Users\Administrator\Documents\Navicat\Premium\profiles
+
+cross-env NODE_OPTIONS=--max_old_space_size=8192 next build && next export
+NODE_OPTIONS=--max_old_space_size=8192 next build && next export
+
+************************************************** DB-GPT begin *********************************************************
+*优点：简单方便，直接连接数据库即可读取DDL、样本数据再结合历史对话拼到Prompt，实现Text2SQL
+ 缺点：如果数据库表比较多，则DDL定义量比较大，历史对话等内容会总结压缩，但是DDL是全量塞进Prompt，每次都很庞大
+ 注意：样本数据是DB-GPT会每张表查询前3条数据做为样本数据。
+           由于JeecgBoot的airag_knowledge_doc数据当中有
+
+* 【'window' is undefined】问题
+    原理：DB-GPT每次回答你之前，会把各种动态内容（数据库表结构、样本数据、对话历史等）拼进给 AI 的“指令”（prompt）里，然后用 Jinja2 模板引擎处理一遍。
+                Jinja2 的规矩是：看到 {{ xxx }} 就认为是“待填空的变量”，会去找叫 xxx 的变量来填。
+    问题：JeecgBoot的airag_knowledge_doc表有条数据长这样 {{ window._CONFIG['domianURL'] }}（JeecgBoot 文档里的示例）。它混进指令后，Jinja2 以为 window 是个变量，满世界找不到 → 直接罢工报错 → 整个对话崩掉。
+    解决方案：采用了当Jinja2模板引擎执行过程中找不到{{ xxx }}则会它替换为空字符串，也不会报错终止，而是继续执行任务。 
+                    之所以不采用将{{ xxx }}转义的方案，是因为塞入到Prompt模板里的信息很多，一个信息要拼入到Prompt，并不知道包含的{{ xxx }}是变量还是纯文本，要每个信息拼入的地方都做判断（太多了），Jinja2模板引擎不好处理。
+                    
+
+
+======拷贝部署 begin================
+# 1. 编译
+cd E:\GitRepositories\cac-seek\web
+yarn compile
+
+# 2. 部署（拷贝到实际运行的静态目录）
+Copy-Item .\out\* C:\Users\Administrator\.conda\envs\dbgpt\Lib\site-packages\dbgpt_app\static\web\ -Recurse -Force
+
+# 3. 重启 webserver，浏览器 Ctrl+F5
+dbgpt start webserver --config E:\GitRepositories\cac-seek\configs\dbgpt-proxy-zhipu.toml
+
+======拷贝部署 end================
+======dev调试部署 begin================
+# 1. 编译
+cd E:\GitRepositories\cac-seek\web
+yarn compile
+
+# 3. 重启 webserver，浏览器 Ctrl+F5
+uv run dbgpt start webserver --config E:\GitRepositories\cac-seek\configs\dbgpt-proxy-zhipu.toml
+======dev调试部署 begin================
+
+************************************************** DB-GPT end *********************************************************
